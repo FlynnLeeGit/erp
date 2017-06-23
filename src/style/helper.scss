@@ -1,9 +1,27 @@
 #app {
-  ._mt30 {
-    margin-top: 30px;
+  @for $i from 1 to 10 {
+    ._mt#{$i} {
+      margin-top: 0.5em * $i;
+    }
+  }
+
+  @for $i from 1 to 10 {
+    ._mb#{$i} {
+      margin-bottom: 0.5em * $i;
+    }
+  }
+
+  @for $i from 1 to 10 {
+    ._ml#{$i} {
+      margin-left: 0.5em * $i;
+    }
   }
 
   ._tr {
     text-align: right;
+  }
+
+  ._fr {
+    float: right;
   }
 }

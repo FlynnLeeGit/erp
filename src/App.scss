@@ -9,6 +9,9 @@ body,
 #app {
   height: 100%;
   position: relative;
+  min-width: 1200px;
+  max-width: 1920px;
+  margin: auto;
 }
 
 body {

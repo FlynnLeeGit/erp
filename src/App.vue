@@ -1,6 +1,5 @@
 <template>
-  <div id="app"
-       container>
+  <div id="app">
     <section class="app__hd">
       <div container>
         <el-row>
@@ -40,5 +39,6 @@ export default {
 </script>
 
 <style lang='scss'  src='./App.scss'></style>
+<style lang='scss' src='./style/global.scss'></style>
 <style lang='scss'  src='./style/helper.scss'></style>
 

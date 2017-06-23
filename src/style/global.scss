@@ -1,0 +1,32 @@
+#app {
+  .el-table {
+    font-size: 12px;
+
+    .cell {
+      padding-left: 6px;
+      padding-right: 6px;
+    }
+
+    td,
+    th {
+      height: 30px;
+    }
+
+    &__expanded-cell {
+      padding: 10px 80px;
+    }
+  }
+
+  .popover {
+    &__content {
+      width: 300px;
+    }
+
+    &__reference {
+      width: 90%;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}

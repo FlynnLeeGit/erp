@@ -1,9 +1,18 @@
 import axios from 'axios'
+
+Promise.prototype.finally = function (fn) {
+  function finFn () {
+    fn.call(null)
+  }
+  this.then(finFn, finFn)
+  return this
+}
 import { Message } from 'element-ui'
 
 axios.interceptors.response.use(
-  res => res,
+  res => Promise.resolve(res),
   err => {
+    console.log(err.response)
     const response = err.response
     switch (response.status) {
       case 400:
@@ -15,10 +24,14 @@ axios.interceptors.response.use(
       case 403:
         Message.error('403')
         break
+      case 500:
+        Message.error('服务器内部错误')
+        break
       default:
-        Message.error(`服务器内部错误`)
+        Message.error(`未知错误`)
         break
     }
+    return Promise.reject(err)
   }
 )
 

@@ -3,19 +3,18 @@
            :router='true'
            @open="handleOpen"
            @close="handleClose">
-    <el-submenu index="1">
-      <template slot="title">
-        定额
-      </template>
+    <el-menu-item-group title="定额管理">
       <el-menu-item index="/quota/artficial">人工管理</el-menu-item>
       <el-menu-item index="/quota/auxmaterial">辅材管理</el-menu-item>
-      <el-menu-item index="/quota/artficialcounter">人工计量</el-menu-item>
-      <el-menu-item index="/quota/auxmaterialcounter">辅材计量</el-menu-item>
-    </el-submenu>
-    <el-menu-item index="/users">
-      <i class="el-icon-menu"></i>
-      人员管理
-    </el-menu-item>
+      <el-menu-item index="/quota/quota">定额模版</el-menu-item>
+    </el-menu-item-group>
+    <el-menu-item-group title="分组2">
+      <el-menu-item index="/users">
+        <i class="el-icon-menu"></i>
+        人员管理
+      </el-menu-item>
+  
+    </el-menu-item-group>
   </el-menu>
 </template>
 <script>

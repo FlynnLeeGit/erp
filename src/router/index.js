@@ -7,9 +7,8 @@ import users from '@/pages/users/index.vue'
 
 import quota from '@/pages/quota/index.vue'
 import artficial from '@/pages/quota/artficial/index.vue'
-import artficialcounter from '@/pages/quota/artficialcounter/index.vue'
 import auxmaterial from '@/pages/quota/auxmaterial/index.vue'
-import auxmaterialcounter from '@/pages/quota/auxmaterialcounter/index.vue'
+import quotaTpl from '@/pages/quota/quota/index.vue'
 
 import store from '../store'
 
@@ -37,19 +36,14 @@ const routes = [
             component: artficial
           },
           {
-            path: 'artficialcounter',
-            name: '人工计量',
-            component: artficialcounter
-          },
-          {
             path: 'auxmaterial',
             name: '辅材管理',
             component: auxmaterial
           },
           {
-            path: 'auxmaterialcounter',
-            name: '辅材计量',
-            component: auxmaterialcounter
+            path: 'quota',
+            name: '定额模版',
+            component: quotaTpl
           }
         ]
       }
