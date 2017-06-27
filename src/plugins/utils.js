@@ -11,20 +11,7 @@ export const search = (dataSource, searchField, searchFields) => {
   })
 }
 
-export const findIndex = (dataSource, field, fieldVal) => {
-  const results = dataSource.filter(row => {
-    return row[field] === fieldVal
-  })
-  return results.length ? results[0] : {}
-}
+export const getPage = (tableData, pageSize, page) =>
+  tableData.slice((page - 1) * pageSize, page * pageSize)
 
-export function debounce (idle, fn) {
-  let last
-  return function () {
-    const ctx = this, args = arguments
-    clearTimeout(last)
-    last = setTimeout(function () {
-      fn.apply(ctx, args)
-    }, idle)
-  }
-}
+export const sort = (a, b, prop) => a[prop] - b[prop] > 0

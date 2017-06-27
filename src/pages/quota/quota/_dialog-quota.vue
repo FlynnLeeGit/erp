@@ -45,6 +45,7 @@
           </el-option>
         </el-select>
       </el-form-item>
+  
       <el-form-item label='阶段'
                     :label-width="formLabelWidth">
         <el-select v-model='row.stage'>
@@ -54,6 +55,12 @@
           </el-option>
         </el-select>
       </el-form-item>
+  
+      <!--<el-form-item label='品牌'
+                    :label-width="formLabelWidth">
+        <el-input placeholder='请输入定额品牌'
+                  v-model='row.brand'></el-input>
+      </el-form-item>-->
   
       <el-form-item label='工种'
                     :label-width="formLabelWidth">
@@ -92,16 +99,23 @@
     <div slot='footer'
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
-      <el-button type="success"
+      <el-button v-if='isAdd'
+                 type="success"
                  :loading='isSubmiting'
-                 @click="submit(row)">
+                 @click="submitAdd(row)">
         添 加
+      </el-button>
+      <el-button v-if='isEdit'
+                 type="info"
+                 :loading='isSubmiting'
+                 @click="submitEdit(row)">
+        更新
       </el-button>
     </div>
   </el-dialog>
 </template>
 <script>
-import { add } from './api'
+import { add, edit } from './api'
 export default {
   props: {
     map: {
@@ -126,26 +140,53 @@ export default {
         quotaAuxiliaryCounters: []
       },
       formLabelWidth: '80px',
-      isSubmiting: false
+      isSubmiting: false,
+      opt: ''
+    }
+  },
+  computed: {
+    isAdd () {
+      return this.opt === 'add'
+    },
+    isEdit () {
+      return this.opt === 'edit'
     }
   },
   methods: {
     // 还原row为初始空内容状态
-    restoreRow () {
-      this.row = Object.assign({}, this.initialRow)
+    restoreRow (originalRow) {
+      this.row = Object.assign({}, originalRow)
     },
-    submit (data) {
+    submitAdd (data) {
       this.isSubmiting = true
-      add(data).then(({ data }) => {
-        this.$message.success("添加成功")
-        this.close()
-        this.$emit('added', data)
-      }).finally(() => {
-        this.isSubmiting = false
-      })
+      add(data)
+        .then(({ data }) => {
+          this.$message.success("添加成功")
+          this.close()
+          this.$emit('added', data)
+        }).finally(() => {
+          this.isSubmiting = false
+        })
     },
-    open () {
-      this.restoreRow()
+    submitEdit (data) {
+      this.isSubmiting = true
+      edit(data)
+        .then(({ data }) => {
+          this.$message.success("更新成功")
+          this.close()
+          this.$emit('edited', data)
+        }).finally(() => {
+          this.isSubmiting = false
+        })
+    },
+    open (opt, row) {
+      this.opt = opt
+      if (this.isAdd) {
+        this.restoreRow(this.initialRow)
+      }
+      if (this.isEdit) {
+        this.restoreRow(row)
+      }
       this.visible = true
     },
     close () {

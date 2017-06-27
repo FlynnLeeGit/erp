@@ -1,13 +1,14 @@
-var path = require('path')
-var webpack = require('webpack')
-var API_SERVER = require('./config').API_SERVER
+const path = require('path')
+const webpack = require('webpack')
+const API_SERVER = require('./config').API_SERVER
+const HtmlWeppackPlugin = require('html-webpack-plugin')
 
 console.log(API_SERVER)
 module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
+    publicPath: '/',
     filename: 'build.js'
   },
   module: {
@@ -35,7 +36,7 @@ module.exports = {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]?[hash]'
+          name: '[name].[ext]?[hash:5]'
         }
       }
     ]
@@ -60,7 +61,14 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
+  plugins: [
+    new HtmlWeppackPlugin({
+      inject: true,
+      template: 'template/index.html',
+      hash: true
+    })
+  ]
 }
 
 if (process.env.NODE_ENV === 'production') {

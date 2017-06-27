@@ -4,11 +4,12 @@
                type='primary'>
       添加
     </el-button>
-    <el-input class="_fr"
-              v-model='searchField'
-              style="width:180px"
-              placeholder='全表搜索'>
-    </el-input>
+    <search class="_fr"
+            v-model='searchField'
+            :fields='searchFields'
+            :table-data='tableData'
+            :filter-table-data.sync='filterTableData'>
+    </search>
     <el-table v-loading='isFetching || isDeleting'
               :data="sliceTableData"
               border
@@ -98,13 +99,18 @@
 
 <script>
 import { get, add, edit, del } from './api'
-import { search } from '@/plugins/utils'
+import Search from '@/components/Search.vue'
+import { getPage } from '@/plugins/utils'
 
 export default {
+  components: {
+    Search
+  },
   data () {
     return {
       // table
       tableData: [],
+      filterTableData: [],
       row: {},
       initialRow: {
         workType: '',
@@ -132,10 +138,7 @@ export default {
   },
   computed: {
     sliceTableData () {
-      return this.filterTableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-    },
-    filterTableData () {
-      return search(this.tableData, this.searchField, this.searchFields)
+      return getPage(this.filterTableData, this.pageSize, this.currentPage)
     }
   },
   methods: {

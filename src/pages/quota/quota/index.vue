@@ -4,12 +4,12 @@
                type='primary'>
       添加定额
     </el-button>
-    <el-input class="_fr"
-              @input='syncSearchField'
-              style="width:180px"
-              :icon='searchLoading'
-              placeholder='全表搜索'>
-    </el-input>
+    <search class="_fr"
+            v-model='searchField'
+            :fields='searchFields'
+            :table-data='tableData'
+            :filter-table-data.sync='filterTableData'>
+    </search>
     <el-table v-loading='isFetching'
               :data="sliceTableData"
               class="_mt2"
@@ -32,10 +32,11 @@
                        width="200">
       </el-table-column>
       <el-table-column label='人工费用'
-                       width='200'>
-        <template scope='scope'>
-          <span class="_text">{{scope.row.name + '333' }}</span>
-        </template>
+                       sortable
+                       width='200'
+                       prop='name'
+                       class-name='_text'
+                       :formatter='formatter'>
       </el-table-column>
       <el-table-column label='辅材费用'
                        width='200'>
@@ -45,6 +46,10 @@
       </el-table-column>
       <el-table-column label="操作">
         <template scope="scope">
+          <el-button size='mini'
+                     @click='handleEdit(scope.$index,scope.row)'>
+            编辑定额
+          </el-button>
           <el-button size='mini'
                      type='danger'
                      @click='handleDelete(scope.$index,scope.row)'>
@@ -93,36 +98,35 @@ import expand from './_expand.vue'
 import dialogQuota from './_dialog-quota.vue'
 import dialogArt from './_dialog-art.vue'
 import dialogMat from './_dialog-mat.vue'
+import Search from '@/components/Search.vue'
 import { get, getArtList, getMatList, getMap, edit, del } from './api'
-import { search, debounce } from '@/plugins/utils'
+import { getPage, sort } from '@/plugins/utils'
 
-let last
 export default {
   components: {
     expand,
     dialogQuota,
     dialogArt,
-    dialogMat
+    dialogMat,
+    Search
   },
   data () {
     return {
       // table
       tableData: [],
       map: {},
-
+      filterTableData: [],
       // table loading status
       isFetching: false,
       isDeleting: false,
 
       // pagination
       currentPage: 1,
-      pageSize: 1000,
+      pageSize: 100,
 
       // search
-      searchLoading: '',
       searchField: '',
       searchFields: ['id', 'type', 'stage', 'sec_type', 'unit', 'work_type', 'wastage', 'position', 'content', 'description'],
-
       // artTable
       artMap: {
         artList: []
@@ -138,10 +142,7 @@ export default {
   },
   computed: {
     sliceTableData () {
-      return this.filterTableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-    },
-    filterTableData () {
-      return search(this.tableData, this.searchField, this.searchFields)
+      return getPage(this.filterTableData, this.pageSize, this.currentPage)
     }
   },
   methods: {
@@ -162,19 +163,15 @@ export default {
           this.isFetching = false
         })
     },
-    // search
-    syncSearchField (newVal) {
-      clearTimeout(last)
-      this.searchLoading = 'loading'
-      last = setTimeout(() => {
-        this.searchLoading = ''
-        this.searchField = newVal
-      }, 300)
+    formatter (row, column) {
+      return row.wastage * 100
     },
-
     // table methods
     handleAdd () {
-      this.$refs.dialogQuota.open()
+      this.$refs.dialogQuota.open('add')
+    },
+    handleEdit ($index, row) {
+      this.$refs.dialogQuota.open('edit', row)
     },
     quotaAdded (newQuota) {
       this.tableData.push(newQuota)
@@ -208,7 +205,6 @@ export default {
     handleCurrentChange (val) {
       this.currentPage = val
     },
-    // dialog methods
   }
 }
 </script>

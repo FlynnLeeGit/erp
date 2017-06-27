@@ -4,10 +4,12 @@
                type='primary'>
       添加
     </el-button>
-    <el-input class="_fr"
-              v-model='searchField'
-              style="width:180px"
-              placeholder='全表搜索'>
+    <search class="_fr"
+            v-model='searchField'
+            :fields='searchFields'
+            :table-data='tableData'
+            :filter-table-data.sync='filterTableData'>
+    </search>
     </el-input>
     <el-table v-loading='isFetching || isDeleting'
               :data="sliceTableData"
@@ -48,9 +50,9 @@
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-          <el-button size="small"
+          <el-button size="mini"
                      @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="small"
+          <el-button size="mini"
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -132,13 +134,17 @@
 
 <script>
 import { get, add, edit, del } from './api'
-import { search } from '@/plugins/utils'
-
+import { getPage } from '@/plugins/utils'
+import Search from '@/components/Search.vue'
 export default {
+  components: {
+    Search
+  },
   data () {
     return {
       // table
       tableData: [],
+      filterTableData: [],
       row: {},
       initialRow: {
         name: '',
@@ -169,11 +175,8 @@ export default {
   },
   computed: {
     sliceTableData () {
-      return this.filterTableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
+      return getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
-    filterTableData () {
-      return search(this.tableData, this.searchField, this.searchFields)
-    }
   },
   methods: {
     // api methods
