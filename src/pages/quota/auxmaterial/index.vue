@@ -59,7 +59,7 @@
   
     <!--pagination-->
     <el-pagination class="_mt2"
-                   :page-sizes='[10,30,50]'
+                   :page-sizes='[50,100,200]'
                    :total='tableData.length'
                    :current-page="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
@@ -69,7 +69,7 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='添加人工'
+    <el-dialog title='辅材'
                :visible.sync='showDialog'>
       <el-form :model='row'>
         <el-form-item v-if="opt==='edit'"
@@ -132,6 +132,7 @@
 
 <script>
 import { get, add, edit, del } from './api'
+import { search } from '@/plugins/utils'
 
 export default {
   data () {
@@ -156,10 +157,11 @@ export default {
 
       // pagination
       currentPage: 1,
-      pageSize: 10,
+      pageSize: 50,
 
       // search
-      searchField: ''
+      searchField: '',
+      searchFields: ['id', 'name', 'price', 'unit', 'brand', 'spec']
     }
   },
   created () {
@@ -170,12 +172,7 @@ export default {
       return this.filterTableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
     },
     filterTableData () {
-      return this.tableData.filter(row => {
-        // 从初始需要表现字段中选择筛选
-        const needFields = Object.assign({ id: 0 }, this.initialRow)
-        return Object.keys(needFields).some(k => this.searchField === '' || row[k].toString().indexOf(this.searchField) > -1
-        )
-      })
+      return search(this.tableData, this.searchField, this.searchFields)
     }
   },
   methods: {

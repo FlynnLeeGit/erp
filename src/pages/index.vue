@@ -25,20 +25,19 @@ export default {
 }
 </script>
 <style lang="scss">
-.app-content {
-  height: 100%;
-}
-
-.app-side {
-  height: 100%;
-}
-
-.app-main {
-  padding: 25px;
-}
-
-.app-route-name {
-  margin-bottom: 30px;
+.app {
+  &-content,
+  &-side,
+  &-main {
+    height: 100%;
+  }
+  &-main {
+    padding: 25px;
+    overflow-y: auto;
+  }
+  &-route-name {
+    margin-bottom: 30px;
+  }
 }
 </style>
 

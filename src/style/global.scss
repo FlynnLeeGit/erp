@@ -29,4 +29,28 @@
       overflow: hidden;
     }
   }
+
+  .table-expand {
+    font-size: 0;
+
+    .el-form-item {
+      font-size: 12px;
+      margin: 0;
+      width: 20%;
+
+      &__label {
+        width: 80px;
+        color: #99a9bf;
+      }
+
+      &__label,
+      &__content {
+        font-size: 12px;
+      }
+
+      &.-block {
+        width: 100%;
+      }
+    }
+  }
 }

@@ -12,7 +12,6 @@ import { Message } from 'element-ui'
 axios.interceptors.response.use(
   res => Promise.resolve(res),
   err => {
-    console.log(err.response)
     const response = err.response
     switch (response.status) {
       case 400:
