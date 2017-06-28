@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const API_SERVER = require('./config').API_SERVER
 const HtmlWeppackPlugin = require('html-webpack-plugin')
 
-console.log(API_SERVER)
+console.log('API_SERVER', API_SERVER)
 module.exports = {
   entry: './src/main.js',
   output: {

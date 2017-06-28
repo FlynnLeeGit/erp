@@ -7,7 +7,7 @@
         <span>{{row.type}}</span>
       </el-form-item>
       <el-form-item label='二级分类'>
-        <span>{{row.sec_type}}</span>
+        <span>{{row.secType}}</span>
       </el-form-item>
       <el-form-item label='单位'>
         <span>{{row.unit}}</span>
@@ -19,7 +19,7 @@
         <span>{{row.stage}}</span>
       </el-form-item>
       <el-form-item label='工种'>
-        <span>{{row.work_type}}</span>
+        <span>{{row.workType}}</span>
       </el-form-item>
       <el-form-item label='损耗率'>
         <span>{{row.wastage}}</span>
@@ -33,8 +33,14 @@
         <span>{{row.content}}</span>
       </el-form-item>
     </el-form>
-    <artficial :table-data='row.quotaArtficialCounters' />
-    <auxmaterial :table-data='row.quotaAuxiliaryCounters' />
+    <artficial :table-data='row.quotaArtficialCounters'
+               :qid='row.id'
+               @update='updateQuota'>
+    </artficial>
+    <auxmaterial :table-data='row.quotaAuxiliaryCounters'
+                 :qid='row.id'
+                 @update='updateQuota'>
+    </auxmaterial>
   </div>
 </template>
 <script>
@@ -50,6 +56,11 @@ export default {
     row: {
       type: Object,
       default: {}
+    },
+  },
+  methods: {
+    updateQuota (newQuota) {
+      this.$root.$emit('quota.quota.update', this.row, newQuota)
     }
   }
 }

@@ -17,16 +17,13 @@ export const editArt = (qid, data) =>
 export const delArt = (qid, aid) =>
   axios.delete(`/_api/quota/quotas/${qid}/artficials/${aid}`)
 // auxmaterialcounter
-export const addMat = data =>
-  axios.post('/_api/quota/auxmaterialcounters', data)
-export const editMat = data =>
-  axios.put(`/_api/quota/auxmaterialcounters/${data.id}`, data)
-export const delMat = id =>
-  axios.delete(`/_api/quota/auxmaterialcounters/${id}`)
+export const addMat = (qid, data) =>
+  axios.post(`/_api/quota/quotas/${qid}/auxiliaries`, data)
+export const editMat = (qid, data) =>
+  axios.put(`/_api/quota/quotas/${qid}/auxiliary`, data)
+export const delMat = (qid, auxid) =>
+  axios.delete(`/_api/quota/quotas/${qid}/auxiliaries/${auxid}`)
 
 export { getMap } from '../api'
 export { get as getArtList } from '../artficial/api'
 export { get as getMatList } from '../auxmaterial/api'
-// export const getMap = commonApi.getMap
-// export const getArtList = artApi.get
-// export const getMatList = matApi.get

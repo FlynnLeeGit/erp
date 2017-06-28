@@ -4,15 +4,16 @@
     <el-form :model='row'>
       <el-form-item label='模版ID'
                     :label-width="formLabelWidth">
-        <span>{{row.quotaTemplateId}}</span>
+        <span>{{qRow.id}}</span>
       </el-form-item>
       <el-form-item label='辅材名称'
                     :label-width="formLabelWidth">
-        <el-select v-model='row.quotaAuxiliaryMaterialId'>
+        <el-select v-model='row.quotaAuxiliaryMaterial.id'>
           <el-option :key='mat.id'
                      :label='mat.name'
                      v-for='mat in map.matList'
-                     :value='mat.id'>
+                     :value='mat.id'
+                     :disabled="optionDisabled(qRow,mat)">
           </el-option>
         </el-select>
       </el-form-item>
@@ -36,6 +37,7 @@
 </template>
 <script>
 import { addMat } from './api'
+import { deepCopy, valueInArray } from '@/plugins/utils'
 export default {
   props: {
     map: {
@@ -46,10 +48,14 @@ export default {
   data () {
     return {
       visible: false,
-      row: {},
+      row: {
+        quotaAuxiliaryMaterial: {}
+      },
       initialRow: {
-        quotaAuxiliaryMaterialId: 0,
         counter: 0,
+        quotaAuxiliaryMaterial: {
+          id: ''
+        }
       },
       formLabelWidth: '80px',
       isSubmiting: false,
@@ -59,15 +65,17 @@ export default {
   methods: {
     // 还原row为初始空内容状态
     restoreRow (qid) {
-      this.row = Object.assign({ quotaTemplateId: qid }, this.initialRow)
+      this.row = deepCopy(this.initialRow)
+    },
+    optionDisabled (qRow, mat) {
+      return qRow.quotaAuxiliaryCounters && valueInArray(qRow.quotaAuxiliaryCounters, mat.id, 'quotaAuxiliaryMaterial.id')
     },
     submit (data) {
       this.isSubmiting = true
-      addMat(data).then(({ data }) => {
+      addMat(this.qRow.id, data).then(({ data }) => {
         this.$message.success(`添加辅材计量至 ${this.qRow.name} 成功`)
-        this.qRow.quotaAuxiliaryCounters.push(data)
         this.close()
-        this.$emit('added')
+        this.$root.$emit('quota.quota.update', this.qRow, data)
       }).finally(() => {
         this.isSubmiting = false
       })

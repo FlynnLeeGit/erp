@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+import { deepCopy } from '@/plugins/utils'
 export default {
   props: {
     data: {
@@ -49,7 +50,7 @@ export default {
   methods: {
     edit (data) {
       this.editMode = true
-      this.editRow = Object.assign({}, this.data)
+      this.editRow = deepCopy(this.data)
     },
     submit (data) {
       this.editMode = false

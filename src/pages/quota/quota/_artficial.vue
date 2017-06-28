@@ -1,5 +1,5 @@
 <template>
-  <el-table v-if='hasCounters'
+  <el-table v-show='hasCounters'
             style="width=100%;"
             border
             :data='tableData'>
@@ -12,13 +12,13 @@
       </template>
   
     </el-table-column>
-    <el-table-column label='人工 计量'
+    <el-table-column label='人工 计量(可编辑)'
                      width='180'>
       <template scope='artScope'>
         <inline-edit :data='artScope.row'
                      prop='counter'
-                     :fn='editArt'
-                     @success='handleArtSuccess'>
+                     :fn='editFn'
+                     @success='update'>
         </inline-edit>
       </template>
     </el-table-column>
@@ -60,6 +60,9 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    qid: {
+      type: Number
     }
   },
   computed: {
@@ -72,15 +75,19 @@ export default {
     del ($index, row) {
       this.$confirm('确认删除辅材计量?')
         .then(() => {
-          return delArt(row.id)
+          return delArt(this.qid, row.id)
         })
-        .then(() => {
+        .then(({ data }) => {
           this.$message.success('删除辅材计量成功')
-          this.tableData.splice($index, 1)
+          this.update(data)
         })
     },
-    handleArtSuccess (newRes) {
-      console.log(newRes)
+    // 返回promise对象,让其在inlineEdit中执行
+    editFn (editRow) {
+      return editArt(this.qid, editRow)
+    },
+    update (data) {
+      this.$emit('update', data)
     }
   }
 }

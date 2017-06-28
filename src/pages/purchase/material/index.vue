@@ -8,10 +8,7 @@
             v-model='searchField'
             :fields='searchFields'
             :table-data='tableData'
-            :map="{
-                supplierId:supplierMap,
-                specId:auxmaterialMap
-              }"
+            :map="searchMap"
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
@@ -247,6 +244,12 @@ export default {
     },
     isEdit () {
       return this.opt === 'edit'
+    },
+    searchMap () {
+      return {
+        supplierId: this.supplierMap,
+        specId: this.auxmaterialMap
+      }
     }
   },
   methods: {

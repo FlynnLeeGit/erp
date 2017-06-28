@@ -32,9 +32,7 @@ export default {
     },
     map: {
       type: Object,
-      default: () => ({
-
-      })
+      default: () => ({})
     }
   },
   data () {

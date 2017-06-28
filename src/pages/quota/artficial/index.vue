@@ -70,7 +70,7 @@
           <el-input placeholder='请输入工种'
                     v-model='row.workType'></el-input>
         </el-form-item>
-        <el-form-item label='单位'
+        <el-form-item label='价格'
                       :label-width="formLabelWidth">
           <el-input-number v-model='row.price'
                            :step='10'>

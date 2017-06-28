@@ -10,7 +10,7 @@
       <el-form-item label='分类'
                     :label-width="formLabelWidth">
         <el-select v-model='row.type'
-                   @change="row.sec_type=''">
+                   @change="row.secType=''">
           <el-option :key='tKey'
                      v-for='(secTypeList,tKey) in map.type'
                      :value='tKey'>
@@ -20,7 +20,7 @@
       <el-form-item v-if='row.type'
                     label='二级分类'
                     :label-width="formLabelWidth">
-        <el-select v-model='row.sec_type'>
+        <el-select v-model='row.secType'>
           <el-option :key='t'
                      v-for='t in map.type[row.type]'
                      :value='t'>
@@ -56,17 +56,11 @@
         </el-select>
       </el-form-item>
   
-      <!--<el-form-item label='品牌'
-                    :label-width="formLabelWidth">
-        <el-input placeholder='请输入定额品牌'
-                  v-model='row.brand'></el-input>
-      </el-form-item>-->
-  
       <el-form-item label='工种'
                     :label-width="formLabelWidth">
-        <el-select v-model='row.work_type'>
+        <el-select v-model='row.workType'>
           <el-option :key='w'
-                     v-for='w in map.work_type'
+                     v-for='w in map.workType'
                      :value='w'>
           </el-option>
         </el-select>
@@ -131,9 +125,9 @@ export default {
         name: '',
         type: '',
         stage: '',
-        sec_type: '',
+        secType: '',
         unit: '',
-        work_type: '',
+        workType: '',
         wastage: 0,
         position: '',
         quotaArtficialCounters: [],
@@ -141,7 +135,8 @@ export default {
       },
       formLabelWidth: '80px',
       isSubmiting: false,
-      opt: ''
+      opt: '',
+      qRow: {}
     }
   },
   computed: {
@@ -174,13 +169,14 @@ export default {
         .then(({ data }) => {
           this.$message.success("更新成功")
           this.close()
-          this.$emit('edited', data)
+          this.$emit('edited', this.qRow, data)
         }).finally(() => {
           this.isSubmiting = false
         })
     },
     open (opt, row) {
       this.opt = opt
+      this.qRow = row
       if (this.isAdd) {
         this.restoreRow(this.initialRow)
       }

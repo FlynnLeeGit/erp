@@ -1,6 +1,6 @@
 <template>
   <el-table style="width=100%;"
-            v-if='hasCounters'
+            v-show='hasCounters'
             border
             :data='tableData'>
     <el-table-column label='id'
@@ -10,13 +10,13 @@
               v-text='artScope.row.id'></span>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 计量'
+    <el-table-column label='辅材 计量(可编辑)'
                      width='180'>
       <template scope='scope'>
         <inline-edit :data='scope.row'
                      prop='counter'
-                     :fn='editMat'
-                     @success='handleMatSuccess'>
+                     :fn='editFn'
+                     @success='update'>
         </inline-edit>
       </template>
     </el-table-column>
@@ -27,17 +27,12 @@
     </el-table-column>
     <el-table-column label='辅材 单位'>
       <template scope='scope'>
-        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.unit}}</span>
+        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.specUnit}}</span>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 价格'>
+    <el-table-column label='辅材 描述'>
       <template scope='scope'>
-        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.price}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label='辅材 品牌'>
-      <template scope='scope'>
-        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.brand}}</span>
+        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.specDesc}}</span>
       </template>
     </el-table-column>
     <el-table-column label='操作'
@@ -65,6 +60,9 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    qid: {
+      type: Number
     }
   },
   data () {
@@ -84,19 +82,21 @@ export default {
       this.$confirm('确认删除辅材计量?')
         .then(() => {
           this.isDeleting = true
-          this.deleteRowId = row.id
-          return delMat(row.id)
+          return delMat(this.qid, row.id)
         })
-        .then(() => {
+        .then(({ data }) => {
           this.$message.success('删除辅材计量成功')
-          this.tableData.splice($index, 1)
+          this.update(data)
         })
         .finally(() => {
           this.isDeleting = false
         })
     },
-    handleMatSuccess (newQuota) {
-      console.log(newQuota)
+    editFn (editRow) {
+      return editMat(this.qid, editRow)
+    },
+    update (data) {
+      this.$emit('update', data)
     }
   }
 }

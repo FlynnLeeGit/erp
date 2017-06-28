@@ -4,15 +4,16 @@
     <el-form :model='row'>
       <el-form-item label='模版ID'
                     :label-width="formLabelWidth">
-        <span>{{row.quotaTemplateId}}</span>
+        <span>{{qRow.id}}</span>
       </el-form-item>
       <el-form-item label='人工工种'
                     :label-width="formLabelWidth">
         <el-select v-model='row.quotaArtficial.id'>
-          <el-option :key='art.id'
+          <el-option v-for='art in map.artList'
+                     :key='art.id'
                      :label='art.workType'
-                     v-for='art in map.artList'
-                     :value='art.id'>
+                     :value='art.id'
+                     :disabled="optionDisabled(qRow,art)">
           </el-option>
         </el-select>
       </el-form-item>
@@ -36,10 +37,9 @@
 </template>
 <script>
 import { addArt } from './api'
-import { deepCopy } from '@/plugins/utils'
+import { deepCopy, valueInArray } from '@/plugins/utils'
 export default {
   props: {
-
     map: {
       type: Object,
       default: {}
@@ -54,16 +54,21 @@ export default {
       initialRow: {
         counter: 0,
         quotaArtficial: {
-          id: 0
+          id: ''
         }
       },
       formLabelWidth: '80px',
       isSubmiting: false,
+      qIndex: -1,
       qRow: {},
     }
   },
   methods: {
+    valueInArray,
     // 还原row为初始空内容状态
+    optionDisabled (qRow, art) {
+      return qRow.quotaArtficialCounters && valueInArray(qRow.quotaArtficialCounters, art.id, 'quotaArtficial.id')
+    },
     restoreRow (qid) {
       this.row = deepCopy(this.initialRow)
     },
@@ -71,9 +76,8 @@ export default {
       this.isSubmiting = true
       addArt(this.qRow.id, data).then(({ data }) => {
         this.$message.success(`添加人工计量至 ${this.qRow.name} 成功`)
-        // this.qRow.quotaArtficialCounters.push(data)
-        this.$emit('added', quota)
         this.close()
+        this.$root.$emit('quota.quota.update', this.qRow, data)
       }).finally(() => {
         this.isSubmiting = false
       })

@@ -18,7 +18,8 @@
   
       <el-table-column type='expand'>
         <template scope='scope'>
-          <expand :row='scope.row' />
+          <expand :row='scope.row'>
+          </expand>
         </template>
       </el-table-column>
       <el-table-column label="＃"
@@ -83,7 +84,7 @@
   
     <!--pagination-->
     <el-pagination class="_mt2"
-                   :page-sizes='[100,300,500,1000]'
+                   :page-sizes='[5,100,300,500,1000]'
                    :total='filterTableData.length'
                    :current-page="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
@@ -93,11 +94,11 @@
     </el-pagination>
   
     <dialog-quota ref='dialogQuota'
+                  :map='map'
                   @added='quotaAdded'
-                  :map='map'>
+                  @edited='quotaEdited'>
     </dialog-quota>
     <dialog-art ref='dialogArt'
-                @added='quota'
                 :map='artMap'>
     </dialog-art>
     <dialog-mat ref='dialogMat'
@@ -113,7 +114,7 @@ import dialogArt from './_dialog-art.vue'
 import dialogMat from './_dialog-mat.vue'
 import Search from '@/components/Search.vue'
 import { get, getArtList, getMatList, getMap, edit, del } from './api'
-import { getPage, sort } from '@/plugins/utils'
+import { getPage, sort, replaceObjectFields } from '@/plugins/utils'
 
 export default {
   components: {
@@ -135,11 +136,11 @@ export default {
 
       // pagination
       currentPage: 1,
-      pageSize: 100,
+      pageSize: 5,
 
       // search
       searchField: '',
-      searchFields: ['id', 'type', 'stage', 'sec_type', 'unit', 'work_type', 'wastage', 'position', 'content', 'description'],
+      searchFields: ['id', 'name', 'type', 'stage', 'secType', 'unit', 'workType', 'wastage', 'position', 'content', 'description'],
       // artTable
       artMap: {
         artList: []
@@ -147,11 +148,15 @@ export default {
       // matTable
       matMap: {
         matList: []
-      }
+      },
+
+      // price related fields
+      replaceFields: ['artificialUnitPrice', 'auxiliaryMaterialUnitPrice', 'principalMaterialUnitPrice', 'totalUnitPrice', 'quotaArtficialCounters', 'quotaAuxiliaryCounters']
     }
   },
   created () {
     this.initData()
+    this.$root.$on('quota.quota.update', this.updateQuotaPrice)
   },
   computed: {
     sliceTableData () {
@@ -177,6 +182,10 @@ export default {
         })
     },
     // table methods
+    // 更新定额相关价格
+    updateQuotaPrice (oldRow, newRow) {
+      replaceObjectFields(oldRow, newRow, this.replaceFields)
+    },
     handleAdd () {
       this.$refs.dialogQuota.open('add')
     },
@@ -185,6 +194,10 @@ export default {
     },
     quotaAdded (newQuota) {
       this.tableData.push(newQuota)
+    },
+    quotaEdited (oldQuota, newQuota) {
+      console.log(oldQuota, newQuota)
+      replaceObjectFields(oldQuota, newQuota, this.searchFields)
     },
     handleDelete (index, row) {
       this.$confirm(`确认删除定额项  ${row.name}？`)
