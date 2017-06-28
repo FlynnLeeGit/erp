@@ -31,19 +31,31 @@
                        prop='name'
                        width="200">
       </el-table-column>
-      <el-table-column label='人工费用'
+      <el-table-column label='人工合计单价'
                        sortable
-                       width='200'
-                       prop='name'
-                       class-name='_text'
-                       :formatter='formatter'>
+                       width='150'
+                       prop='artificialUnitPrice'
+                       class-name='_text'>
       </el-table-column>
-      <el-table-column label='辅材费用'
-                       width='200'>
-        <template scope='scope'>
-          <span class="_text">{{scope.row.sec_type + '333' }}</span>
-        </template>
+      <el-table-column label='辅材合计单价'
+                       sortable
+                       width='150'
+                       prop='auxiliaryMaterialUnitPrice'
+                       class-name='_text'>
       </el-table-column>
+      <el-table-column label='主材合计单价'
+                       sortable
+                       width='150'
+                       prop='principalMaterialUnitPrice'
+                       class-name='_text'>
+      </el-table-column>
+      <el-table-column label='合计单价'
+                       sortable
+                       width='150'
+                       prop='totalUnitPrice'
+                       class-name='_text'>
+      </el-table-column>
+  
       <el-table-column label="操作">
         <template scope="scope">
           <el-button size='mini'
@@ -85,6 +97,7 @@
                   :map='map'>
     </dialog-quota>
     <dialog-art ref='dialogArt'
+                @added='quota'
                 :map='artMap'>
     </dialog-art>
     <dialog-mat ref='dialogMat'
@@ -163,9 +176,6 @@ export default {
           this.isFetching = false
         })
     },
-    formatter (row, column) {
-      return row.wastage * 100
-    },
     // table methods
     handleAdd () {
       this.$refs.dialogQuota.open('add')
@@ -208,6 +218,3 @@ export default {
   }
 }
 </script>
-<style lang='scss'>
-
-</style>

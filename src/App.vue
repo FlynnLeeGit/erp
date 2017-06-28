@@ -4,7 +4,7 @@
       <div container>
         <el-row>
           <el-col :span='18'>
-            <h2>中孚管理系统</h2>
+            <h2>中孚空间OA系统</h2>
           </el-col>
           <el-col v-if='user'
                   :span='6'
@@ -14,13 +14,11 @@
                        type='primary'>登出</el-button>
           </el-col>
         </el-row>
-        <h2></h2>
-  
       </div>
-  
     </section>
     <section class="app__bd">
-      <router-view />
+      <router-view>
+      </router-view>
     </section>
   </div>
 </template>

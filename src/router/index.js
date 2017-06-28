@@ -10,6 +10,10 @@ import artficial from '@/pages/quota/artficial/index.vue'
 import auxmaterial from '@/pages/quota/auxmaterial/index.vue'
 import quotaTpl from '@/pages/quota/quota/index.vue'
 
+import purchase from '@/pages/purchase/index.vue'
+import supply from '@/pages/purchase/supply/index.vue'
+import material from '@/pages/purchase/material/index.vue'
+
 import store from '../store'
 
 Vue.use(Router)
@@ -44,6 +48,23 @@ const routes = [
             path: 'quota',
             name: '定额模版',
             component: quotaTpl
+          }
+        ]
+      },
+      {
+        path: 'purchase',
+        component: purchase,
+        name: '采购管理',
+        children: [
+          {
+            path: 'supply',
+            component: supply,
+            name: '供应商管理'
+          },
+          {
+            path: 'material',
+            component: material,
+            name: '材料管理'
           }
         ]
       }

@@ -1,4 +1,10 @@
 #app {
+  [container] {
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .el-table {
     font-size: 12px;
 

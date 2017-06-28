@@ -29,6 +29,12 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    map: {
+      type: Object,
+      default: () => ({
+
+      })
     }
   },
   data () {
@@ -48,7 +54,7 @@ export default {
   },
   computed: {
     filterTable () {
-      return search(this.tableData, this.value, this.fields)
+      return search(this.tableData, this.value, this.fields, this.map)
     }
   },
   watch: {

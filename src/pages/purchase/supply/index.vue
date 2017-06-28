@@ -22,15 +22,24 @@
                        prop='id'
                        width="80">
       </el-table-column>
-      <el-table-column label="工种"
+      <el-table-column label="公司"
                        sortable
-                       prop='workType'
+                       prop='company'
                        width="180">
       </el-table-column>
-      <el-table-column label="价格(元)"
-                       prop='price'
+      <el-table-column label="联系人"
+                       prop='contact'
                        sortable
-                       width="100">
+                       width="180">
+      </el-table-column>
+      <el-table-column label="手机号"
+                       prop='mobile'
+                       sortable
+                       width="200">
+      </el-table-column>
+      <el-table-column label="备注"
+                       prop='note'
+                       sortable>
       </el-table-column>
       <el-table-column label="操作"
                        width='160'>
@@ -57,7 +66,7 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='人工'
+    <el-dialog title='供应商'
                :visible.sync='showDialog'>
       <el-form :model='row'>
         <el-form-item v-if="opt==='edit'"
@@ -65,17 +74,27 @@
                       :label-width="formLabelWidth">
           {{row.id}}
         </el-form-item>
-        <el-form-item label='工种'
+        <el-form-item label='公司'
                       :label-width="formLabelWidth">
-          <el-input placeholder='请输入工种'
-                    v-model='row.workType'></el-input>
+          <el-input placeholder='请输入供应商公司名称'
+                    v-model='row.company'></el-input>
         </el-form-item>
-        <el-form-item label='单位'
+        <el-form-item label='联系人'
                       :label-width="formLabelWidth">
-          <el-input-number v-model='row.price'
-                           :step='10'>
-          </el-input-number>
-          <span class="_ml2">元</span>
+          <el-input placeholder='请输入供应商联系人'
+                    v-model='row.contact'></el-input>
+        </el-form-item>
+        <el-form-item label='手机号'
+                      :label-width="formLabelWidth">
+          <el-input placeholder='请输入供应商手机号'
+                    v-model='row.mobile'></el-input>
+        </el-form-item>
+        <el-form-item label='备注'
+                      :label-width="formLabelWidth">
+          <el-input type='textarea'
+                    :rows='3'
+                    placeholder='请输入备注'
+                    v-model='row.note'></el-input>
         </el-form-item>
   
       </el-form>
@@ -115,8 +134,10 @@ export default {
       filterTableData: [],
       row: {},
       initialRow: {
-        workType: '',
-        price: 0
+        company: '',
+        contact: '',
+        mobile: '',
+        note: ''
       },
       // edit && del
       editIdx: 0,
@@ -137,7 +158,7 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'workType', 'price']
+      searchFields: ['id', 'company', 'contact', 'mobile', 'note']
     }
   },
   created () {

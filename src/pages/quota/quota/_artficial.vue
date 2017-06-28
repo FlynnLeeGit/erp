@@ -50,6 +50,7 @@
 </template>
 <script>
 import { delArt, editArt } from './api'
+
 import InlineEdit from '@/components/InlineEdit.vue'
 export default {
   components: {

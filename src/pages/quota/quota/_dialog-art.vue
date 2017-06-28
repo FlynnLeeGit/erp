@@ -8,7 +8,7 @@
       </el-form-item>
       <el-form-item label='人工工种'
                     :label-width="formLabelWidth">
-        <el-select v-model='row.quotaArtficialId'>
+        <el-select v-model='row.quotaArtficial.id'>
           <el-option :key='art.id'
                      :label='art.workType'
                      v-for='art in map.artList'
@@ -36,6 +36,7 @@
 </template>
 <script>
 import { addArt } from './api'
+import { deepCopy } from '@/plugins/utils'
 export default {
   props: {
 
@@ -47,27 +48,31 @@ export default {
   data () {
     return {
       visible: false,
-      row: {},
+      row: {
+        quotaArtficial: {}
+      },
       initialRow: {
-        quotaArtficialId: '',
         counter: 0,
+        quotaArtficial: {
+          id: 0
+        }
       },
       formLabelWidth: '80px',
       isSubmiting: false,
-      qRow: {}
+      qRow: {},
     }
   },
   methods: {
     // 还原row为初始空内容状态
     restoreRow (qid) {
-      this.row = Object.assign({ quotaTemplateId: qid }, this.initialRow)
+      this.row = deepCopy(this.initialRow)
     },
     submit (data) {
       this.isSubmiting = true
-      addArt(data).then(({ data }) => {
+      addArt(this.qRow.id, data).then(({ data }) => {
         this.$message.success(`添加人工计量至 ${this.qRow.name} 成功`)
-        this.qRow.quotaArtficialCounters.push(data)
-        this.$emit('added')
+        // this.qRow.quotaArtficialCounters.push(data)
+        this.$emit('added', quota)
         this.close()
       }).finally(() => {
         this.isSubmiting = false
@@ -75,7 +80,7 @@ export default {
     },
     open (qRow) {
       this.qRow = qRow
-      this.restoreRow(qRow.id)
+      this.restoreRow()
       this.visible = true
     },
     close () {

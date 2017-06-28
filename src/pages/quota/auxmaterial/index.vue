@@ -11,7 +11,7 @@
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='isFetching || isDeleting'
+    <el-table v-loading='isFetching'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -28,21 +28,20 @@
                        width="180">
       </el-table-column>
       <el-table-column label="单位"
-                       prop='unit'
+                       prop='specUnit'
                        sortable
                        width="100">
       </el-table-column>
-      <el-table-column label="价格(元)"
-                       prop='price'
+      <el-table-column label="规格描述"
+                       prop='specDesc'
                        sortable
                        width="120">
       </el-table-column>
-      <el-table-column label="品牌"
+      <el-table-column label="计算策略"
                        sortable
+                       :formatter='calcStrategyFormatter'
+                       prop='calcStrategy'
                        width="100">
-        <template scope='scope'>
-          <el-tag type='primary'>{{scope.row.brand}}</el-tag>
-        </template>
       </el-table-column>
       <el-table-column label="说明"
                        prop='spec'>
@@ -53,6 +52,7 @@
           <el-button size="mini"
                      @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini"
+                     :loading='isDeleting && scope.$index === delIdx'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -87,29 +87,24 @@
         <el-form-item label='单位'
                       :label-width="formLabelWidth">
           <el-input placeholder='请输入辅材单位(个,m,桶等)'
-                    v-model='row.unit'></el-input>
+                    v-model='row.specUnit'></el-input>
         </el-form-item>
-        <el-form-item label='价格'
+        <el-form-item label='规格描述'
                       :label-width="formLabelWidth">
-          <el-input-number v-model='row.price'
-                           :step='10'>
-          </el-input-number>
-          <span class="_ml2">元</span>
+          <el-input placeholder='描述'
+                    v-model='row.specDesc'></el-input>
         </el-form-item>
-        <el-form-item label='品牌'
+        <el-form-item label='计算策略'
                       :label-width="formLabelWidth">
-          <el-input placeholder='请输入辅材的品牌'
-                    v-model='row.brand'>
-          </el-input>
+          <el-select v-model='row.calcStrategy'>
+            <el-option v-for='(c,cKey) in map.calcStrategy'
+                       :key='cKey'
+                       :label='c'
+                       :value='cKey'>
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label='说明'
-                      :label-width="formLabelWidth">
-          <el-input placeholder='请输入辅材的说明'
-                    type='textarea'
-                    :rows='5'
-                    v-model='row.spec'>
-          </el-input>
-        </el-form-item>
+  
       </el-form>
       <div slot='footer'
            class="dialog-footer">
@@ -133,7 +128,7 @@
 </template>
 
 <script>
-import { get, add, edit, del } from './api'
+import { get, getMap, add, edit, del } from './api'
 import { getPage } from '@/plugins/utils'
 import Search from '@/components/Search.vue'
 export default {
@@ -148,13 +143,17 @@ export default {
       row: {},
       initialRow: {
         name: '',
-        price: 0,
-        unit: '',
-        brand: '',
-        spec: ''
+        specUnit: '',
+        specDesc: '',
+        calcStrategy: ''
       },
+      // edit && del
+      editIdx: 0,
+      delIdx: 0,
       isFetching: false,
       isDeleting: false,
+
+      map: {},
       // dialog
       isSubmiting: false,
       showDialog: false,
@@ -167,11 +166,11 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'name', 'price', 'unit', 'brand', 'spec']
+      searchFields: ['id', 'name', 'specUnit', 'specDesc']
     }
   },
   created () {
-    this.fecthData()
+    this.initData()
   },
   computed: {
     sliceTableData () {
@@ -179,20 +178,21 @@ export default {
     },
   },
   methods: {
-    // api methods
-    get, add, edit, del,
-    fecthData () {
+    initData () {
       this.isFetching = true
-      this.get()
-        .then(({ data }) => {
-          this.tableData = data
+      Promise.all([get(), getMap()])
+        .then(([one, two]) => {
+          this.tableData = one.data
+          this.map = two.data.quota_template
         })
         .finally(() => {
           this.isFetching = false
         })
     },
     // table methods
-
+    calcStrategyFormatter (row) {
+      return this.map.calcStrategy[row.calcStrategy]
+    },
     handleAdd () {
       this.opt = 'add'
       this.row = Object.assign({}, this.initialRow)
@@ -200,18 +200,20 @@ export default {
     },
     handleEdit (index, row) {
       this.opt = 'edit'
+      this.editIdx = this.tableData.indexOf(row)
       this.row = Object.assign({}, row)
       this.showDialog = true
     },
     handleDelete (index, row) {
+      this.delIdx = this.tableData.indexOf(row)
       this.$confirm('确认删除？')
         .then(() => {
           this.isDeleting = true
-          return this.del(row.id)
+          return del(row.id)
         })
         .then(() => {
           this.$message.success('删除成功')
-          this.fecthData()
+          this.tableData.splice(this.delIdx, 1)
         })
         .finally(() => {
           this.isDeleting = false
@@ -227,21 +229,21 @@ export default {
     // dialog methods
     submitAdd (data) {
       this.isSubmiting = true
-      this.add(data).then(() => {
+      add(data).then(({ data }) => {
         this.$message.success("添加成功")
-        this.fecthData()
-      }).finally(() => {
         this.showDialog = false
+        this.tableData.push(data)
+      }).finally(() => {
         this.isSubmiting = false
       })
     },
     submitEdit (data) {
       this.isSubmiting = true
-      this.edit(data).then(res => {
+      edit(data).then(({ data }) => {
         this.$message.success('更新成功')
-        this.fecthData()
-      }).finally(() => {
         this.showDialog = false
+        this.tableData.splice(this.editIdx, 1, data)
+      }).finally(() => {
         this.isSubmiting = false
       })
     },

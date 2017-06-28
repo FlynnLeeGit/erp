@@ -8,6 +8,10 @@
             v-model='searchField'
             :fields='searchFields'
             :table-data='tableData'
+            :map="{
+                supplierId:supplierMap,
+                specId:auxmaterialMap
+              }"
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
@@ -22,16 +26,50 @@
                        prop='id'
                        width="80">
       </el-table-column>
-      <el-table-column label="工种"
+  
+      <el-table-column label="供应商"
                        sortable
-                       prop='workType'
-                       width="180">
+                       prop='supplierId'
+                       :formatter='supplierFormatter'>
       </el-table-column>
-      <el-table-column label="价格(元)"
-                       prop='price'
+  
+      <el-table-column label="品牌"
+                       sortable
+                       width="150">
+        <template scope='scope'>
+          <el-tag type='primary'>{{scope.row.brand}}</el-tag>
+        </template>
+      </el-table-column>
+  
+      <el-table-column label="包装单位"
+                       prop='packUnit'
                        sortable
                        width="100">
       </el-table-column>
+  
+      <el-table-column label="包装价格(元)"
+                       prop='packPrice'
+                       sortable
+                       width="130">
+      </el-table-column>
+  
+      <el-table-column label="辅材规格"
+                       prop='specId'
+                       :formatter="specFormatter"
+                       sortable>
+      </el-table-column>
+      <el-table-column label="规格数量"
+                       prop='specAmount'
+                       sortable
+                       width="100">
+      </el-table-column>
+      <el-table-column label="规格单价"
+                       prop='specPrice'
+                       sortable
+                       class-name="_text"
+                       width="100">
+      </el-table-column>
+  
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
@@ -57,24 +95,70 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='人工'
+    <el-dialog title='辅材'
                :visible.sync='showDialog'>
       <el-form :model='row'>
-        <el-form-item v-if="opt==='edit'"
+        <el-form-item v-if="isEdit"
                       label='id'
                       :label-width="formLabelWidth">
           {{row.id}}
         </el-form-item>
-        <el-form-item label='工种'
+        <el-form-item label='供应商'
                       :label-width="formLabelWidth">
-          <el-input placeholder='请输入工种'
-                    v-model='row.workType'></el-input>
+          <el-select v-model='row.supplierId'>
+            <el-option v-for='s in supplierList'
+                       :label='s.company'
+                       :value='s.id'
+                       :key='s.id'>
+            </el-option>
+          </el-select>
+  
         </el-form-item>
-        <el-form-item label='单位'
+  
+        <el-form-item label='包装品牌'
                       :label-width="formLabelWidth">
-          <el-input-number v-model='row.price'
-                           :step='10'>
+          <el-input placeholder='请输入包装品牌'
+                    v-model='row.brand'></el-input>
+        </el-form-item>
+  
+        <el-form-item label='包装单位'
+                      :label-width="formLabelWidth">
+          <el-input placeholder='请输入包装单位(袋,包)'
+                    v-model='row.packUnit'>
+          </el-input>
+        </el-form-item>
+  
+        <el-form-item label='包装价格'
+                      :label-width="formLabelWidth">
+          <el-input-number placeholder='请输入包装价格'
+                           :step='100'
+                           v-model='row.packPrice'>
           </el-input-number>
+          <span class="_ml2">元</span>
+        </el-form-item>
+  
+        <el-form-item label='辅材规格'
+                      :label-width="formLabelWidth">
+          <el-select v-model='row.specId'>
+            <el-option v-for='a in auxmaterialList'
+                       :label='a.name'
+                       :value='a.id'
+                       :key='a.id'>
+            </el-option>
+          </el-select>
+        </el-form-item>
+  
+        <el-form-item label='规格数量'
+                      :label-width="formLabelWidth">
+          <el-input-number placeholder='请输入规格数量'
+                           :step='10'
+                           v-model='row.specAmount'>
+          </el-input-number>
+        </el-form-item>
+  
+        <el-form-item label='规格单价'
+                      :label-width="formLabelWidth">
+          <span class="_text">{{(row.packPrice / row.specAmount).toFixed(2)}}</span>
           <span class="_ml2">元</span>
         </el-form-item>
   
@@ -82,13 +166,13 @@
       <div slot='footer'
            class="dialog-footer">
         <el-button @click="cancelDialog()">取 消</el-button>
-        <el-button v-if="opt==='add'"
+        <el-button v-if="isAdd"
                    type="success"
                    :loading='isSubmiting'
                    @click="submitAdd(row)">
           添 加
         </el-button>
-        <el-button v-if="opt==='edit'"
+        <el-button v-if="isEdit"
                    type='primary'
                    :loading='isSubmiting'
                    @click='submitEdit(row)'>
@@ -101,8 +185,8 @@
 </template>
 
 <script>
-import { get, add, edit, del } from './api'
-import { getPage } from '@/plugins/utils'
+import { get, add, edit, del, getAuxmaterial, getSupply } from './api'
+import { getPage, listToMap } from '@/plugins/utils'
 import Search from '@/components/Search.vue'
 export default {
   components: {
@@ -115,8 +199,14 @@ export default {
       filterTableData: [],
       row: {},
       initialRow: {
-        workType: '',
-        price: 0
+        supplierId: '',
+        packUnit: '',
+        packPrice: 0,
+
+        specId: '',
+        specAmount: 10,
+        specPrice: 0,
+        brand: ''
       },
       // edit && del
       editIdx: 0,
@@ -125,6 +215,11 @@ export default {
       isDeleting: false,
 
       map: {},
+
+      auxmaterialList: [],
+      auxmaterialMap: {},
+      supplierList: [],
+      supplierMap: {},
       // dialog
       isSubmiting: false,
       showDialog: false,
@@ -137,7 +232,7 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'workType', 'price']
+      searchFields: ['id', 'specId', 'supplierId', 'packUnit', 'specAmount', 'packPrice', 'specPrice', 'brand']
     }
   },
   created () {
@@ -147,17 +242,35 @@ export default {
     sliceTableData () {
       return getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
+    isAdd () {
+      return this.opt === 'add'
+    },
+    isEdit () {
+      return this.opt === 'edit'
+    }
   },
   methods: {
     initData () {
       this.isFetching = true
-      Promise.all([get()])
-        .then(([one]) => {
+      Promise.all([get(), getAuxmaterial(), getSupply()])
+        .then(([one, two, three]) => {
           this.tableData = one.data
+          this.auxmaterialList = two.data
+          this.auxmaterialMap = listToMap(this.auxmaterialList)
+          this.supplierList = three.data
+          this.supplierMap = listToMap(this.supplierList, 'company')
         })
         .finally(() => {
           this.isFetching = false
         })
+    },
+
+    // formatter
+    supplierFormatter (row) {
+      return this.supplierMap[row.supplierId]
+    },
+    specFormatter (row) {
+      return this.auxmaterialMap[row.specId]
     },
     // table methods
     handleAdd () {

@@ -1,6 +1,7 @@
 import axios from '@/plugins/axios'
-import * as artApi from '../artficial/api'
-import * as matApi from '../auxmaterial/api'
+// import * as artApi from '../artficial/api'
+// import * as matApi from '../auxmaterial/api'
+// import * as commonApi from '../api'
 
 // quotaTemplate
 export const get = () => axios.get('/_api/quota/quota')
@@ -9,10 +10,12 @@ export const edit = data => axios.put(`/_api/quota/quotas/${data.id}`, data)
 export const del = id => axios.delete(`/_api/quota/quotas/${id}`)
 
 // artficialcounter
-export const addArt = data => axios.post('/_api/quota/artficialcounters', data)
-export const editArt = data =>
-  axios.put(`/_api/quota/artficialcounters/${data.id}`, data)
-export const delArt = id => axios.delete(`/_api/quota/artficialcounters/${id}`)
+export const addArt = (qid, data) =>
+  axios.post(`/_api/quota/quotas/${qid}/artficials`, data)
+export const editArt = (qid, data) =>
+  axios.put(`/_api/quota/quotas/${qid}/artficial`, data)
+export const delArt = (qid, aid) =>
+  axios.delete(`/_api/quota/quotas/${qid}/artficials/${aid}`)
 // auxmaterialcounter
 export const addMat = data =>
   axios.post('/_api/quota/auxmaterialcounters', data)
@@ -21,8 +24,9 @@ export const editMat = data =>
 export const delMat = id =>
   axios.delete(`/_api/quota/auxmaterialcounters/${id}`)
 
-export const getMap = () => axios.get('/_api/quota/quota/map')
-
-export const getArtList = artApi.get
-export const getMatList = matApi.get
-
+export { getMap } from '../api'
+export { get as getArtList } from '../artficial/api'
+export { get as getMatList } from '../auxmaterial/api'
+// export const getMap = commonApi.getMap
+// export const getArtList = artApi.get
+// export const getMatList = matApi.get
