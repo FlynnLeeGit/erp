@@ -41,7 +41,7 @@ const routes = [
           },
           {
             path: 'auxmaterial',
-            name: '辅材管理',
+            name: '辅材规格',
             component: auxmaterial
           },
           {

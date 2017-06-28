@@ -59,20 +59,23 @@
     <!--dialog-->
     <el-dialog title='人工'
                :visible.sync='showDialog'>
-      <el-form :model='row'>
+      <el-form :model='row'
+               :rules='formRules'>
         <el-form-item v-if="opt==='edit'"
                       label='id'
                       :label-width="formLabelWidth">
           {{row.id}}
         </el-form-item>
         <el-form-item label='工种'
+                      prop='workType'
                       :label-width="formLabelWidth">
           <el-input placeholder='请输入工种'
                     v-model='row.workType'></el-input>
         </el-form-item>
         <el-form-item label='价格'
                       :label-width="formLabelWidth">
-          <el-input-number v-model='row.price'
+          <el-input-number v-model.number='row.price'
+                           :min='0'
                            :step='10'>
           </el-input-number>
           <span class="_ml2">元</span>
@@ -137,7 +140,13 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'workType', 'price']
+      searchFields: ['id', 'workType', 'price'],
+
+      formRules: {
+        workType: [
+          { required: true, message: '请输入工种名称', trigger: 'blur' },
+        ]
+      }
     }
   },
   created () {

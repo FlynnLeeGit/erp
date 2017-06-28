@@ -1,4 +1,5 @@
 import axios from 'axios'
+import configApi from './configApi'
 
 Promise.prototype.finally = function (fn) {
   function finFn () {
@@ -34,4 +35,24 @@ axios.interceptors.response.use(
   }
 )
 
-export default axios
+export default {
+  get (url, options) {
+    let key = url
+    
+    if (options) {
+      key = JSON.stringify({ ...options, url })
+    }
+
+    if (configApi.cached && configApi.cached.has(key)) {
+      console.log(`使用api缓存${key}`) // eslint-disable-line
+      return Promise.resolve(configApi.cached.get(key))
+    }
+    return axios.get(url, options).then(res => {
+      if (configApi.cached) configApi.cached.set(key, res)
+      return res
+    })
+  },
+  post: axios.post,
+  put: axios.put,
+  delete: axios.delete
+}

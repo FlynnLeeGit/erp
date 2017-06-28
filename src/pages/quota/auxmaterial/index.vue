@@ -73,13 +73,15 @@
     <!--dialog-->
     <el-dialog title='辅材'
                :visible.sync='showDialog'>
-      <el-form :model='row'>
+      <el-form :model='row'
+               :rules='formRules'>
         <el-form-item v-if="opt==='edit'"
                       label='id'
                       :label-width="formLabelWidth">
           {{row.id}}
         </el-form-item>
         <el-form-item label='名称'
+                      prop='name'
                       :label-width="formLabelWidth">
           <el-input placeholder='请输入辅材名称'
                     v-model='row.name'></el-input>
@@ -95,6 +97,7 @@
                     v-model='row.specDesc'></el-input>
         </el-form-item>
         <el-form-item label='计算策略'
+                      prop='calcStrategy'
                       :label-width="formLabelWidth">
           <el-select v-model='row.calcStrategy'>
             <el-option v-for='(c,cKey) in map.calcStrategy'
@@ -166,7 +169,16 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'name', 'specUnit', 'specDesc']
+      searchFields: ['id', 'name', 'specUnit', 'specDesc'],
+
+      formRules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
+        ],
+        calcStrategy: [
+          { required: true }
+        ]
+      }
     }
   },
   created () {
