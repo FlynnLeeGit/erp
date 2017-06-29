@@ -11,3 +11,22 @@
   
   </el-row>
 </template>
+<script>
+import {getVersionList,getLast,getByVersion} from './api'
+
+export default {
+  data(){
+    return {
+      prevTableData:[],
+      
+    }
+  },
+  
+  created(){
+    this.initData()
+  },
+  initData(){
+
+  }
+}
+</script>
