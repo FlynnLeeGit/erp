@@ -4,7 +4,10 @@
       <div container>
         <el-row>
           <el-col :span='18'>
-            <h2>中孚空间OA系统</h2>
+            <h2>
+              <i class="el-icon-menu"></i>
+              中孚空间OA系统
+            </h2>
           </el-col>
           <el-col v-if='user'
                   :span='6'

@@ -43,18 +43,35 @@
                        prop='calcStrategy'
                        width="100">
       </el-table-column>
-      <el-table-column label="说明"
-                       prop='spec'>
-      </el-table-column>
+      <!--<el-table-column label='使用此规格材料'>
+        <template scope='scope'>
+          <div v-if='scope.row.purchaseMaterials.length'>
+            <el-tag v-for='m in scope.row.purchaseMaterials'
+                    :key='m.id'
+                    type='primary'>
+              {{m.brand}}-{{m.packPrice}}元/{{m.packUnit}}-数量{{m.specAmount}}
+            </el-tag>
+          </div>
+          <span v-else>
+            <el-tag type='gray'>无</el-tag>
+          </span>
+        </template>
+  
+      </el-table-column>-->
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
           <el-button size="mini"
                      @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini"
-                     :loading='isDeleting && scope.$index === delIdx'
-                     type="danger"
-                     @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+   
+            <el-button size="mini"
+                       :loading='isDeleting && scope.$index === delIdx'
+                       type="danger"
+                       @click="handleDelete(scope.$index, scope.row)">
+              删除
+            </el-button>
+  
+  
         </template>
       </el-table-column>
     </el-table>

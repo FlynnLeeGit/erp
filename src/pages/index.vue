@@ -1,11 +1,12 @@
 <template>
   <el-row class="app-content">
-    <el-col :span='4'
+    <el-col :span='sideSpan'
             class="app-side">
-      <my-side>
+      <my-side @mini='sideMini'
+               @normal='sideNormal'>
       </my-side>
     </el-col>
-    <el-col :span='20'
+    <el-col :span='24 - sideSpan'
             class="app-main">
       <h3 class="app-route-name">{{$route.name}}</h3>
       <router-view>
@@ -19,6 +20,19 @@ import MySide from '@/components/MySide.vue'
 export default {
   components: {
     MySide
+  },
+  data () {
+    return {
+      sideSpan: 3
+    }
+  },
+  methods: {
+    sideMini () {
+      this.sideSpan = 1
+    },
+    sideNormal () {
+      this.sideSpan = 4
+    }
   }
 }
 </script>

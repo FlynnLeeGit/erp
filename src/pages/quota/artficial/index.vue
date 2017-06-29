@@ -15,6 +15,7 @@
               :data="sliceTableData"
               border
               class="_mt2"
+              highlight-current-row
               :default-sort="{prop: 'id'}"
               style="width: 100%">
       <el-table-column label="＃"

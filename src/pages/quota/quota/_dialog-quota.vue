@@ -1,13 +1,23 @@
 <template>
   <el-dialog title='添加定额'
              :visible.sync='visible'>
-    <el-form :model='row'>
-      <el-form-item label='名称'
+    <el-form ref='form'
+             :model='row'
+             :rules='formRules'>
+      <el-form-item prop='name'
+                    label='名称'
                     :label-width="formLabelWidth">
         <el-input placeholder='请输入定额名称'
                   v-model='row.name'></el-input>
       </el-form-item>
+      <el-form-item prop='brand'
+                    label='品牌'
+                    :label-width="formLabelWidth">
+        <el-input placeholder='请输入品牌'
+                  v-model='row.brand'></el-input>
+      </el-form-item>
       <el-form-item label='分类'
+                    prop='type'
                     :label-width="formLabelWidth">
         <el-select v-model='row.type'
                    @change="row.secType=''">
@@ -18,6 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item v-if='row.type'
+                    prop='secType'
                     label='二级分类'
                     :label-width="formLabelWidth">
         <el-select v-model='row.secType'>
@@ -28,6 +39,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label='单位'
+                    prop='unit'
                     :label-width="formLabelWidth">
         <el-select v-model='row.unit'>
           <el-option :key='u'
@@ -37,6 +49,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label='位置'
+                    prop='position'
                     :label-width="formLabelWidth">
         <el-select v-model='row.position'>
           <el-option :key='p'
@@ -47,6 +60,7 @@
       </el-form-item>
   
       <el-form-item label='阶段'
+                    prop='stage'
                     :label-width="formLabelWidth">
         <el-select v-model='row.stage'>
           <el-option :key='s'
@@ -57,6 +71,7 @@
       </el-form-item>
   
       <el-form-item label='工种'
+                    prop='workType'
                     :label-width="formLabelWidth">
         <el-select v-model='row.workType'>
           <el-option :key='w'
@@ -69,6 +84,7 @@
       <el-form-item label='损耗率'
                     :label-width="formLabelWidth">
         <el-input-number v-model='row.wastage'
+                         :min='0'
                          :step='0.01'>
         </el-input-number>
       </el-form-item>
@@ -99,12 +115,6 @@
                  @click="submitAdd(row)">
         添 加
       </el-button>
-      <el-button v-if='isEdit'
-                 type="info"
-                 :loading='isSubmiting'
-                 @click="submitEdit(row)">
-        更新
-      </el-button>
     </div>
   </el-dialog>
 </template>
@@ -123,6 +133,7 @@ export default {
       row: {},
       initialRow: {
         name: '',
+        brand: '',
         type: '',
         stage: '',
         secType: '',
@@ -135,54 +146,69 @@ export default {
       },
       formLabelWidth: '80px',
       isSubmiting: false,
-      opt: '',
-      qRow: {}
+      opt: 'add',
+      formRules: {
+        // name: [
+        //   { required: true, message: '定额名称不能为空' }
+        // ],
+        // type: [
+        //   { required: true, message: '类型不能为空' }
+        // ],
+        // secType: [
+        //   { required: true, message: '二级分类不能为空' }
+        // ],
+        // unit: [
+        //   { required: true, message: '单位不能为空' }
+        // ],
+        // stage: [
+        //   { required: true, message: '阶段不能为空' }
+        // ],
+        // position: [
+        //   { required: true, message: '位置不能为空' }
+        // ],
+        // workType: [
+        //   { required: true, message: '工种不能为空' }
+        // ]
+      }
     }
   },
   computed: {
     isAdd () {
       return this.opt === 'add'
     },
-    isEdit () {
-      return this.opt === 'edit'
-    }
   },
   methods: {
     // 还原row为初始空内容状态
     restoreRow (originalRow) {
       this.row = Object.assign({}, originalRow)
     },
-    submitAdd (data) {
-      this.isSubmiting = true
-      add(data)
-        .then(({ data }) => {
-          this.$message.success("添加成功")
-          this.close()
-          this.$emit('added', data)
-        }).finally(() => {
-          this.isSubmiting = false
+    formValidate () {
+      return new Promise((resolve, reject) => {
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            resolve()
+          } else {
+            reject('form valid failure')
+          }
         })
+      })
     },
-    submitEdit (data) {
-      this.isSubmiting = true
-      edit(data)
-        .then(({ data }) => {
-          this.$message.success("更新成功")
-          this.close()
-          this.$emit('edited', this.qRow, data)
-        }).finally(() => {
-          this.isSubmiting = false
-        })
+    submitAdd (data) {
+      this.formValidate().then(() => {
+        this.isSubmiting = true
+        add(data)
+          .then(({ data }) => {
+            this.$message.success("添加成功")
+            this.close()
+            this.$emit('added', data)
+          }).finally(() => {
+            this.isSubmiting = false
+          })
+      })
     },
     open (opt, row) {
-      this.opt = opt
       this.qRow = row
-      if (this.isAdd) {
-        this.restoreRow(this.initialRow)
-      }
-      if (this.isEdit) {
-        this.restoreRow(row)
-      }
+      this.restoreRow(this.initialRow)
       this.visible = true
     },
     close () {

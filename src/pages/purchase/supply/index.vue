@@ -30,16 +30,32 @@
       <el-table-column label="联系人"
                        prop='contact'
                        sortable
-                       width="180">
+                       width="150">
       </el-table-column>
       <el-table-column label="手机号"
                        prop='mobile'
                        sortable
-                       width="200">
+                       width="150">
       </el-table-column>
       <el-table-column label="备注"
                        prop='note'
                        sortable>
+      </el-table-column>
+      <el-table-column label='使用此供应商材料'>
+        <template scope='scope'>
+          <div v-if='scope.row.purchaseMaterials.length'>
+            <el-tag type='primary'
+                    v-for='m in scope.row.purchaseMaterials'
+                    :key='m.id'>
+              {{m.brand}}-{{m.packPrice}}元/{{m.packUnit}}
+            </el-tag>
+  
+          </div>
+          <el-tag v-else
+                  type='gray'>
+            无
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column label="操作"
                        width='160'>

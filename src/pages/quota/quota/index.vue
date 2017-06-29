@@ -1,110 +1,230 @@
 <template>
-  <div>
-    <el-button @click='handleAdd()'
-               type='primary'>
-      添加定额
-    </el-button>
-    <search class="_fr"
-            v-model='searchField'
-            :fields='searchFields'
-            :table-data='tableData'
-            :filter-table-data.sync='filterTableData'>
-    </search>
-    <el-table v-loading='isFetching'
-              :data="sliceTableData"
-              class="_mt2"
-              :default-sort="{prop: 'id'}"
-              style="width: 100%;">
+  <el-row class="quota-content">
+    <el-col :span='24'
+            class="quota-content__col">
   
-      <el-table-column type='expand'>
-        <template scope='scope'>
-          <expand :row='scope.row'>
-          </expand>
-        </template>
-      </el-table-column>
-      <el-table-column label="＃"
-                       sortable
-                       prop='id'
-                       width="60">
-      </el-table-column>
-      <el-table-column label="名称"
-                       sortable
-                       prop='name'
-                       width="200">
-      </el-table-column>
-      <el-table-column label='人工合计单价'
-                       sortable
-                       width='150'
-                       prop='artificialUnitPrice'
-                       class-name='_text'>
-      </el-table-column>
-      <el-table-column label='辅材合计单价'
-                       sortable
-                       width='150'
-                       prop='auxiliaryMaterialUnitPrice'
-                       class-name='_text'>
-      </el-table-column>
-      <el-table-column label='主材合计单价'
-                       sortable
-                       width='150'
-                       prop='principalMaterialUnitPrice'
-                       class-name='_text'>
-      </el-table-column>
-      <el-table-column label='合计单价'
-                       sortable
-                       width='150'
-                       prop='totalUnitPrice'
-                       class-name='_text'>
-      </el-table-column>
+      <el-button @click='handleAdd()'
+                 type='primary'>
+        添加定额
+      </el-button>
+      <el-button @click='release'
+                 :loading='isReleasing'
+                 type='success'>
+        发布定额版本
+      </el-button>
   
-      <el-table-column label="操作">
-        <template scope="scope">
-          <el-button size='mini'
-                     @click='handleEdit(scope.$index,scope.row)'>
-            编辑
-          </el-button>
-          <el-button size="mini"
-                     type='success'
-                     @click="addArtficial(scope.$index, scope.row)">
-            <i class="el-icon-plus"></i> 人工
-          </el-button>
-          <el-button size="mini"
-                     type="success"
-                     @click="addMaterial(scope.$index, scope.row)">
-            <i class="el-icon-plus"></i> 辅材
-          </el-button>
-          <el-button size='mini'
-                     type='danger'
-                     @click='handleDelete(scope.$index,scope.row)'>
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <search class="_fr"
+              v-model='searchField'
+              :fields='searchFields'
+              :table-data='tableData'
+              :filter-table-data.sync='filterTableData'>
+      </search>
+      <el-table v-loading='isFetching'
+                :data="sliceTableData"
+                class="_mt2"
+                border
+                :default-sort="{prop: 'id'}"
+                style="width: 100%;">
+        <el-table-column type='expand'>
+          <template scope='scope'>
+            <expand :row='scope.row'>
+            </expand>
+          </template>
+        </el-table-column>
+        <el-table-column label="＃"
+                         sortable
+                         prop='id'
+                         width="60">
+        </el-table-column>
+        <el-table-column label="名称"
+                         show-overflow-tooltip
+                         width='100'>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         type='text'
+                         prop='name'
+                         :fn='edit'
+                         direct-modify>
+            </inline-edit>
+          </template>
+        </el-table-column>
   
-    <!--pagination-->
-    <el-pagination class="_mt2"
-                   :page-sizes='[5,100,300,500,1000]'
-                   :total='filterTableData.length'
-                   :current-page="currentPage"
-                   layout='total,sizes,prev,pager,next,jumper'
-                   :page-size='pageSize'
-                   @current-change='handleCurrentChange'
-                   @size-change='handleSizeChange'>
-    </el-pagination>
+        <el-table-column label="品牌"
+                         show-overflow-tooltip
+                         width='50'>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         type='text'
+                         prop='brand'
+                         :fn='edit'
+                         direct-modify>
+            </inline-edit>
+          </template>
+        </el-table-column>
   
-    <dialog-quota ref='dialogQuota'
-                  :map='map'
-                  @added='quotaAdded'
-                  @edited='quotaEdited'>
-    </dialog-quota>
-    <dialog-art ref='dialogArt'
-                :map='artMap'>
-    </dialog-art>
-    <dialog-mat ref='dialogMat'
-                :map='matMap'>
-    </dialog-mat>
-  </div>
+        <el-table-column label="大类"
+                         show-overflow-tooltip
+                         width='70'>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         :fn='edit'
+                         type='select'
+                         prop='type'
+                         @before-update='beforeUpdateType'
+                         direct-modify>
+              <template slot='options'>
+                <option v-for='(t,tIdx) in map.type'
+                        :key='tIdx'>{{tIdx}}
+                </option>
+              </template>
+            </inline-edit>
+          </template>
+        </el-table-column>
+        <el-table-column label="小类"
+                         show-overflow-tooltip
+                         width='50'>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         :fn='edit'
+                         type='select'
+                         prop='secType'
+                         direct-modify>
+              <template slot='options'>
+                <option v-for='(st,sIdx) in map.type[scope.row.type]'
+                        :key='sIdx'>{{st}}
+                </option>
+              </template>
+            </inline-edit>
+          </template>
+        </el-table-column>
+        <el-table-column label="单位"
+                         width='50'>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         :fn='edit'
+                         type='select'
+                         prop='unit'
+                         direct-modify>
+              <template slot='options'>
+                <option v-for='(u,uIdx) in map.unit'
+                        :key='uIdx'>{{u}}
+                </option>
+              </template>
+            </inline-edit>
+          </template>
+        </el-table-column>
+        <el-table-column label="位置"
+                         width='50'>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         :fn='edit'
+                         type='select'
+                         prop='position'
+                         direct-modify>
+              <template slot='options'>
+                <option v-for='(p,pIdx) in map.position'
+                        :key='pIdx'>{{p}}
+                </option>
+              </template>
+            </inline-edit>
+          </template>
+        </el-table-column>
+        <el-table-column label="阶段">
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         :fn='edit'
+                         type='select'
+                         prop='stage'
+                         direct-modify>
+              <template slot='options'>
+                <option v-for='(s,sIdx) in map.stage'
+                        :key='sIdx'>{{s}}
+                </option>
+              </template>
+            </inline-edit>
+          </template>
+        </el-table-column>
+        <el-table-column label="损耗率"
+                         sortable>
+          <template scope='scope'>
+            <inline-edit :data='scope.row'
+                         prop='wastage'
+                         :fn='edit'
+                         direct-modify>
+            </inline-edit>
+          </template>
+  
+        </el-table-column>
+        <el-table-column label='人工价'
+                         sortable
+                         prop='artificialUnitPrice'
+                         class-name='_text'>
+        </el-table-column>
+        <el-table-column label='辅材价'
+                         sortable
+                         prop='auxiliaryMaterialUnitPrice'
+                         class-name='_text'>
+        </el-table-column>
+        <el-table-column label='主材价'
+                         sortable
+                         prop='principalMaterialUnitPrice'
+                         class-name='_text'>
+        </el-table-column>
+        <el-table-column label='合计价'
+                         sortable
+                         prop='totalUnitPrice'
+                         class-name='_text'>
+        </el-table-column>
+  
+        <el-table-column label="操作"
+                         width="200">
+          <template scope="scope">
+            <el-button size="mini"
+                       type='success'
+                       @click="addArtficial(scope.$index, scope.row)">
+              人工
+            </el-button>
+            <el-button size="mini"
+                       type="success"
+                       @click="addMaterial(scope.$index, scope.row)">
+              辅材
+            </el-button>
+            <el-button size='mini'
+                       type='danger'
+                       @click='handleDelete(scope.$index,scope.row)'>
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+  
+      <!--pagination-->
+      <el-pagination class="_mt2"
+                     :page-sizes='[100,300,500,1000]'
+                     :total='filterTableData.length'
+                     :current-page="currentPage"
+                     layout='total,sizes,prev,pager,next,jumper'
+                     :page-size='pageSize'
+                     @current-change='handleCurrentChange'
+                     @size-change='handleSizeChange'>
+      </el-pagination>
+  
+      <dialog-quota ref='dialogQuota'
+                    :map='map'
+                    @added='quotaAdded'>
+      </dialog-quota>
+      <dialog-art ref='dialogArt'
+                  :map='artMap'>
+      </dialog-art>
+      <dialog-mat ref='dialogMat'
+                  :map='matMap'>
+      </dialog-mat>
+    </el-col>
+    <el-col :span='12'
+            class="quota-content__col">
+  
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -113,7 +233,8 @@ import dialogQuota from './_dialog-quota.vue'
 import dialogArt from './_dialog-art.vue'
 import dialogMat from './_dialog-mat.vue'
 import Search from '@/components/Search.vue'
-import { get, getArtList, getMatList, getMap, edit, del } from './api'
+import InlineEdit from '@/components/InlineEdit.vue'
+import { get, getArtList, getMatList, getMap, edit, del, release } from './api'
 import { getPage, sort, replaceObjectFields } from '@/plugins/utils'
 
 export default {
@@ -122,7 +243,8 @@ export default {
     dialogQuota,
     dialogArt,
     dialogMat,
-    Search
+    Search,
+    InlineEdit
   },
   data () {
     return {
@@ -136,7 +258,7 @@ export default {
 
       // pagination
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 100,
 
       // search
       searchField: '',
@@ -150,13 +272,13 @@ export default {
         matList: []
       },
 
-      // price related fields
-      replaceFields: ['artificialUnitPrice', 'auxiliaryMaterialUnitPrice', 'principalMaterialUnitPrice', 'totalUnitPrice', 'quotaArtficialCounters', 'quotaAuxiliaryCounters']
+      // release status
+      isReleasing: false,
     }
   },
   created () {
     this.initData()
-    this.$root.$on('quota.quota.update', this.updateQuotaPrice)
+    this.$root.$on('quota.quota.update', replaceObjectFields)
   },
   computed: {
     sliceTableData () {
@@ -164,6 +286,7 @@ export default {
     }
   },
   methods: {
+    edit,
     // api methods
     initData () {
       this.isFetching = true
@@ -181,11 +304,12 @@ export default {
           this.isFetching = false
         })
     },
+
+    beforeUpdateType (editRow) {
+      editRow.secType = ''
+    },
     // table methods
     // 更新定额相关价格
-    updateQuotaPrice (oldRow, newRow) {
-      replaceObjectFields(oldRow, newRow, this.replaceFields)
-    },
     handleAdd () {
       this.$refs.dialogQuota.open('add')
     },
@@ -194,10 +318,6 @@ export default {
     },
     quotaAdded (newQuota) {
       this.tableData.push(newQuota)
-    },
-    quotaEdited (oldQuota, newQuota) {
-      console.log(oldQuota, newQuota)
-      replaceObjectFields(oldQuota, newQuota, this.searchFields)
     },
     handleDelete (index, row) {
       this.$confirm(`确认删除定额项  ${row.name}？`)
@@ -228,6 +348,41 @@ export default {
     handleCurrentChange (val) {
       this.currentPage = val
     },
+    release () {
+
+      this.$prompt('请输入本次版本提交信息描述').then(({ value }) => {
+        this.isReleasing = true
+        this.$notify({
+          type: 'info',
+          message: '提交版本会比较占用时间 请耐心等待至发布结束'
+        })
+        release({
+          description: value
+        })
+          .then(({ data }) => {
+            this.$notify({
+              type: 'info',
+              title: '发布成功！',
+              message: `版本号为${data.version}`
+            })
+          })
+          .finally(() => {
+            this.isReleasing = false
+
+          })
+
+      })
+    }
   }
 }
 </script>
+<style lang="scss">
+// .quota-content {
+//   height: 100%;
+//   &__col {
+//     height: 100%;
+//     overflow-y: scroll;
+//   }
+// }
+</style>
+

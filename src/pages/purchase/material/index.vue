@@ -26,16 +26,15 @@
   
       <el-table-column label="供应商"
                        sortable
-                       prop='supplierId'
+                       class-name='_text'
+                       prop='purchaseSupplierId'
                        :formatter='supplierFormatter'>
       </el-table-column>
   
       <el-table-column label="品牌"
                        sortable
+                       prop='brand'
                        width="150">
-        <template scope='scope'>
-          <el-tag type='primary'>{{scope.row.brand}}</el-tag>
-        </template>
       </el-table-column>
   
       <el-table-column label="包装单位"
@@ -51,7 +50,8 @@
       </el-table-column>
   
       <el-table-column label="辅材规格"
-                       prop='specId'
+                       class-name='_text'
+                       prop='quotaAuxiliaryMaterialId'
                        :formatter="specFormatter"
                        sortable>
       </el-table-column>
@@ -65,6 +65,24 @@
                        sortable
                        class-name="_text"
                        width="100">
+      </el-table-column>
+  
+      <el-table-column label="启用"
+                       sortable
+                       class-name="_text"
+                       width="60">
+        <template scope='scope'>
+  
+          <el-tag type='primary'
+                  v-if='scope.row.isEnable'>
+            启用
+          </el-tag>
+          <el-tag type='gray'
+                  v-else>
+            禁用
+          </el-tag>
+  
+        </template>
       </el-table-column>
   
       <el-table-column label="操作"
@@ -102,7 +120,8 @@
         </el-form-item>
         <el-form-item label='供应商'
                       :label-width="formLabelWidth">
-          <el-select v-model='row.supplierId'>
+          <el-select :disabled='isEdit'
+                     v-model='row.purchaseSupplierId'>
             <el-option v-for='s in supplierList'
                        :label='s.company'
                        :value='s.id'
@@ -136,7 +155,8 @@
   
         <el-form-item label='辅材规格'
                       :label-width="formLabelWidth">
-          <el-select v-model='row.specId'>
+          <el-select :disabled='isEdit'
+                     v-model='row.quotaAuxiliaryMaterialId'>
             <el-option v-for='a in auxmaterialList'
                        :label='a.name'
                        :value='a.id'
@@ -157,6 +177,15 @@
                       :label-width="formLabelWidth">
           <span class="_text">{{(row.packPrice / row.specAmount).toFixed(2)}}</span>
           <span class="_ml2">元</span>
+        </el-form-item>
+  
+        <el-form-item label='启用?'
+                      :label-width="formLabelWidth">
+          <el-switch v-model="row.isEnable"
+                     on-text="启用"
+                     off-text="禁用">
+          </el-switch>
+  
         </el-form-item>
   
       </el-form>
@@ -183,7 +212,7 @@
 
 <script>
 import { get, add, edit, del, getAuxmaterial, getSupply } from './api'
-import { getPage, listToMap } from '@/plugins/utils'
+import { getPage, listToMap, deepCopy } from '@/plugins/utils'
 import Search from '@/components/Search.vue'
 export default {
   components: {
@@ -196,14 +225,16 @@ export default {
       filterTableData: [],
       row: {},
       initialRow: {
-        supplierId: '',
+        purchaseSupplierId: '',
         packUnit: '',
         packPrice: 0,
 
-        specId: '',
+        quotaAuxiliaryMaterialId: '',
         specAmount: 10,
         specPrice: 0,
-        brand: ''
+        brand: '',
+
+        isEnable: true
       },
       // edit && del
       editIdx: 0,
@@ -229,7 +260,7 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'specId', 'supplierId', 'packUnit', 'specAmount', 'packPrice', 'specPrice', 'brand']
+      searchFields: ['id', 'quotaAuxiliaryMaterialId', 'purchaseSupplierId', 'packUnit', 'specAmount', 'packPrice', 'specPrice', 'brand']
     }
   },
   created () {
@@ -247,8 +278,8 @@ export default {
     },
     searchMap () {
       return {
-        supplierId: this.supplierMap,
-        specId: this.auxmaterialMap
+        purchaseSupplierId: this.supplierMap,
+        quotaAuxiliaryMaterialId: this.auxmaterialMap
       }
     }
   },
@@ -270,21 +301,21 @@ export default {
 
     // formatter
     supplierFormatter (row) {
-      return this.supplierMap[row.supplierId]
+      return this.supplierMap[row.purchaseSupplierId]
     },
     specFormatter (row) {
-      return this.auxmaterialMap[row.specId]
+      return this.auxmaterialMap[row.quotaAuxiliaryMaterialId]
     },
     // table methods
     handleAdd () {
       this.opt = 'add'
-      this.row = Object.assign({}, this.initialRow)
+      this.row = deepCopy(this.initialRow)
       this.showDialog = true
     },
     handleEdit (index, row) {
       this.opt = 'edit'
       this.editIdx = this.tableData.indexOf(row)
-      this.row = Object.assign({}, row)
+      this.row = deepCopy(row)
       this.showDialog = true
     },
     handleDelete (index, row) {
@@ -310,9 +341,9 @@ export default {
       this.currentPage = val
     },
     // dialog methods
-    submitAdd (data) {
+    submitAdd (addRow) {
       this.isSubmiting = true
-      add(data).then(({ data }) => {
+      add(addRow).then(({ data }) => {
         this.$message.success("添加成功")
         this.showDialog = false
         this.tableData.push(data)
@@ -320,9 +351,9 @@ export default {
         this.isSubmiting = false
       })
     },
-    submitEdit (data) {
+    submitEdit (editRow) {
       this.isSubmiting = true
-      edit(data).then(({ data }) => {
+      edit(editRow).then(({ data }) => {
         this.$message.success('更新成功')
         this.showDialog = false
         this.tableData.splice(this.editIdx, 1, data)

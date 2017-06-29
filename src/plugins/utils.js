@@ -56,8 +56,12 @@ export const listToMap = (list, mapField = 'name') => {
  * @param {* 新的记录} newObj
  * @param {* 需要更新的字段名称} fields
  */
-export const replaceObjectFields = (oldObj, newObj, fields) => {
+export const replaceObjectFields = (oldObj, newObj, fields = 'all') => {
+  if (fields === 'all') {
+    fields = Object.keys(oldObj)
+  }
   fields.forEach(f => {
+    console.log(f, oldObj[f], newObj[f])
     oldObj[f] = newObj[f]
   })
 }
@@ -67,8 +71,8 @@ export const replaceObjectFields = (oldObj, newObj, fields) => {
  * @param {* 查询对象} obj
  * @param {* 查询字段 可支持a.b.c的语法} field
  */
-export const recursionFieldValue = (obj, field) => {
-  return field.split('.').reduce((prev, next) => prev[next], obj)
+export const recursionFieldValue = (obj, fields) => {
+  return fields.split('.').reduce((prev, next) => prev[next], obj)
 }
 
 /**
