@@ -9,6 +9,7 @@ import quota from '@/pages/quota/index.vue'
 import artficial from '@/pages/quota/artficial/index.vue'
 import auxmaterial from '@/pages/quota/auxmaterial/index.vue'
 import quotaTpl from '@/pages/quota/quota/index.vue'
+import release from '@/pages/quota/release/index.vue'
 
 import purchase from '@/pages/purchase/index.vue'
 import supply from '@/pages/purchase/supply/index.vue'
@@ -48,6 +49,11 @@ const routes = [
             path: 'quota',
             name: '定额模版',
             component: quotaTpl
+          },
+          {
+            path: 'release',
+            name: '版本管理',
+            component: release
           }
         ]
       },
