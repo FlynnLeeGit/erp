@@ -5,8 +5,8 @@
            :model="form">
     <el-form-item label="新密码">
       <el-input placeholder='请输入新密码'
+                autofocus
                 v-model="form.password">
-  
       </el-input>
     </el-form-item>
     <el-form-item>

@@ -166,7 +166,7 @@ export default {
         name: '',
         specUnit: '',
         specDesc: '',
-        calcStrategy: ''
+        calcStrategy: '1'
       },
       // edit && del
 

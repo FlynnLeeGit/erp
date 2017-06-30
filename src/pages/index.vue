@@ -1,14 +1,14 @@
 <template>
   <el-row class="app-content">
-    <el-col :span='sideSpan'
+    <el-col v-if='!sideHide'
+            :span='2'
             class="app-side">
-      <my-side @mini='sideMini'
-               @normal='sideNormal'>
+      <my-side>
       </my-side>
     </el-col>
-    <el-col :span='24 - sideSpan'
+    <el-col :span='sideHide?24:22'
             class="app-main">
-      <h3 class="app-route-name">{{$route.name}}</h3>
+      <h4 class="app-route-name">{{$route.name}}</h4>
       <router-view>
       </router-view>
     </el-col>
@@ -17,22 +17,13 @@
 <script>
 import axios from '@/plugins/axios'
 import MySide from '@/components/MySide.vue'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   components: {
     MySide
   },
-  data () {
-    return {
-      sideSpan: 3
-    }
-  },
-  methods: {
-    sideMini () {
-      this.sideSpan = 1
-    },
-    sideNormal () {
-      this.sideSpan = 4
-    }
+  computed: {
+    ...mapGetters(['sideHide'])
   }
 }
 </script>
@@ -44,11 +35,11 @@ export default {
     height: 100%;
   }
   &-main {
-    padding: 25px;
+    padding: 15px;
     overflow-y: auto;
   }
   &-route-name {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
 }
 </style>

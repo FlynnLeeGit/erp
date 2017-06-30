@@ -26,6 +26,15 @@
              v-model='editRow[prop]'>
       </input>
   
+      <textarea class="InlineEdit__input"
+                v-if='isTextarea'
+                placeholder="请输入"
+                v-focus
+                :rows='rows'
+                @blur='submit(editRow)'
+                v-model='editRow[prop]'>
+      </textarea>
+  
       <!--select类型绑定-->
       <select v-if='isSelect'
               v-focus
@@ -74,6 +83,10 @@ export default {
     directModify: {
       type: Boolean,
       default: true
+    },
+    rows: {
+      type: Number,
+      default: 6
     }
   },
   data () {
@@ -92,12 +105,18 @@ export default {
     },
     isSelect () {
       return this.type === 'select'
+    },
+    isTextarea () {
+      return this.type === 'textarea'
     }
   },
   methods: {
     edit (data) {
       this.editMode = true
       this.editRow = this.$utils.deepCopy(this.data)
+      if (this.isTextarea) {
+        this.$el.parentNode.style.width = '40%'
+      }
     },
     submit (editRow) {
       this.editMode = false
@@ -130,6 +149,12 @@ export default {
     &:focus {
       border: 1px solid #20a0ff;
     }
+  }
+  pre {
+    line-height: 1.4;
+  }
+  textarea {
+    font-family: monospace;
   }
 }
 </style>

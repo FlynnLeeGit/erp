@@ -302,6 +302,7 @@ export default {
             auxmaterial: two.data,
             supplier: three.data
           }
+
           this.map = {
             auxmaterial: this.$utils.listToMap(two.data),
             supplier: this.$utils.listToMap(three.data, 'company'),
@@ -317,6 +318,7 @@ export default {
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
+      this.remoteOptions = this.list.auxmaterial
     },
     handleDelete (index, row) {
       this.delId = row.id

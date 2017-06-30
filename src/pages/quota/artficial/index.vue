@@ -31,8 +31,14 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='edit'
-                       type='text'
+                       type='select'
                        prop='workType'>
+            <template slot='options'>
+              <option v-for='(w,wIdx) in map.workType'
+                      :key='wIdx'
+                      v-text='w'>
+              </option>
+            </template>
           </inline-edit>
         </template>
       </el-table-column>
@@ -79,10 +85,12 @@
                label-width='80px'>
         <el-form-item label='工种'
                       prop='workType'>
-          <el-input placeholder='请输入工种'
-                    v-model='row.workType'
-                    autofocus>
-          </el-input>
+          <el-select v-model='row.workType'>
+            <el-option v-for='(w,wIdx) in map.workType'
+                       :key='wIdx'
+                       :value='w'>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label='价格'>
           <el-input-number v-model.number='row.price'
@@ -108,7 +116,7 @@
 </template>
 
 <script>
-import { get, add, edit, del } from './api'
+import { get, getMap, add, edit, del } from './api'
 
 export default {
   data () {
@@ -158,9 +166,10 @@ export default {
     edit,
     initData () {
       this.isFetching = true
-      Promise.all([get()])
-        .then(([one]) => {
+      Promise.all([get(), getMap()])
+        .then(([one, two]) => {
           this.tableData = one.data
+          this.map = two.data.quota_template
         })
         .finally(() => {
           this.isFetching = false

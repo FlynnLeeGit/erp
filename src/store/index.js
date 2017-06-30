@@ -3,11 +3,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import users from './modules/users/index.js'
+import users from './modules/users'
+import layout from './modules/layout'
 
 const store = new Vuex.Store({
   modules: {
-    users
+    users,
+    layout
   },
   strict: false
 })

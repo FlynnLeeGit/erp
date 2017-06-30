@@ -8,7 +8,9 @@
         <inline-edit :data='row'
                      prop='description'
                      :fn='edit'
-                     type='text'>
+                     type='textarea'>
+  
+          <pre>{{row.description}}</pre>
         </inline-edit>
       </el-form-item>
       <el-form-item label='工作内容'
@@ -16,7 +18,8 @@
         <inline-edit :data='row'
                      prop='content'
                      :fn='edit'
-                     type='text'>
+                     type='textarea'>
+          <pre>{{row.content}}</pre>
         </inline-edit>
       </el-form-item>
     </el-form>

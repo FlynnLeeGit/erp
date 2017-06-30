@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span='18'>
             <h2>
-              <i class="el-icon-menu"></i>
+              <i class="fa fa-list _pointer" @click='TOGGLE_SIDE_HIDE'></i>
               中孚空间OA系统
             </h2>
           </el-col>
@@ -14,7 +14,9 @@
                   class="_tr">
             <span>你好,{{user.name}}</span>
             <el-button @click='logout($route.fullPath)'
-                       type='primary'>登出</el-button>
+                       type='primary'>
+              登出
+            </el-button>
           </el-col>
         </el-row>
       </div>
@@ -26,7 +28,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'app',
@@ -34,7 +36,8 @@ export default {
     ...mapGetters(['user'])
   },
   methods: {
-    ...mapActions(['logout'])
+    ...mapActions(['logout']),
+    ...mapMutations(['TOGGLE_SIDE_HIDE']),
   }
 }
 </script>
