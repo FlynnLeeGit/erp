@@ -4,7 +4,6 @@ import store from '../store'
 
 import index from '@/pages/index.vue'
 import login from '@/pages/login.vue'
-import users from '@/pages/users/index.vue'
 
 import quota from '@/pages/quota/index.vue'
 import artficial from '@/pages/quota/artficial/index.vue'
