@@ -26,9 +26,10 @@
   
       <el-table-column label="供应商"
                        sortable
-                       class-name='_text'
-                       prop='purchaseSupplierId'
-                       :formatter='supplierFormatter'>
+                       class-name='_text'>
+        <template scope='scope'>
+          {{scope.row.purchaseSupplier.company}}
+        </template>
       </el-table-column>
   
       <el-table-column label="品牌"
@@ -71,9 +72,10 @@
       </el-table-column>
   
       <el-table-column label="辅材规格"
-                       class-name='_text'
-                       :formatter="specFormatter"
-                       prop='quotaAuxiliaryMaterialId'>
+                       class-name='_text'>
+        <template scope='scope'>
+          {{scope.row.quotaAuxiliaryMaterial.name}}
+        </template>
       </el-table-column>
       <el-table-column label="规格数量"
                        prop='specAmount'
@@ -117,7 +119,7 @@
         <template scope="scope">
   
           <el-button size="mini"
-                     :loading='isDeleting && scope.$index === delIdx'
+                     :loading='isDeleting && scope.row.id=== delId'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -170,11 +172,15 @@
         </el-form-item>
   
         <el-form-item label='辅材规格'>
-          <el-select v-model='row.quotaAuxiliaryMaterialId'>
-            <el-option v-for='a in list.auxmaterial'
-                       :label='a.name'
-                       :value='a.id'
-                       :key='a.id'>
+          <el-select v-model='row.quotaAuxiliaryMaterialId'
+                     filterable
+                     remote
+                     placeholder="输入规格名称查询"
+                     :remote-method='auxRemoteMethod'>
+            <el-option v-for='item in remoteOptions'
+                       :key='item.id'
+                       :value='item.id'
+                       :label='item.name'>
             </el-option>
           </el-select>
         </el-form-item>
@@ -239,7 +245,7 @@ export default {
       },
       // edit && del
 
-      delIdx: 0,
+      delId: 0,
       isFetching: false,
       isDeleting: false,
 
@@ -253,6 +259,8 @@ export default {
         auxmaterial: {},
         supplier: {}
       },
+
+      remoteOptions: [],
 
       // dialog
       isSubmiting: false,
@@ -305,20 +313,13 @@ export default {
         })
     },
 
-    // formatter
-    supplierFormatter (row) {
-      return this.map.supplier[row.purchaseSupplierId]
-    },
-    specFormatter (row) {
-      return this.map.auxmaterial[row.quotaAuxiliaryMaterialId]
-    },
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
     },
     handleDelete (index, row) {
-      this.delIdx = this.tableData.indexOf(row)
+      this.delId = row.id
       this.$confirm('确认删除？')
         .then(() => {
           this.isDeleting = true
@@ -349,6 +350,9 @@ export default {
       }).finally(() => {
         this.isSubmiting = false
       })
+    },
+    auxRemoteMethod (query) {
+      this.remoteOptions = this.list.auxmaterial.filter(item => item.name.indexOf(query) > -1)
     },
     cancelDialog () {
       this.showDialog = false
