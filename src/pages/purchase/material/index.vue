@@ -35,30 +35,57 @@
                        sortable
                        prop='brand'
                        width="150">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='brand'
+                       :fn='edit'
+                       type='text'>
+          </inline-edit>
+        </template>
       </el-table-column>
   
       <el-table-column label="包装单位"
                        prop='packUnit'
                        sortable
                        width="100">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='packUnit'
+                       :fn='edit'
+                       type='text'>
+          </inline-edit>
+        </template>
       </el-table-column>
   
       <el-table-column label="包装价格(元)"
                        prop='packPrice'
                        sortable
                        width="130">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='packPrice'
+                       :fn='edit'
+                       type='number'>
+          </inline-edit>
+        </template>
       </el-table-column>
   
       <el-table-column label="辅材规格"
                        class-name='_text'
-                       prop='quotaAuxiliaryMaterialId'
                        :formatter="specFormatter"
-                       sortable>
+                       prop='quotaAuxiliaryMaterialId'>
       </el-table-column>
       <el-table-column label="规格数量"
                        prop='specAmount'
                        sortable
                        width="100">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='specAmount'
+                       :fn='edit'
+                       type='number'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label="规格单价"
                        prop='specPrice'
@@ -88,8 +115,7 @@
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-          <el-button size="mini"
-                     @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+  
           <el-button size="mini"
                      :loading='isDeleting && scope.$index === delIdx'
                      type="danger"
@@ -101,28 +127,21 @@
     <!--pagination-->
     <el-pagination class="_mt2"
                    :page-sizes='[50,100,200]'
-                   :total='tableData.length'
-                   :current-page="currentPage"
+                   :total='filterTableData.length'
+                   :current-page.sync="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
                    :page-size='pageSize'
-                   @current-change='handleCurrentChange'
                    @size-change='handleSizeChange'>
     </el-pagination>
   
     <!--dialog-->
     <el-dialog title='辅材'
                :visible.sync='showDialog'>
-      <el-form :model='row'>
-        <el-form-item v-if="isEdit"
-                      label='id'
-                      :label-width="formLabelWidth">
-          {{row.id}}
-        </el-form-item>
-        <el-form-item label='供应商'
-                      :label-width="formLabelWidth">
-          <el-select :disabled='isEdit'
-                     v-model='row.purchaseSupplierId'>
-            <el-option v-for='s in supplierList'
+      <el-form :model='row'
+               label-width="80px">
+        <el-form-item label='供应商'>
+          <el-select v-model='row.purchaseSupplierId'>
+            <el-option v-for='s in list.supplier'
                        :label='s.company'
                        :value='s.id'
                        :key='s.id'>
@@ -131,21 +150,18 @@
   
         </el-form-item>
   
-        <el-form-item label='包装品牌'
-                      :label-width="formLabelWidth">
+        <el-form-item label='包装品牌'>
           <el-input placeholder='请输入包装品牌'
                     v-model='row.brand'></el-input>
         </el-form-item>
   
-        <el-form-item label='包装单位'
-                      :label-width="formLabelWidth">
+        <el-form-item label='包装单位'>
           <el-input placeholder='请输入包装单位(袋,包)'
                     v-model='row.packUnit'>
           </el-input>
         </el-form-item>
   
-        <el-form-item label='包装价格'
-                      :label-width="formLabelWidth">
+        <el-form-item label='包装价格'>
           <el-input-number placeholder='请输入包装价格'
                            :step='100'
                            v-model='row.packPrice'>
@@ -153,11 +169,9 @@
           <span class="_ml2">元</span>
         </el-form-item>
   
-        <el-form-item label='辅材规格'
-                      :label-width="formLabelWidth">
-          <el-select :disabled='isEdit'
-                     v-model='row.quotaAuxiliaryMaterialId'>
-            <el-option v-for='a in auxmaterialList'
+        <el-form-item label='辅材规格'>
+          <el-select v-model='row.quotaAuxiliaryMaterialId'>
+            <el-option v-for='a in list.auxmaterial'
                        :label='a.name'
                        :value='a.id'
                        :key='a.id'>
@@ -165,22 +179,19 @@
           </el-select>
         </el-form-item>
   
-        <el-form-item label='规格数量'
-                      :label-width="formLabelWidth">
+        <el-form-item label='规格数量'>
           <el-input-number placeholder='请输入规格数量'
                            :step='10'
                            v-model='row.specAmount'>
           </el-input-number>
         </el-form-item>
   
-        <el-form-item label='规格单价'
-                      :label-width="formLabelWidth">
+        <el-form-item label='规格单价'>
           <span class="_text">{{(row.packPrice / row.specAmount).toFixed(2)}}</span>
           <span class="_ml2">元</span>
         </el-form-item>
   
-        <el-form-item label='启用?'
-                      :label-width="formLabelWidth">
+        <el-form-item label='启用?'>
           <el-switch v-model="row.isEnable"
                      on-text="启用"
                      off-text="禁用">
@@ -192,18 +203,12 @@
       <div slot='footer'
            class="dialog-footer">
         <el-button @click="cancelDialog()">取 消</el-button>
-        <el-button v-if="isAdd"
-                   type="success"
+        <el-button type="success"
                    :loading='isSubmiting'
                    @click="submitAdd(row)">
           添 加
         </el-button>
-        <el-button v-if="isEdit"
-                   type='primary'
-                   :loading='isSubmiting'
-                   @click='submitEdit(row)'>
-          更 新
-        </el-button>
+  
       </div>
     </el-dialog>
   
@@ -211,13 +216,9 @@
 </template>
 
 <script>
-import { get, add, edit, del, getAuxmaterial, getSupply } from './api'
-import { getPage, listToMap, deepCopy } from '@/plugins/utils'
-import Search from '@/components/Search.vue'
+import { get, add, edit, del, getAuxmaterial, getSupplier } from './api'
+
 export default {
-  components: {
-    Search
-  },
   data () {
     return {
       // table
@@ -237,22 +238,25 @@ export default {
         isEnable: true
       },
       // edit && del
-      editIdx: 0,
+
       delIdx: 0,
       isFetching: false,
       isDeleting: false,
 
-      map: {},
 
-      auxmaterialList: [],
-      auxmaterialMap: {},
-      supplierList: [],
-      supplierMap: {},
+      // map && list
+      list: {
+        auxmaterial: [],
+        supplier: []
+      },
+      map: {
+        auxmaterial: {},
+        supplier: {}
+      },
+
       // dialog
       isSubmiting: false,
       showDialog: false,
-      formLabelWidth: '80px',
-      opt: 'add',
 
       // pagination
       currentPage: 1,
@@ -268,31 +272,33 @@ export default {
   },
   computed: {
     sliceTableData () {
-      return getPage(this.filterTableData, this.pageSize, this.currentPage)
+      return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
-    isAdd () {
-      return this.opt === 'add'
-    },
-    isEdit () {
-      return this.opt === 'edit'
-    },
+    // 搜索 id->name 映射表
     searchMap () {
       return {
-        purchaseSupplierId: this.supplierMap,
-        quotaAuxiliaryMaterialId: this.auxmaterialMap
+        purchaseSupplierId: this.map.supplier,
+        quotaAuxiliaryMaterialId: this.map.auxmaterial
       }
     }
   },
   methods: {
+    edit,
     initData () {
       this.isFetching = true
-      Promise.all([get(), getAuxmaterial(), getSupply()])
+      Promise.all([get(), getAuxmaterial(), getSupplier()])
         .then(([one, two, three]) => {
           this.tableData = one.data
-          this.auxmaterialList = two.data
-          this.auxmaterialMap = listToMap(this.auxmaterialList)
-          this.supplierList = three.data
-          this.supplierMap = listToMap(this.supplierList, 'company')
+
+          this.list = {
+            auxmaterial: two.data,
+            supplier: three.data
+          }
+          this.map = {
+            auxmaterial: this.$utils.listToMap(two.data),
+            supplier: this.$utils.listToMap(three.data, 'company'),
+          }
+
         })
         .finally(() => {
           this.isFetching = false
@@ -301,21 +307,14 @@ export default {
 
     // formatter
     supplierFormatter (row) {
-      return this.supplierMap[row.purchaseSupplierId]
+      return this.map.supplier[row.purchaseSupplierId]
     },
     specFormatter (row) {
-      return this.auxmaterialMap[row.quotaAuxiliaryMaterialId]
+      return this.map.auxmaterial[row.quotaAuxiliaryMaterialId]
     },
     // table methods
     handleAdd () {
-      this.opt = 'add'
-      this.row = deepCopy(this.initialRow)
-      this.showDialog = true
-    },
-    handleEdit (index, row) {
-      this.opt = 'edit'
-      this.editIdx = this.tableData.indexOf(row)
-      this.row = deepCopy(row)
+      this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
     },
     handleDelete (index, row) {
@@ -337,9 +336,6 @@ export default {
     handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
     // dialog methods
     submitAdd (addRow) {
       this.isSubmiting = true
@@ -347,16 +343,9 @@ export default {
         this.$message.success("添加成功")
         this.showDialog = false
         this.tableData.push(data)
-      }).finally(() => {
-        this.isSubmiting = false
-      })
-    },
-    submitEdit (editRow) {
-      this.isSubmiting = true
-      edit(editRow).then(({ data }) => {
-        this.$message.success('更新成功')
-        this.showDialog = false
-        this.tableData.splice(this.editIdx, 1, data)
+        this.$nextTick(() => {
+          this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
+        })
       }).finally(() => {
         this.isSubmiting = false
       })

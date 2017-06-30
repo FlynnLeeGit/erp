@@ -6,9 +6,8 @@
   </el-input>
 </template>
 <script>
-import { search } from '@/plugins/utils'
-let last
 export default {
+  name: 'Search',
   props: {
     value: {
       type: String,
@@ -37,14 +36,16 @@ export default {
   },
   data () {
     return {
-      loadingIcon: ''
+      loadingIcon: '',
+      last: null
     }
   },
   methods: {
+    // debounce value
     syncValue (newVal) {
-      clearTimeout(last)
+      clearTimeout(this.last)
       this.loadingIcon = 'loading'
-      last = setTimeout(() => {
+      this.last = setTimeout(() => {
         this.loadingIcon = ''
         this.$emit('input', newVal)
       }, 300)
@@ -52,7 +53,7 @@ export default {
   },
   computed: {
     filterTable () {
-      return search(this.tableData, this.value, this.fields, this.map)
+      return this.$utils.search(this.tableData, this.value, this.fields, this.map)
     }
   },
   watch: {

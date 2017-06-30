@@ -3,22 +3,20 @@
              :visible.sync='visible'>
     <el-form ref='form'
              :model='row'
+             label-width="80px"
              :rules='formRules'>
       <el-form-item prop='name'
-                    label='名称'
-                    :label-width="formLabelWidth">
+                    label='名称'>
         <el-input placeholder='请输入定额名称'
                   v-model='row.name'></el-input>
       </el-form-item>
       <el-form-item prop='brand'
-                    label='品牌'
-                    :label-width="formLabelWidth">
+                    label='品牌'>
         <el-input placeholder='请输入品牌'
                   v-model='row.brand'></el-input>
       </el-form-item>
       <el-form-item label='分类'
-                    prop='type'
-                    :label-width="formLabelWidth">
+                    prop='type'>
         <el-select v-model='row.type'
                    @change="row.secType=''">
           <el-option :key='tKey'
@@ -29,8 +27,7 @@
       </el-form-item>
       <el-form-item v-if='row.type'
                     prop='secType'
-                    label='二级分类'
-                    :label-width="formLabelWidth">
+                    label='二级分类'>
         <el-select v-model='row.secType'>
           <el-option :key='t'
                      v-for='t in map.type[row.type]'
@@ -39,8 +36,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label='单位'
-                    prop='unit'
-                    :label-width="formLabelWidth">
+                    prop='unit'>
         <el-select v-model='row.unit'>
           <el-option :key='u'
                      v-for='u in map.unit'
@@ -49,8 +45,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label='位置'
-                    prop='position'
-                    :label-width="formLabelWidth">
+                    prop='position'>
         <el-select v-model='row.position'>
           <el-option :key='p'
                      v-for='p in map.position'
@@ -60,8 +55,7 @@
       </el-form-item>
   
       <el-form-item label='阶段'
-                    prop='stage'
-                    :label-width="formLabelWidth">
+                    prop='stage'>
         <el-select v-model='row.stage'>
           <el-option :key='s'
                      v-for='s in map.stage'
@@ -71,8 +65,7 @@
       </el-form-item>
   
       <el-form-item label='工种'
-                    prop='workType'
-                    :label-width="formLabelWidth">
+                    prop='workType'>
         <el-select v-model='row.workType'>
           <el-option :key='w'
                      v-for='w in map.workType'
@@ -81,24 +74,21 @@
         </el-select>
       </el-form-item>
   
-      <el-form-item label='损耗率'
-                    :label-width="formLabelWidth">
+      <el-form-item label='损耗率'>
         <el-input-number v-model='row.wastage'
                          :min='0'
                          :step='0.01'>
         </el-input-number>
       </el-form-item>
   
-      <el-form-item label='说明'
-                    :label-width="formLabelWidth">
+      <el-form-item label='说明'>
         <el-input placeholder='请输入定额的说明'
                   type='textarea'
                   :rows='3'
                   v-model='row.description'>
         </el-input>
       </el-form-item>
-      <el-form-item label='工作内容'
-                    :label-width="formLabelWidth">
+      <el-form-item label='工作内容'>
         <el-input placeholder='请输入定额的工作内容'
                   type='textarea'
                   :rows='5'
@@ -109,8 +99,7 @@
     <div slot='footer'
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
-      <el-button v-if='isAdd'
-                 type="success"
+      <el-button type="success"
                  :loading='isSubmiting'
                  @click="submitAdd(row)">
         添 加
@@ -144,9 +133,7 @@ export default {
         quotaArtficialCounters: [],
         quotaAuxiliaryCounters: []
       },
-      formLabelWidth: '80px',
       isSubmiting: false,
-      opt: 'add',
       formRules: {
         // name: [
         //   { required: true, message: '定额名称不能为空' }
@@ -171,11 +158,6 @@ export default {
         // ]
       }
     }
-  },
-  computed: {
-    isAdd () {
-      return this.opt === 'add'
-    },
   },
   methods: {
     // 还原row为初始空内容状态
@@ -206,8 +188,7 @@ export default {
           })
       })
     },
-    open (opt, row) {
-      this.qRow = row
+    open () {
       this.restoreRow(this.initialRow)
       this.visible = true
     },

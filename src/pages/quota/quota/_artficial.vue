@@ -18,7 +18,8 @@
         <inline-edit :data='artScope.row'
                      prop='counter'
                      :fn='editFn'
-                     @success='update'>
+                     :direct-modify='false'
+                     @updated='update'>
         </inline-edit>
       </template>
     </el-table-column>
@@ -51,11 +52,7 @@
 <script>
 import { delArt, editArt } from './api'
 
-import InlineEdit from '@/components/InlineEdit.vue'
 export default {
-  components: {
-    InlineEdit
-  },
   props: {
     tableData: {
       type: Array,

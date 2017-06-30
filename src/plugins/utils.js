@@ -61,7 +61,6 @@ export const replaceObjectFields = (oldObj, newObj, fields = 'all') => {
     fields = Object.keys(oldObj)
   }
   fields.forEach(f => {
-    console.log(f, oldObj[f], newObj[f])
     oldObj[f] = newObj[f]
   })
 }
@@ -85,4 +84,14 @@ export const valueInArray = (arr, value, field = 'id') => {
   return arr.some(
     item => recursionFieldValue(item, field).toString() === value.toString()
   )
+}
+/**
+ * 中文表格字段排序函数
+ * @param {* 排序字段} sortKey
+ * @param {* 比较前对象} a
+ * @param {* 比较后对象} b
+ */
+
+export const sortByChs = (sortKey, a, b) => {
+  return a[sortKey].localeCompare(b[sortKey]) > 0
 }

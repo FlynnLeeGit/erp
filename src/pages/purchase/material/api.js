@@ -7,4 +7,4 @@ export const edit = data =>
 export const del = id => axios.delete(`/_api/purchase/materials/${id}`)
 
 export { get as getAuxmaterial } from '../../quota/auxmaterial/api'
-export { get as getSupply } from '../supply/api'
+export { get as getSupplier } from '../supply/api'

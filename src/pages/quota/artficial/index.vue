@@ -26,18 +26,32 @@
       <el-table-column label="工种"
                        sortable
                        prop='workType'
+                       :sort-method="$utils.sortByChs.bind(this,'workType')"
                        width="180">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       type='text'
+                       prop='workType'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label="价格(元)"
                        prop='price'
                        sortable
                        width="100">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       type='number'
+                       prop='price'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-          <el-button size="mini"
-                     @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+  
           <el-button size="mini"
                      :loading='isDeleting && scope.$index === delIdx'
                      type="danger"
@@ -50,31 +64,27 @@
     <el-pagination class="_mt2"
                    :page-sizes='[50,100,200]'
                    :total='tableData.length'
-                   :current-page="currentPage"
+                   :current-page.sync="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
                    :page-size='pageSize'
-                   @current-change='handleCurrentChange'
                    @size-change='handleSizeChange'>
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='人工'
+    <el-dialog title='添加人工'
+               @keyup.enter.native='submitAdd(row)'
                :visible.sync='showDialog'>
       <el-form :model='row'
-               :rules='formRules'>
-        <el-form-item v-if="opt==='edit'"
-                      label='id'
-                      :label-width="formLabelWidth">
-          {{row.id}}
-        </el-form-item>
+               :rules='formRules'
+               label-width='80px'>
         <el-form-item label='工种'
-                      prop='workType'
-                      :label-width="formLabelWidth">
+                      prop='workType'>
           <el-input placeholder='请输入工种'
-                    v-model='row.workType'></el-input>
+                    v-model='row.workType'
+                    autofocus>
+          </el-input>
         </el-form-item>
-        <el-form-item label='价格'
-                      :label-width="formLabelWidth">
+        <el-form-item label='价格'>
           <el-input-number v-model.number='row.price'
                            :min='0'
                            :step='10'>
@@ -86,17 +96,10 @@
       <div slot='footer'
            class="dialog-footer">
         <el-button @click="cancelDialog()">取 消</el-button>
-        <el-button v-if="opt==='add'"
-                   type="success"
+        <el-button type="success"
                    :loading='isSubmiting'
                    @click="submitAdd(row)">
           添 加
-        </el-button>
-        <el-button v-if="opt==='edit'"
-                   type='primary'
-                   :loading='isSubmiting'
-                   @click='submitEdit(row)'>
-          更 新
         </el-button>
       </div>
     </el-dialog>
@@ -106,12 +109,8 @@
 
 <script>
 import { get, add, edit, del } from './api'
-import { getPage } from '@/plugins/utils'
-import Search from '@/components/Search.vue'
+
 export default {
-  components: {
-    Search
-  },
   data () {
     return {
       // table
@@ -123,7 +122,6 @@ export default {
         price: 0
       },
       // edit && del
-      editIdx: 0,
       delIdx: 0,
       isFetching: false,
       isDeleting: false,
@@ -132,8 +130,6 @@ export default {
       // dialog
       isSubmiting: false,
       showDialog: false,
-      formLabelWidth: '80px',
-      opt: 'add',
 
       // pagination
       currentPage: 1,
@@ -155,10 +151,11 @@ export default {
   },
   computed: {
     sliceTableData () {
-      return getPage(this.filterTableData, this.pageSize, this.currentPage)
+      return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
   },
   methods: {
+    edit,
     initData () {
       this.isFetching = true
       Promise.all([get()])
@@ -171,14 +168,7 @@ export default {
     },
     // table methods
     handleAdd () {
-      this.opt = 'add'
-      this.row = Object.assign({}, this.initialRow)
-      this.showDialog = true
-    },
-    handleEdit (index, row) {
-      this.opt = 'edit'
-      this.editIdx = this.tableData.indexOf(row)
-      this.row = Object.assign({}, row)
+      this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
     },
     handleDelete (index, row) {
@@ -200,9 +190,6 @@ export default {
     handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
     // dialog methods
     submitAdd (data) {
       this.isSubmiting = true
@@ -210,16 +197,9 @@ export default {
         this.$message.success("添加成功")
         this.showDialog = false
         this.tableData.push(data)
-      }).finally(() => {
-        this.isSubmiting = false
-      })
-    },
-    submitEdit (data) {
-      this.isSubmiting = true
-      edit(data).then(({ data }) => {
-        this.$message.success('更新成功')
-        this.showDialog = false
-        this.tableData.splice(this.editIdx, 1, data)
+        this.$nextTick(() => {
+          this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
+        })
       }).finally(() => {
         this.isSubmiting = false
       })

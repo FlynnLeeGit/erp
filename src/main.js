@@ -4,8 +4,15 @@ import ElementUI from 'element-ui'
 import router from './router'
 import store from './store'
 import './plugins/directives'
+import * as utils from './plugins/utils'
+
+import InlineEdit from '@/components/InlineEdit.vue'
+import Search from '@/components/Search.vue'
 
 Vue.use(ElementUI)
+Vue.prototype.$utils = utils
+Vue.component(InlineEdit.name, InlineEdit)
+Vue.component(Search.name, Search)
 
 new Vue({
   el: '#app',

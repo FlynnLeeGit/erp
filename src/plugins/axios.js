@@ -24,6 +24,9 @@ axios.interceptors.response.use(
       case 403:
         Message.error('403')
         break
+      case 404:
+        Message.error(`访问的接口地址不存在`)
+        break
       case 500:
         Message.error('服务器内部错误')
         break
@@ -38,7 +41,7 @@ axios.interceptors.response.use(
 export default {
   get (url, options) {
     let key = url
-    
+
     if (options) {
       key = JSON.stringify({ ...options, url })
     }

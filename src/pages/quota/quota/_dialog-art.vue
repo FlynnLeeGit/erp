@@ -1,13 +1,12 @@
 <template>
   <el-dialog title='添加人工计量'
-             :visible.sync='visible'>
+             :visible.sync='visible'
+             label-width='80px'>
     <el-form :model='row'>
-      <el-form-item label='模版ID'
-                    :label-width="formLabelWidth">
+      <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
-      <el-form-item label='人工工种'
-                    :label-width="formLabelWidth">
+      <el-form-item label='人工工种'>
         <el-select v-model='row.quotaArtficial.id'>
           <el-option v-for='art in map.artList'
                      :key='art.id'
@@ -17,8 +16,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label='人工计量'
-                    :label-width="formLabelWidth">
+      <el-form-item label='人工计量'>
         <el-input-number v-model='row.counter'
                          :step='0.1'>
         </el-input-number>
@@ -37,7 +35,7 @@
 </template>
 <script>
 import { addArt } from './api'
-import { deepCopy, valueInArray } from '@/plugins/utils'
+
 export default {
   props: {
     map: {
@@ -57,20 +55,19 @@ export default {
           id: ''
         }
       },
-      formLabelWidth: '80px',
+
       isSubmiting: false,
       qIndex: -1,
       qRow: {},
     }
   },
   methods: {
-    valueInArray,
     // 还原row为初始空内容状态
     optionDisabled (qRow, art) {
-      return qRow.quotaArtficialCounters && valueInArray(qRow.quotaArtficialCounters, art.id, 'quotaArtficial.id')
+      return qRow.quotaArtficialCounters && this.$utils.valueInArray(qRow.quotaArtficialCounters, art.id, 'quotaArtficial.id')
     },
     restoreRow (qid) {
-      this.row = deepCopy(this.initialRow)
+      this.row = this.$utils.deepCopy(this.initialRow)
     },
     submit (data) {
       this.isSubmiting = true

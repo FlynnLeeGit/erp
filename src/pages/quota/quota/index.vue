@@ -38,13 +38,12 @@
         </el-table-column>
         <el-table-column label="名称"
                          show-overflow-tooltip
-                         width='100'>
+                         width='120'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          type='text'
                          prop='name'
-                         :fn='edit'
-                         direct-modify>
+                         :fn='edit'>
             </inline-edit>
           </template>
         </el-table-column>
@@ -56,22 +55,20 @@
             <inline-edit :data='scope.row'
                          type='text'
                          prop='brand'
-                         :fn='edit'
-                         direct-modify>
+                         :fn='edit'>
             </inline-edit>
           </template>
         </el-table-column>
   
         <el-table-column label="大类"
                          show-overflow-tooltip
-                         width='70'>
+                         width='100'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          :fn='edit'
                          type='select'
                          prop='type'
-                         @before-update='beforeUpdateType'
-                         direct-modify>
+                         @before-update='beforeUpdateType'>
               <template slot='options'>
                 <option v-for='(t,tIdx) in map.type'
                         :key='tIdx'>{{tIdx}}
@@ -82,13 +79,12 @@
         </el-table-column>
         <el-table-column label="小类"
                          show-overflow-tooltip
-                         width='50'>
+                         width='100'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          :fn='edit'
                          type='select'
-                         prop='secType'
-                         direct-modify>
+                         prop='secType'>
               <template slot='options'>
                 <option v-for='(st,sIdx) in map.type[scope.row.type]'
                         :key='sIdx'>{{st}}
@@ -103,8 +99,7 @@
             <inline-edit :data='scope.row'
                          :fn='edit'
                          type='select'
-                         prop='unit'
-                         direct-modify>
+                         prop='unit'>
               <template slot='options'>
                 <option v-for='(u,uIdx) in map.unit'
                         :key='uIdx'>{{u}}
@@ -114,13 +109,13 @@
           </template>
         </el-table-column>
         <el-table-column label="位置"
+                         show-overflow-tooltip
                          width='50'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          :fn='edit'
                          type='select'
-                         prop='position'
-                         direct-modify>
+                         prop='position'>
               <template slot='options'>
                 <option v-for='(p,pIdx) in map.position'
                         :key='pIdx'>{{p}}
@@ -129,13 +124,14 @@
             </inline-edit>
           </template>
         </el-table-column>
-        <el-table-column label="阶段">
+        <el-table-column label="阶段"
+                         show-overflow-tooltip
+                         width="60">
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          :fn='edit'
                          type='select'
-                         prop='stage'
-                         direct-modify>
+                         prop='stage'>
               <template slot='options'>
                 <option v-for='(s,sIdx) in map.stage'
                         :key='sIdx'>{{s}}
@@ -145,12 +141,12 @@
           </template>
         </el-table-column>
         <el-table-column label="损耗率"
+                         prop='wastage'
                          sortable>
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          prop='wastage'
-                         :fn='edit'
-                         direct-modify>
+                         :fn='edit'>
             </inline-edit>
           </template>
   
@@ -191,6 +187,7 @@
             </el-button>
             <el-button size='mini'
                        type='danger'
+                       :loading='isDeleting && scope.row.id === delId'
                        @click='handleDelete(scope.$index,scope.row)'>
               删除
             </el-button>
@@ -202,10 +199,9 @@
       <el-pagination class="_mt2"
                      :page-sizes='[100,300,500,1000]'
                      :total='filterTableData.length'
-                     :current-page="currentPage"
+                     :current-page.sync="currentPage"
                      layout='total,sizes,prev,pager,next,jumper'
                      :page-size='pageSize'
-                     @current-change='handleCurrentChange'
                      @size-change='handleSizeChange'>
       </el-pagination>
   
@@ -232,19 +228,15 @@ import expand from './_expand.vue'
 import dialogQuota from './_dialog-quota.vue'
 import dialogArt from './_dialog-art.vue'
 import dialogMat from './_dialog-mat.vue'
-import Search from '@/components/Search.vue'
-import InlineEdit from '@/components/InlineEdit.vue'
+
 import { get, getArtList, getMatList, getMap, edit, del, release } from './api'
-import { getPage, sort, replaceObjectFields } from '@/plugins/utils'
 
 export default {
   components: {
     expand,
     dialogQuota,
     dialogArt,
-    dialogMat,
-    Search,
-    InlineEdit
+    dialogMat
   },
   data () {
     return {
@@ -255,6 +247,7 @@ export default {
       // table loading status
       isFetching: false,
       isDeleting: false,
+      delId: 0,
 
       // pagination
       currentPage: 1,
@@ -278,11 +271,11 @@ export default {
   },
   created () {
     this.initData()
-    this.$root.$on('quota.quota.update', replaceObjectFields)
+    this.$root.$on('quota.quota.update', this.$utils.replaceObjectFields)
   },
   computed: {
     sliceTableData () {
-      return getPage(this.filterTableData, this.pageSize, this.currentPage)
+      return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     }
   },
   methods: {
@@ -304,24 +297,24 @@ export default {
           this.isFetching = false
         })
     },
-
     beforeUpdateType (editRow) {
       editRow.secType = ''
     },
     // table methods
     // 更新定额相关价格
     handleAdd () {
-      this.$refs.dialogQuota.open('add')
-    },
-    handleEdit ($index, row) {
-      this.$refs.dialogQuota.open('edit', row)
+      this.$refs.dialogQuota.open()
     },
     quotaAdded (newQuota) {
       this.tableData.push(newQuota)
+      this.$nextTick(() => {
+        this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
+      })
     },
     handleDelete (index, row) {
       this.$confirm(`确认删除定额项  ${row.name}？`)
         .then(() => {
+          this.delId = row.id
           this.isDeleting = true
           return del(row.id)
         })
@@ -340,16 +333,11 @@ export default {
     addMaterial ($index, row) {
       this.$refs.dialogMat.open(row)
     },
-
     // pagination
     handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
     release () {
-
       this.$prompt('请输入本次版本提交信息描述').then(({ value }) => {
         this.isReleasing = true
         this.$notify({
@@ -368,9 +356,7 @@ export default {
           })
           .finally(() => {
             this.isReleasing = false
-
           })
-
       })
     }
   }

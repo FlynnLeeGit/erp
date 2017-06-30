@@ -24,22 +24,54 @@
       </el-table-column>
       <el-table-column label="公司"
                        sortable
+                       :sort-method="$utils.sortByChs.bind(this,'company')"
                        prop='company'
                        width="180">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       prop='company'
+                       type='text'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label="联系人"
                        prop='contact'
                        sortable
+                       :sort-method="$utils.sortByChs.bind(this,'contact')"
                        width="150">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       prop='contact'
+                       type='text'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label="手机号"
                        prop='mobile'
                        sortable
+                       :sort-method="$utils.sortByChs.bind(this,'mobile')"
                        width="150">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       prop='mobile'
+                       type='text'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label="备注"
+                       :sort-method="$utils.sortByChs.bind(this,'note')"
                        prop='note'
                        sortable>
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       prop='note'
+                       type='text'>
+          </inline-edit>
+        </template>
       </el-table-column>
       <el-table-column label='使用此供应商材料'>
         <template scope='scope'>
@@ -49,7 +81,6 @@
                     :key='m.id'>
               {{m.brand}}-{{m.packPrice}}元/{{m.packUnit}}
             </el-tag>
-  
           </div>
           <el-tag v-else
                   type='gray'>
@@ -60,8 +91,7 @@
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-          <el-button size="mini"
-                     @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+  
           <el-button size="mini"
                      :loading='isDeleting && scope.$index === delIdx'
                      type="danger"
@@ -73,62 +103,48 @@
     <!--pagination-->
     <el-pagination class="_mt2"
                    :page-sizes='[50,100,200]'
-                   :total='tableData.length'
-                   :current-page="currentPage"
+                   :total='filterTableData.length'
+                   :current-page.sync="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
                    :page-size='pageSize'
-                   @current-change='handleCurrentChange'
                    @size-change='handleSizeChange'>
     </el-pagination>
   
     <!--dialog-->
     <el-dialog title='供应商'
                :visible.sync='showDialog'>
-      <el-form :model='row'>
-        <el-form-item v-if="opt==='edit'"
-                      label='id'
-                      :label-width="formLabelWidth">
-          {{row.id}}
-        </el-form-item>
-        <el-form-item label='公司'
-                      :label-width="formLabelWidth">
+      <el-form :model='row'
+               label-width='80px'>
+        <el-form-item label='公司'>
           <el-input placeholder='请输入供应商公司名称'
                     v-model='row.company'></el-input>
         </el-form-item>
-        <el-form-item label='联系人'
-                      :label-width="formLabelWidth">
+        <el-form-item label='联系人'>
           <el-input placeholder='请输入供应商联系人'
                     v-model='row.contact'></el-input>
         </el-form-item>
-        <el-form-item label='手机号'
-                      :label-width="formLabelWidth">
+        <el-form-item label='手机号'>
           <el-input placeholder='请输入供应商手机号'
                     v-model='row.mobile'></el-input>
         </el-form-item>
-        <el-form-item label='备注'
-                      :label-width="formLabelWidth">
+        <el-form-item label='备注'>
           <el-input type='textarea'
                     :rows='3'
                     placeholder='请输入备注'
-                    v-model='row.note'></el-input>
+                    v-model='row.note'>
+          </el-input>
         </el-form-item>
   
       </el-form>
       <div slot='footer'
            class="dialog-footer">
         <el-button @click="cancelDialog()">取 消</el-button>
-        <el-button v-if="opt==='add'"
-                   type="success"
+        <el-button type="success"
                    :loading='isSubmiting'
                    @click="submitAdd(row)">
           添 加
         </el-button>
-        <el-button v-if="opt==='edit'"
-                   type='primary'
-                   :loading='isSubmiting'
-                   @click='submitEdit(row)'>
-          更 新
-        </el-button>
+  
       </div>
     </el-dialog>
   
@@ -137,12 +153,8 @@
 
 <script>
 import { get, add, edit, del } from './api'
-import { getPage } from '@/plugins/utils'
-import Search from '@/components/Search.vue'
+
 export default {
-  components: {
-    Search
-  },
   data () {
     return {
       // table
@@ -156,17 +168,16 @@ export default {
         note: ''
       },
       // edit && del
-      editIdx: 0,
       delIdx: 0,
       isFetching: false,
       isDeleting: false,
 
-      map: {},
+      map: {
+
+      },
       // dialog
       isSubmiting: false,
       showDialog: false,
-      formLabelWidth: '80px',
-      opt: 'add',
 
       // pagination
       currentPage: 1,
@@ -182,10 +193,11 @@ export default {
   },
   computed: {
     sliceTableData () {
-      return getPage(this.filterTableData, this.pageSize, this.currentPage)
+      return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
   },
   methods: {
+    edit,
     initData () {
       this.isFetching = true
       Promise.all([get()])
@@ -198,14 +210,7 @@ export default {
     },
     // table methods
     handleAdd () {
-      this.opt = 'add'
-      this.row = Object.assign({}, this.initialRow)
-      this.showDialog = true
-    },
-    handleEdit (index, row) {
-      this.opt = 'edit'
-      this.editIdx = this.tableData.indexOf(row)
-      this.row = Object.assign({}, row)
+      this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
     },
     handleDelete (index, row) {
@@ -227,9 +232,6 @@ export default {
     handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
     // dialog methods
     submitAdd (data) {
       this.isSubmiting = true
@@ -237,16 +239,9 @@ export default {
         this.$message.success("添加成功")
         this.showDialog = false
         this.tableData.push(data)
-      }).finally(() => {
-        this.isSubmiting = false
-      })
-    },
-    submitEdit (data) {
-      this.isSubmiting = true
-      edit(data).then(({ data }) => {
-        this.$message.success('更新成功')
-        this.showDialog = false
-        this.tableData.splice(this.editIdx, 1, data)
+        this.$nextTick(() => {
+          this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
+        })
       }).finally(() => {
         this.isSubmiting = false
       })

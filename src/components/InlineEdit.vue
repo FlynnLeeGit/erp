@@ -2,36 +2,40 @@
   <div class="InlineEdit"
        @click='edit(data)'
        v-loading='isSubmiting'>
-    <!--数字类型绑定-->
-    <input class="InlineEdit__input"
-           v-if="editMode && isNumber"
-           v-focus
-           @blur='submit(editRow)'
-           @keyup.enter='submit(editRow)'
-           type='number'
-           v-model.number='editRow[prop]'>
-    </input>
-    <!--文本类型绑定-->
-    <input class="InlineEdit__input"
-           v-else-if='editMode && isText'
-           v-focus
-           @blur='submit(editRow)'
-           @keyup.enter='submit(editRow)'
-           type='text'
-           v-model='editRow[prop]'>
-    </input>
+    <template v-if='editMode'>
   
-    <select v-else-if='editMode && isSelect'
-            v-focus
-            class="InlineEdit__input"
-            @keyup.enter='submit(editRow)'
-            @blur='submit(editRow)'
-            v-model='editRow[prop]'>
-      <slot name='options'>
+      <!--数字类型绑定-->
+      <input class="InlineEdit__input"
+             v-if="isNumber"
+             v-focus
+             placeholder="请输入"
+             @blur='submit(editRow)'
+             @keyup.enter='submit(editRow)'
+             type='number'
+             v-model.number='editRow[prop]'>
+      </input>
   
-      </slot>
-    </select>
+      <!--文本类型绑定-->
+      <input class="InlineEdit__input"
+             v-if='isText'
+             placeholder="请输入"
+             v-focus
+             @blur='submit(editRow)'
+             @keyup.enter='submit(editRow)'
+             type='text'
+             v-model='editRow[prop]'>
+      </input>
   
+      <!--select类型绑定-->
+      <select v-if='isSelect'
+              v-focus
+              class="InlineEdit__input"
+              @keyup.enter='submit(editRow)'
+              @blur='submit(editRow)'
+              v-model='editRow[prop]'>
+        <slot name='options'></slot>
+      </select>
+    </template>
     <div v-else
          class="_pointer">
       <slot>{{data[prop]}}</slot>
@@ -39,8 +43,9 @@
   </div>
 </template>
 <script>
-import { deepCopy, replaceObjectFields } from '@/plugins/utils'
+
 export default {
+  name: 'InlineEdit',
   props: {
     // 行记录对象
     data: {
@@ -68,7 +73,7 @@ export default {
     // 是否直接更新原始data数据
     directModify: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data () {
@@ -92,7 +97,7 @@ export default {
   methods: {
     edit (data) {
       this.editMode = true
-      this.editRow = deepCopy(this.data)
+      this.editRow = this.$utils.deepCopy(this.data)
     },
     submit (editRow) {
       this.editMode = false
@@ -102,9 +107,9 @@ export default {
         this.fn(editRow)
           .then(({ data }) => {
             if (this.directModify) {
-              replaceObjectFields(this.data, data)
+              this.$utils.replaceObjectFields(this.data, data)
             }
-            this.$emit('success', data)
+            this.$emit('updated', data)
           })
           .finally(() => {
             this.isSubmiting = false

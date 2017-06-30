@@ -1,13 +1,12 @@
 <template>
   <el-dialog title='添加辅材计量'
-             :visible.sync='visible'>
+             :visible.sync='visible'
+             label-width="80px">
     <el-form :model='row'>
-      <el-form-item label='模版ID'
-                    :label-width="formLabelWidth">
+      <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
-      <el-form-item label='辅材名称'
-                    :label-width="formLabelWidth">
+      <el-form-item label='辅材名称'>
         <el-select v-model='row.quotaAuxiliaryMaterial.id'>
           <el-option :key='mat.id'
                      :label='mat.name'
@@ -17,8 +16,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label='辅材计量'
-                    :label-width="formLabelWidth">
+      <el-form-item label='辅材计量'>
         <el-input-number v-model='row.counter'
                          :step='0.1'>
         </el-input-number>
@@ -37,7 +35,7 @@
 </template>
 <script>
 import { addMat } from './api'
-import { deepCopy, valueInArray } from '@/plugins/utils'
+
 export default {
   props: {
     map: {
@@ -57,7 +55,6 @@ export default {
           id: ''
         }
       },
-      formLabelWidth: '80px',
       isSubmiting: false,
       qRow: {},
     }
@@ -65,10 +62,10 @@ export default {
   methods: {
     // 还原row为初始空内容状态
     restoreRow (qid) {
-      this.row = deepCopy(this.initialRow)
+      this.row = this.$utils.deepCopy(this.initialRow)
     },
     optionDisabled (qRow, mat) {
-      return qRow.quotaAuxiliaryCounters && valueInArray(qRow.quotaAuxiliaryCounters, mat.id, 'quotaAuxiliaryMaterial.id')
+      return qRow.quotaAuxiliaryCounters && this.$utils.valueInArray(qRow.quotaAuxiliaryCounters, mat.id, 'quotaAuxiliaryMaterial.id')
     },
     submit (data) {
       this.isSubmiting = true

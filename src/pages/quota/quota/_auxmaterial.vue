@@ -16,7 +16,8 @@
         <inline-edit :data='scope.row'
                      prop='counter'
                      :fn='editFn'
-                     @success='update'>
+                     :direct-modify='false'
+                     @updated='update'>
         </inline-edit>
       </template>
     </el-table-column>
