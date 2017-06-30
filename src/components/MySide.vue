@@ -26,6 +26,10 @@
         <el-menu-item index="/purchase/supply">供应商管理</el-menu-item>
         <el-menu-item index="/purchase/material">辅材管理</el-menu-item>
       </el-menu-item-group>
+      <el-menu-item-group title="账号管理">
+        <el-menu-item index="/account/users">用户列表</el-menu-item>
+        <el-menu-item index="/account/password">密码修改</el-menu-item>
+      </el-menu-item-group>
     </template>
   </el-menu>
 </template>

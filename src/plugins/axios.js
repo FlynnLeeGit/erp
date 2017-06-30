@@ -1,5 +1,6 @@
 import axios from 'axios'
 import configApi from './configApi'
+import store from '../store'
 
 Promise.prototype.finally = function (fn) {
   function finFn () {
@@ -57,5 +58,8 @@ export default {
   },
   post: axios.post,
   put: axios.put,
-  delete: axios.delete
+  delete: axios.delete,
+  setHeader (hName, hContent) {
+    axios.defaults.headers.common[hName] = hContent
+  }
 }

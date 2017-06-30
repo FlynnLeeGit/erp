@@ -51,21 +51,34 @@ export default {
         if (valid) {
           this.isSubmiting = true
           this['login'](this.loginForm)
-            .then(() => {
+            .then(user => {
               this.$message.success('登陆成功！')
               this.isSubmiting = false
-              const redirectUrl = this.$route.query.redirect
-              if (redirectUrl) {
-                this.$router.push(redirectUrl)
-              } else {
-                this.$router.push('/')
-              }
+              this.redirectStragety(user)
             })
             .catch(() => {
               this.isSubmiting = false
             })
         }
       })
+    },
+    redirectStragety (user) {
+      // 需要重置密码
+      if (user.resetPassword) {
+        this.$notify({
+          type: 'info',
+          message: '您是首次登陆,请修改初始密码'
+        })
+        this.$router.push('/account/password')
+        return
+      }
+
+      const redirectUrl = this.$route.query.redirect
+      if (redirectUrl) {
+        this.$router.push(redirectUrl)
+      } else {
+        this.$router.push('/')
+      }
     },
     resetForm (form) {
       this.$refs[form].resetFields()

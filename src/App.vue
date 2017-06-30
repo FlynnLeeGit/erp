@@ -13,7 +13,7 @@
                   :span='6'
                   class="_tr">
             <span>你好,{{user.name}}</span>
-            <el-button @click='logout'
+            <el-button @click='logout($route.fullPath)'
                        type='primary'>登出</el-button>
           </el-col>
         </el-row>
