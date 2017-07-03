@@ -28,6 +28,7 @@
   
       <textarea class="InlineEdit__input"
                 v-if='isTextarea'
+                @click.stop='noOp'
                 placeholder="请输入"
                 v-focus
                 :rows='rows'
@@ -35,8 +36,9 @@
                 v-model='editRow[prop]'>
       </textarea>
   
-      <!--select类型绑定-->
+      <!--select类型绑定 加上@click.stop 防止时间冒泡-->
       <select v-if='isSelect'
+              @click.stop='noOp'
               v-focus
               class="InlineEdit__input"
               @keyup.enter='submit(editRow)'
@@ -111,7 +113,11 @@ export default {
     }
   },
   methods: {
+    noOp () {
+
+    },
     edit (data) {
+      console.log('edit')
       this.editMode = true
       this.editRow = this.$utils.deepCopy(this.data)
       if (this.isTextarea) {
