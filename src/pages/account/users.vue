@@ -261,7 +261,7 @@ export default {
     submitAdd (data) {
       this.isSubmiting = true
       add(data).then(({ data }) => {
-        this.$message.success("添加成功")
+        this.$message.success("添加用户成功")
         this.showDialog = false
         this.tableData.push(data)
         this.$nextTick(() => {

@@ -8,7 +8,7 @@ const state = {
 const mutations = {
   SET_USER (state, user) {
     state.user = user
-    const inArr = (str, arr) => arr.indexOf(str)
+    const inArr = (str, arr) => arr.indexOf(str) > -1
     state.user.pass = {
       quota: inArr('ROLE_QUOTA', user.roles),
       purchase: inArr('ROLE_PURCHASE', user.roles),
