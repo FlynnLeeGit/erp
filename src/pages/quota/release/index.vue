@@ -190,7 +190,7 @@ export default {
       prevTableData: [],
       prevDesc: '',
 
-      nextVersion: '',
+      nextVersion: 'latest',
       nextDesc: '',
       nextTableData: [],
 

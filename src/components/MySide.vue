@@ -14,6 +14,10 @@
         <el-menu-item index="/purchase/supply">供应商管理</el-menu-item>
         <el-menu-item index="/purchase/material">辅材管理</el-menu-item>
       </el-menu-item-group>
+      <el-menu-item-group title="项目管理"
+                          v-if='user.pass.project'>
+        <el-menu-item index="/project/list">list</el-menu-item>
+      </el-menu-item-group>
       <el-menu-item-group title="账号管理"
                           v-if='user.pass.account'>
         <el-menu-item index="/account/users">用户列表</el-menu-item>

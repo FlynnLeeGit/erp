@@ -19,6 +19,7 @@ import account from '@/pages/account/index.vue'
 import accoutUsers from '@/pages/account/users.vue'
 import accountPassword from '@/pages/account/password.vue'
 
+import project from '@/pages/project/index.vue'
 
 Vue.use(Router)
 
@@ -86,12 +87,25 @@ const accountRoutes = {
   ]
 }
 
+const projectRoutes = {
+  path: 'project',
+  component: project,
+  name: '项目管理'
+  // children:[
+  //   {
+  //     path:'',
+  //     name:'',
+  //     component:null
+  //   }
+  // ]
+}
+
 const routes = [
   {
     path: '/',
     name: '首页',
     component: index,
-    children: [quotaRoutes, purchaseRoutes, accountRoutes]
+    children: [quotaRoutes, purchaseRoutes, accountRoutes, projectRoutes]
   },
   {
     path: '/login',
