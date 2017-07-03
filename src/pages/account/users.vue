@@ -51,16 +51,6 @@
                        width="100">
       </el-table-column>
   
-      <el-table-column label="权限角色"
-                       width="100">
-        <template scope='scope'>
-          <el-tag v-for='(r,rIdx) in map.department[scope.row.departmentId].permissions'
-                  :key='rIdx'>
-            <span v-if="r==='ROLE_USER'">用户</span>
-            <span v-if="r==='ROLE_ADMIN'">管理员</span>
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="性别"
                        class-name="_text"
                        width="100">

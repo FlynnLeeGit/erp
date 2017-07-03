@@ -8,6 +8,13 @@ const state = {
 const mutations = {
   SET_USER (state, user) {
     state.user = user
+    const inArr = (str, arr) => arr.indexOf(str)
+    state.user.pass = {
+      quota: inArr('ROLE_QUOTA', user.roles),
+      purchase: inArr('ROLE_PURCHASE', user.roles),
+      account: inArr('ROLE_USER', user.roles),
+      project: inArr('ROLE_PROJECT', user.roles)
+    }
     axios.setHeader('X-SFDD-AUTH', user.token)
   },
   LOGOUT (state) {
