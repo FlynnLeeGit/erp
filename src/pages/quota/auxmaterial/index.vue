@@ -140,7 +140,7 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
+        <el-button @click="showDialog = false">取 消</el-button>
         <el-button type="success"
                    :loading='isSubmiting'
                    @click="submitAdd(row)">
