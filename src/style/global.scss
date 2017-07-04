@@ -8,6 +8,14 @@
   .el-table {
     font-size: 12px;
 
+    .danger-row {
+      background-color: rgba(255, 73, 73, .1);
+    }
+
+    .success-row {
+      background-color: rgba(18, 206, 102, .1);
+    }
+
     .cell {
       padding-left: 3px;
       padding-right: 3px;
@@ -18,33 +26,12 @@
       height: 30px;
     }
 
-    .danger-row {
-      background-color: rgba(255, 73, 73, .1);
-    }
-
-    .success-row {
-      background-color: rgba(18, 206, 102, .1);
-    }
-
     &__expand-icon {
       height: 30px;
     }
 
     &__expanded-cell {
-      padding: 10px 0 10px 160px;
-    }
-  }
-
-  .popover {
-    &__content {
-      width: 300px;
-    }
-
-    &__reference {
-      width: 90%;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      padding: 10px 80px;
     }
   }
 
