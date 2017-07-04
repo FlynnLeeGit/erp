@@ -169,6 +169,7 @@
                            v-model='row.packPrice'>
           </el-input-number>
           <span class="_ml2">元</span>
+          <span class="_ml1">[步进100]</span>
         </el-form-item>
   
         <el-form-item label='辅材规格'>
@@ -187,9 +188,11 @@
   
         <el-form-item label='规格数量'>
           <el-input-number placeholder='请输入规格数量'
+                           :min='0'
                            :step='10'
                            v-model='row.specAmount'>
           </el-input-number>
+          <span class="_ml1">[步进10]</span>
         </el-form-item>
   
         <el-form-item label='规格单价'>

@@ -98,6 +98,7 @@
                            :min='0'
                            :step='10'>
           </el-input-number>
+           <span class="_ml1">[步进10]</span>
           <span class="_ml2">元</span>
         </el-form-item>
   

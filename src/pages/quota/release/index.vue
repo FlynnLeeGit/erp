@@ -80,8 +80,7 @@
       </el-table-column>
   
       <el-table-column label="大类"
-                       show-overflow-tooltip
-                       width='100'>
+                       show-overflow-tooltip>
         <template scope='scope'>
           <diff-cell :data='scope.row'
                      prop='type'>
@@ -89,8 +88,7 @@
         </template>
       </el-table-column>
       <el-table-column label="小类"
-                       show-overflow-tooltip
-                       width='100'>
+                       show-overflow-tooltip>
         <template scope='scope'>
           <diff-cell :data='scope.row'
                      prop='secType'>
@@ -123,28 +121,32 @@
           </diff-cell>
         </template>
       </el-table-column>
-      <el-table-column label="损耗率">
+      <el-table-column label="损耗率"
+                       width="100">
         <template scope='scope'>
           <diff-cell :data='scope.row'
                      prop='wastage'>
           </diff-cell>
         </template>
       </el-table-column>
-      <el-table-column label='人工价'>
+      <el-table-column label='人工价'
+                       width='100'>
         <template scope='scope'>
           <diff-cell :data='scope.row'
                      prop='artificialUnitPrice'>
           </diff-cell>
         </template>
       </el-table-column>
-      <el-table-column label='辅材价'>
+      <el-table-column label='辅材价'
+                       width='100'>
         <template scope='scope'>
           <diff-cell :data='scope.row'
                      prop='auxiliaryMaterialUnitPrice'>
           </diff-cell>
         </template>
       </el-table-column>
-      <el-table-column label='主材价'>
+      <el-table-column label='主材价'
+                       width='100'>
         <template scope='scope'>
           <diff-cell :data='scope.row'
                      prop='principalMaterialUnitPrice'>
@@ -152,6 +154,7 @@
         </template>
       </el-table-column>
       <el-table-column label='合计价'
+                       width='100'
                        prop='totalUnitPrice'>
         <template scope='scope'>
           <diff-cell :data='scope.row'
@@ -242,6 +245,10 @@ export default {
         .then(([one, two]) => {
           this.prevTableData = one.data
           this.nextTableData = two.data
+          this.$notify({
+            type: 'success',
+            message: '比较完成'
+          })
         })
         .finally(() => {
           this.isFetching = false

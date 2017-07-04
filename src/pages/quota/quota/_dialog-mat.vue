@@ -22,6 +22,7 @@
                          :min='0'
                          :step='0.1'>
         </el-input-number>
+        <span class="_ml1">[步进0.1]</span>
       </el-form-item>
     </el-form>
     <div slot='footer'
