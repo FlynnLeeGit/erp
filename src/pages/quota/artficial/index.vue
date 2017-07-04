@@ -94,6 +94,7 @@
         </el-form-item>
         <el-form-item label='价格'>
           <el-input-number v-model.number='row.price'
+                           :debounce='800'
                            :min='0'
                            :step='10'>
           </el-input-number>

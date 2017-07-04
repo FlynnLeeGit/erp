@@ -2,14 +2,15 @@ import axios from '@/plugins/axios'
 import router from '@/router'
 
 const state = {
-  user: null
+  user: null,
+  pass: {}
 }
 
 const mutations = {
   SET_USER (state, user) {
     state.user = user
     const inArr = (str, arr) => arr.indexOf(str) > -1
-    state.user.pass = {
+    state.pass = {
       quota: inArr('ROLE_QUOTA', user.roles),
       purchase: inArr('ROLE_PURCHASE', user.roles),
       account: inArr('ROLE_USER', user.roles),
@@ -41,7 +42,8 @@ const actions = {
   }
 }
 const getters = {
-  user: state => state.user
+  user: state => state.user,
+  userPass: state => state.pass
 }
 
 export default {

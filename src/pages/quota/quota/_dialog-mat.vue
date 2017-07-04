@@ -18,6 +18,8 @@
       </el-form-item>
       <el-form-item label='辅材计量'>
         <el-input-number v-model='row.counter'
+                         :debounce='800'
+                         :min='0'
                          :step='0.1'>
         </el-input-number>
       </el-form-item>

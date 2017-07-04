@@ -17,7 +17,9 @@
         </el-select>
       </el-form-item>
       <el-form-item label='人工计量'>
-        <el-input-number v-model='row.counter'
+        <el-input-number :debounce='800'
+                         :min='0'
+                         v-model='row.counter'
                          :step='0.1'>
         </el-input-number>
       </el-form-item>
