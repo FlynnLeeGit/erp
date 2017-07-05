@@ -2,6 +2,8 @@ const path = require('path')
 const webpack = require('webpack')
 const API_SERVER = require('./config').API_SERVER
 const HtmlWeppackPlugin = require('html-webpack-plugin')
+const AutoWebpackPlugin = require('autodll-webpack-plugin')
+const pkg = require('./package.json')
 
 console.log('API_SERVER', API_SERVER)
 module.exports = {
@@ -61,13 +63,22 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map',
+  devtool: '#cheap-module-eval-source-map',
   plugins: [
     new HtmlWeppackPlugin({
       inject: true,
       template: 'template/index.html',
       hash: true
-    })
+    }),
+    // new AutoWebpackPlugin({
+    //   inject: true,
+    //   context: __dirname,
+    //   filename: '[name]_[hash:5].js',
+    //   path: '/',
+    //   entry: {
+    //     vender: Object.keys(pkg.dependencies)
+    //   }
+    // })
   ]
 }
 

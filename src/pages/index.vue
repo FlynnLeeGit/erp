@@ -8,8 +8,10 @@
     </el-col>
     <el-col :span='sideHide?24:22'
             class="app-main">
-      <h4 class="app-route-name">{{$route.name}}</h4>
-      <router-view>
+  
+      <h3>{{$route.meta.title}}</h3>
+  
+      <router-view class="_mt3">
       </router-view>
     </el-col>
   </el-row>

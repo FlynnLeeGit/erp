@@ -20,32 +20,52 @@ import accoutUsers from '@/pages/account/users.vue'
 import accountPassword from '@/pages/account/password.vue'
 
 import project from '@/pages/project/index.vue'
+import projectList from '@/pages/project/list/index.vue'
+import projectDetail from '@/pages/project/detail/index.vue'
+import projectDetailSpace from '@/pages/project/detail/space/index.vue'
+import projectDetailBudget from '@/pages/project/detail/budget/index.vue'
 
 Vue.use(Router)
 
 const quotaRoutes = {
   path: 'quota',
-  name: '定额',
+  name: 'quota',
+  meta: {
+    title: '定额'
+  },
   component: quota,
+
   children: [
     {
       path: 'artficial',
-      name: '人工管理',
+      name: 'quota.artficial',
+      meta: {
+        title: '人工管理'
+      },
       component: artficial
     },
     {
       path: 'auxmaterial',
-      name: '辅材规格',
+      name: 'quota.auxmaterial',
+      meta: {
+        title: '辅材规格'
+      },
       component: auxmaterial
     },
     {
       path: 'quota',
-      name: '定额模版',
+      name: 'quota.quota',
+      meta: {
+        title: '定额模版'
+      },
       component: quotaTpl
     },
     {
       path: 'release',
-      name: '版本管理',
+      name: 'quota.release',
+      meta: {
+        title: '版本管理'
+      },
       component: release
     }
   ]
@@ -54,34 +74,52 @@ const quotaRoutes = {
 const purchaseRoutes = {
   path: 'purchase',
   component: purchase,
-  name: '采购管理',
+  name: 'purchase',
+  meta: {
+    title: '采购管理'
+  },
   children: [
     {
       path: 'supply',
-      component: supply,
-      name: '供应商管理'
+      name: 'purchase.supply',
+      meta: {
+        title: '供应商管理'
+      },
+      component: supply
     },
     {
       path: 'material',
-      component: material,
-      name: '材料管理'
+      name: 'purchase.material',
+      meta: {
+        title: '材料管理'
+      },
+      component: material
     }
   ]
 }
 
 const accountRoutes = {
   path: 'account',
+  name: 'account',
+  meta: {
+    title: '账号管理'
+  },
   component: account,
-  name: '账号管理',
   children: [
     {
       path: 'users',
-      name: '用户列表',
+      name: 'account.users',
+      meta: {
+        title: '用户列表'
+      },
       component: accoutUsers
     },
     {
       path: 'password',
-      name: '密码修改',
+      name: 'account.password',
+      meta: {
+        title: '密码修改'
+      },
       component: accountPassword
     }
   ]
@@ -89,22 +127,57 @@ const accountRoutes = {
 
 const projectRoutes = {
   path: 'project',
+  name: '项目管理',
+  meta: {
+    title: '项目'
+  },
   component: project,
-  name: '项目管理'
-  // children:[
-  //   {
-  //     path:'',
-  //     name:'',
-  //     component:null
-  //   }
-  // ]
+  children: [
+    {
+      path: 'list',
+      name: 'project.list',
+      meta: {
+        title: '列表'
+      },
+      component: projectList
+    },
+    {
+      path: 'detail/:pid',
+      name: 'project.detail',
+      meta: {
+        title: '详情'
+      },
+      component: projectDetail,
+      children: [
+        {
+          path: 'space',
+          name: 'project.detail.space',
+          meta: {
+            title: '空间管理'
+          },
+          component: projectDetailSpace
+        },
+        {
+          path: 'budget',
+          name: 'project.detail.budget',
+          meta: {
+            title: '预算管理'
+          },
+          component: projectDetailBudget
+        }
+      ]
+    }
+  ]
 }
 
 const routes = [
   {
     path: '/',
-    name: '首页',
+    name: 'index',
     component: index,
+    meta: {
+      title: '首页'
+    },
     children: [quotaRoutes, purchaseRoutes, accountRoutes, projectRoutes]
   },
   {

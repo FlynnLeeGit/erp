@@ -95,3 +95,5 @@ export const valueInArray = (arr, value, field = 'id') => {
 export const sortByChs = (sortKey, a, b) => {
   return a[sortKey].localeCompare(b[sortKey]) > 0
 }
+
+export const toLocaleString = time => new Date(time * 1000).toLocaleDateString()
