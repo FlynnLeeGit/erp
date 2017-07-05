@@ -1,5 +1,6 @@
 import axios from '@/plugins/axios'
 import router from '@/router'
+import { Message } from 'element-ui'
 
 const state = {
   user: {},
@@ -9,7 +10,11 @@ const state = {
 const mutations = {
   SET_USER (state, user) {
     state.user = user
+    if (!user.roles) {
+      Message.error('不存在用户权限列表')
+    }
     const inArr = (str, arr) => arr.indexOf(str) > -1
+
     state.pass = {
       quota: inArr('ROLE_QUOTA', user.roles),
       purchase: inArr('ROLE_PURCHASE', user.roles),
