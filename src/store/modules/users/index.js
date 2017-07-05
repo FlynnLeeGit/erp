@@ -2,7 +2,7 @@ import axios from '@/plugins/axios'
 import router from '@/router'
 
 const state = {
-  user: null,
+  user: {},
   pass: {}
 }
 

@@ -20,6 +20,7 @@ import accoutUsers from '@/pages/account/users.vue'
 import accountPassword from '@/pages/account/password.vue'
 
 import project from '@/pages/project/index.vue'
+import projectCollect from '@/pages/project/collect/index.vue'
 import projectList from '@/pages/project/list/index.vue'
 import projectDetail from '@/pages/project/detail/index.vue'
 import projectDetailSpace from '@/pages/project/detail/space/index.vue'
@@ -127,7 +128,7 @@ const accountRoutes = {
 
 const projectRoutes = {
   path: 'project',
-  name: '项目管理',
+  name: 'project',
   meta: {
     title: '项目'
   },
@@ -140,6 +141,14 @@ const projectRoutes = {
         title: '列表'
       },
       component: projectList
+    },
+    {
+      path: 'collect',
+      name: 'project.collect',
+      meta: {
+        title: '常用定额管理'
+      },
+      component: projectCollect
     },
     {
       path: 'detail/:pid',
@@ -207,7 +216,7 @@ router.beforeEach((to, from, next) => {
     if (lsUser) {
       store.commit('SET_USER', lsUser)
     }
-    if (!store.state.users.user) {
+    if (!store.state.users.user.id) {
       next({
         path: '/login',
         query: {

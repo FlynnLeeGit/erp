@@ -11,7 +11,7 @@
             :map="searchMap"
             :filter-table-data.sync='filterTableData'>
     </search>
-    </el-input>
+  
     <el-table v-loading='isFetching'
               :data="sliceTableData"
               border
