@@ -16,6 +16,8 @@ Vue.component(InlineEdit.name, InlineEdit)
 Vue.component(Search.name, Search)
 Vue.component(Card.name, Card)
 
+Vue.config.devtools = true
+
 new Vue({
   el: '#app',
   router,
