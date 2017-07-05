@@ -5,50 +5,53 @@
                  @click='handleAdd'>
         添加项目
       </el-button>
+  
     </el-row>
   
-    <div class="_mt3"
-         v-for='(t,tKey) in map.archiveType'
-         :key='tKey'>
-      <h5>
-        {{t}}的项目
-        <span class="_text">[{{filterTableData[tKey].length}}]</span>
-      </h5>
-      <el-row :gutter="10"
-              class="_mt1">
-        <el-col :span='6'
-                v-for='project in filterTableData[tKey]'
-                :key='project.id'>
-          <card :title='project.address'
-                :type='archiveThemeMap[tKey]'>
-            <el-button @click='goDetail(project.id)'
-                       type='info'
-                       slot='header-slot'
-                       class="_fr"
-                       size='small'>
-              进入项目
-            </el-button>
-            
-            <span>{{project.username}} {{map.gender[project.gender]}}</span>
-            <p class='_mt1 _text'>
-              {{project.mobile}}
-              <span class="_fr">
-                <el-button @click.stop='handleEdit(project)'
-                           type='text'
-                           class="_p0">
-                  编辑
-                </el-button>
-                <el-button @click.stop='handleDelete(project)'
-                           :loading='isDeleting && delId === project.id'
-                           type='text'
-                           class="_p0 _text-danger">
-                  删除
-                </el-button>
-              </span>
-            </p>
-          </card>
-        </el-col>
-      </el-row>
+    <div v-loading='isFetching'>
+      <div class="_mt3"
+           v-for='(t,tKey) in map.archiveType'
+           :key='tKey'>
+        <h5>
+          {{t}}的项目
+          <span class="_text">[{{filterTableData[tKey].length}}]</span>
+        </h5>
+        <el-row :gutter="10"
+                class="_mt1">
+          <el-col :span='6'
+                  v-for='project in filterTableData[tKey]'
+                  :key='project.id'>
+            <card :title='project.address'
+                  :type='archiveThemeMap[tKey]'>
+              <el-button @click='goDetail(project.id)'
+                         type='info'
+                         slot='header-slot'
+                         class="_fr"
+                         size='small'>
+                进入项目
+              </el-button>
+  
+              <span>{{project.username}} {{map.gender[project.gender]}}</span>
+              <p class='_mt1 _text'>
+                {{project.mobile}}
+                <span class="_fr">
+                  <el-button @click.stop='handleEdit(project)'
+                             type='text'
+                             class="_p0">
+                    编辑
+                  </el-button>
+                  <el-button @click.stop='handleDelete(project)'
+                             :loading='isDeleting && delId === project.id'
+                             type='text'
+                             class="_p0 _text-danger">
+                    删除
+                  </el-button>
+                </span>
+              </p>
+            </card>
+          </el-col>
+        </el-row>
+      </div>
     </div>
   
     <!--dialog-->

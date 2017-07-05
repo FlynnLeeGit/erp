@@ -2,13 +2,15 @@
   <div>
     <el-row>
       <el-button type='success'
+                 size='small'
                  @click='handleAdd'>
         添加空间
       </el-button>
     </el-row>
   
     <el-row :gutter="10"
-            class="_mt1">
+            class="_mt1"
+            v-loading='isFetching'>
       <el-col :span='6'
               v-for='(s,index) in tableData'
               :key='s.id'>

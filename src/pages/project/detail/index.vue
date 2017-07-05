@@ -5,7 +5,8 @@
                @click="$router.push({name:'project.list'})">
       返回
     </el-button>
-    <el-tabs v-model="activeName"
+    <el-tabs type='card'
+             v-model="activeName"
              @tab-click="handleClick">
       <el-tab-pane label="空间管理"
                    name="project.detail.space">
