@@ -96,20 +96,39 @@
                        width="100">
       </el-table-column>
   
+      <el-table-column label="型号"
+                       prop='model'
+                       width="100">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='model'
+                       :fn='edit'
+                       type='text'>
+          </inline-edit>
+        </template>
+      </el-table-column>
+  
       <el-table-column label="启用"
-                       sortable
                        class-name="_text"
                        width="60">
         <template scope='scope'>
-  
-          <el-tag type='primary'
-                  v-if='scope.row.isEnable'>
-            启用
-          </el-tag>
-          <el-tag type='gray'
-                  v-else>
-            禁用
-          </el-tag>
+          <inline-edit type='select'
+                       :data='scope.row'
+                       :fn='edit'
+                       prop='isEnable'>
+            <template slot='options'>
+              <option :value="false">禁用</option>
+              <option :value="true">启用</option>
+            </template>
+            <el-tag type='primary'
+                    v-if='scope.row.isEnable'>
+              启用
+            </el-tag>
+            <el-tag type='gray'
+                    v-else>
+              禁用
+            </el-tag>
+          </inline-edit>
   
         </template>
       </el-table-column>
@@ -200,6 +219,12 @@
           <span class="_ml2">元</span>
         </el-form-item>
   
+        <el-form-item label='辅材型号'>
+          <el-input placeholder='请输入辅材型号'
+                    v-model='row.model'>
+          </el-input>
+        </el-form-item>
+  
         <el-form-item label='启用?'>
           <el-switch v-model="row.isEnable"
                      on-text="启用"
@@ -243,6 +268,7 @@ export default {
         specAmount: 10,
         specPrice: 0,
         brand: '',
+        model: '',
 
         isEnable: true
       },

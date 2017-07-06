@@ -70,12 +70,11 @@
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-  
           <el-button size="mini"
                      :loading='isDeleting && scope.row.id === delId'
                      type="warning"
                      @click="handleDelete(scope.$index, scope.row)">
-            禁用</el-button>
+            禁用该用户</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -240,7 +239,7 @@ export default {
     },
     handleDelete (index, row) {
       this.delId = row.id
-      this.$confirm('确认禁用？')
+      this.$confirm('确认禁用？禁用后该用户将无法登陆！')
         .then(() => {
           this.isDeleting = true
           return del(row.id)

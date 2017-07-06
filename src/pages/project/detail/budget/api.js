@@ -6,3 +6,4 @@ export const add = (pid, data) =>
 export const edit = data => axios.put('/_api/project/project/budget', data)
 export const del = (pid, bid) =>
   axios.delete(`/_api/project/projects/${pid}/spaces/${bid}`)
+export { get as getCollects } from '../../collect/api'

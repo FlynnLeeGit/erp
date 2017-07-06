@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-row>
-      <search class="_fr"
-              v-model='searchField'
+    <el-alert title='将常用的定额打上标签，方便您日后预算制作时的选取'></el-alert>
+    <el-row class="_mt1">
+      <search v-model='searchField'
               :fields='searchFields'
               :table-data='tableData'
               :filter-table-data.sync='filterTableData'>
@@ -13,17 +13,37 @@
               :row-class-name='rowCls'
               v-loading='isFetching'
               style="width:100%"
-              :data='mergeTable'>
-      <el-table-column label='tag'
+              :data='sliceTableData'>
+      <el-table-column label='标签'
                        align='center'
-                       width='60'>
+                       width='80'>
         <template scope='scope'>
-          <el-tag type='info'>
-            标签
+          <el-tag type='primary'
+                  v-if='scope.row.tag'>
+            {{scope.row.tag}}
           </el-tag>
         </template>
       </el-table-column>
-  
+      <el-table-column label='操作'
+                       align="center"
+                       width='80'>
+        <template scope='scope'>
+          <el-button v-if='!scope.row.tag'
+                     size='mini'
+                     @click='handleAdd(scope.row)'
+                     type='success'>
+            <i class="fa fa-plus"></i>
+            列为常用
+          </el-button>
+          <el-button v-else
+                     :loading='isDeleting && delId === scope.row.id'
+                     size='mini'
+                     @click='handleDelete(scope.row)'
+                     type='danger'>
+            <i class="fa fa-close"></i>取消
+          </el-button>
+        </template>
+      </el-table-column>
       <el-table-column label='#'
                        prop='id'
                        width='50'>
@@ -99,24 +119,36 @@
                        prop='content'
                        class-name="_text">
       </el-table-column>
-      <el-table-column label='操作'>
-        <template scope='scope'>
-          <el-button size='mini'
-                     @click='handleAdd'
-                     type='success'>添加常用</el-button>
-        </template>
-      </el-table-column>
   
     </el-table>
-  
+    <!--pagination-->
+    <el-pagination class="_mt2"
+                   :page-sizes='[50,100,200,500]'
+                   :total='filterTableData.length'
+                   :current-page.sync="currentPage"
+                   layout='total,sizes,prev,pager,next,jumper'
+                   :page-size='pageSize'
+                   @size-change='handleSizeChange'>
+    </el-pagination>
     <!--dialog-->
     <el-dialog title='列为常用'
                :visible.sync='showDialog'>
       <el-form :model='row'
+               ref='dialogForm'
+               :rules='formRules'
                label-width='80px'>
-        <el-form-item label='标签'>
-          <el-input placeholder='请输入给予此定额的标签'
-                    v-model='row.name'></el-input>
+        <el-form-item label='标签'
+                      prop='name'>
+          <el-select v-model='row.name'
+                     allow-create
+                     filterable
+                     placeholder="为此定额添加标签">
+            <el-option v-for='tag in tags'
+                       :key='tag'
+                       :value='tag'>
+            </el-option>
+          </el-select>
+          <span class="_ml1">(可从之前的标签中选择或手工输入)</span>
         </el-form-item>
       </el-form>
       <div slot='footer'
@@ -125,7 +157,7 @@
         <el-button type="success"
                    :loading='isSubmiting'
                    @click="submitAdd(row)">
-          添 加
+          确 定
         </el-button>
   
       </div>
@@ -134,7 +166,7 @@
   </div>
 </template>
 <script>
-import { get, edit, del, add, getQuota } from './api'
+import { get, edit, del, add, getQuota, getTags } from './api'
 
 export default {
   data () {
@@ -142,24 +174,31 @@ export default {
       tableData: [],
       collectData: [],
       filterTableData: [],
+      tags: [],
       isFetching: false,
+      row: {},
 
       searchField: '',
-      searchFields: ['id', 'name', 'type', 'stage', 'secType', 'unit', 'workType', 'wastage', 'position', 'content', 'description'],
+      searchFields: ['tag', 'id', 'name', 'type', 'stage', 'secType', 'unit', 'workType', 'wastage', 'position', 'content', 'description'],
 
+      currentPage: 1,
+      pageSize: 50,
 
-      row: {},
-      initialRow: {
-        name: ''
-      },
-
+      editQRow: {},
+      delId: 0,
+      isDeleting: false,
       showDialog: false,
-      isSubmiting: false
+      isSubmiting: false,
+      formRules: {
+        name: [
+          { required: true, message: '标签名称不能为空' }
+        ]
+      }
     }
   },
   computed: {
-    mergeTable () {
-      return this.filterTableData
+    sliceTableData () {
+      return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     }
   },
   created () {
@@ -170,38 +209,86 @@ export default {
       this.isFetching = true
       Promise.all([getQuota(), get()])
         .then(([one, two]) => {
-          this.tableData = one.data
+          this.tableData = this.mergeTable(one.data, two.data)
           this.collectData = two.data
         })
         .finally(() => {
           this.isFetching = false
         })
     },
-    handleAdd () {
-      this.row = this.$utils.deepCopy(this.initialRow)
-      this.showDialog = true
+    // 更新tableData tag字段
+    mergeTable (quotaTable, collectTable) {
+      const collectMap = {}
+      // 以定额id为key的map
+      collectTable.forEach(cItem => {
+        collectMap[cItem.quotaTemplateId] = cItem
+      })
+      quotaTable.forEach(qItem => {
+        qItem.tag = ''
+        qItem.tagId = 0
+        if (collectMap[qItem.id]) {
+          qItem.tag = collectMap[qItem.id].name
+          qItem.tagId = collectMap[qItem.id].id
+        }
+      })
+      return quotaTable
+    },
+    handleAdd (qRow) {
+      getTags().then(({ data }) => {
+        this.tags = data
+        this.editQRow = qRow
+        this.row = {
+          name: '',
+          quotaTemplateId: qRow.id
+        }
+        this.showDialog = true
+      })
+    },
+    handleDelete (qRow) {
+      this.$confirm('确认取消？')
+        .then(() => {
+          this.isDeleting = true
+          this.delId = qRow.id
+          return del(qRow.tagId)
+        })
+        .then(() => {
+          this.$message.success('取消常用成功！')
+          qRow.tag = ''
+          qRow.tagId = 0
+        })
+        .finally(() => {
+          this.isDeleting = false
+        })
     },
     submitAdd (row) {
-      this.isSubmiting = true
-      add(row).then(({ data }) => {
-        this.$message.success('添加常用定额成功！')
-        this.showDialog = false
-        this.collectData.push(data)
-      }).finally(() => {
-
-        this.isSubmiting = false
+      this.$refs.dialogForm.validate(valid => {
+        if (valid) {
+          this.isSubmiting = true
+          add(row).then(({ data }) => {
+            this.$message.success('添加常用定额标注成功！')
+            this.showDialog = false
+            this.editQRow.tag = data.name
+            this.editQRow.tagId = data.id
+          }).finally(() => {
+            this.isSubmiting = false
+          })
+        } else {
+          return false
+        }
       })
+
+
     },
     cancelDialog () {
       this.showDialog = false
     },
     rowCls (row) {
-      // if (row.diff.status === 'delete') {
-      //   return 'danger-row'
-      // }
-      // if (row.diff.status === 'add') {
-      //   return 'success-row'
-      // }
+      if (row.tag) {
+        return 'primary-row'
+      }
+    },
+    handleSizeChange (val) {
+      this.pageSize = val
     }
   }
 }

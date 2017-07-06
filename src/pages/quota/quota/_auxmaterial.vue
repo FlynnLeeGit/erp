@@ -10,7 +10,7 @@
               v-text='artScope.row.id'></span>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 计量(可编辑)'
+    <el-table-column label='计量(可编辑)'
                      width='180'>
       <template scope='scope'>
         <inline-edit :data='scope.row'
@@ -21,17 +21,22 @@
         </inline-edit>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 名称'>
+    <el-table-column label='辅材 品牌'>
+      <template scope='scope'>
+        <span class="_text">{{scope.row.brand}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label='规格 名称'>
       <template scope='scope'>
         <span class="_text">{{scope.row.quotaAuxiliaryMaterial.name}}</span>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 单位'>
+    <el-table-column label='规格 单位'>
       <template scope='scope'>
         <span class="_text">{{scope.row.quotaAuxiliaryMaterial.specUnit}}</span>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 描述'>
+    <el-table-column label='规格 描述'>
       <template scope='scope'>
         <span class="_text">{{scope.row.quotaAuxiliaryMaterial.specDesc}}</span>
       </template>

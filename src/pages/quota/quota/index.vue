@@ -48,18 +48,6 @@
           </template>
         </el-table-column>
   
-        <el-table-column label="品牌"
-                         show-overflow-tooltip
-                         width='50'>
-          <template scope='scope'>
-            <inline-edit :data='scope.row'
-                         type='text'
-                         prop='brand'
-                         :fn='edit'>
-            </inline-edit>
-          </template>
-        </el-table-column>
-  
         <el-table-column label="大类"
                          show-overflow-tooltip
                          width='100'>
@@ -93,6 +81,7 @@
             </inline-edit>
           </template>
         </el-table-column>
+
         <el-table-column label="单位"
                          width='50'>
           <template scope='scope'>
@@ -173,17 +162,17 @@
         </el-table-column>
   
         <el-table-column label="操作"
-                         width="200">
+                         width="220">
           <template scope="scope">
             <el-button size="mini"
                        type='success'
                        @click="addArtficial(scope.$index, scope.row)">
-              人工
+              <i class="el-icon-plus"></i>人工计量
             </el-button>
             <el-button size="mini"
                        type="success"
                        @click="addMaterial(scope.$index, scope.row)">
-              辅材
+              <i class="el-icon-plus"></i>辅材计量
             </el-button>
             <el-button size='mini'
                        type='danger'

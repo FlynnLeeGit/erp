@@ -1,13 +1,5 @@
 <template>
   <div>
-    <el-row>
-      <el-button type='success'
-                 size='small'
-                 @click='handleAdd'>
-        添加空间
-      </el-button>
-    </el-row>
-  
     <el-row :gutter="10"
             class="_mt1"
             v-loading='isFetching'>
@@ -33,6 +25,11 @@
             </span>
           </p>
         </card>
+      </el-col>
+      <el-col :span='6'>
+        <card-plus style="height:105px;"
+                   @click='handleAdd'>
+        </card-plus>
       </el-col>
     </el-row>
   

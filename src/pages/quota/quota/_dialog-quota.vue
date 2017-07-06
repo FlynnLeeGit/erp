@@ -10,11 +10,7 @@
         <el-input placeholder='请输入定额名称'
                   v-model='row.name'></el-input>
       </el-form-item>
-      <el-form-item prop='brand'
-                    label='品牌'>
-        <el-input placeholder='请输入品牌'
-                  v-model='row.brand'></el-input>
-      </el-form-item>
+
       <el-form-item label='分类'
                     prop='type'>
         <el-select v-model='row.type'
@@ -125,7 +121,6 @@ export default {
       row: {},
       initialRow: {
         name: '',
-        brand: '',
         type: '',
         stage: '',
         secType: '',

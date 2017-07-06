@@ -1,13 +1,5 @@
 <template>
   <div>
-    <el-row>
-      <el-button type='success'
-                 @click='handleAdd'>
-        添加项目
-      </el-button>
-  
-    </el-row>
-  
     <div v-loading='isFetching'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'
@@ -23,7 +15,7 @@
                   :key='project.id'>
             <card :title='project.address'
                   :type='archiveThemeMap[tKey]'>
-              <el-button @click='goDetail(project.id)'
+              <el-button @click='goDetail(project)'
                          type='info'
                          slot='header-slot'
                          class="_fr"
@@ -49,6 +41,12 @@
                 </span>
               </p>
             </card>
+          </el-col>
+          <el-col :span='6'
+                  v-if='+tKey===1'>
+            <card-plus @click='handleAdd'>
+  
+            </card-plus>
           </el-col>
         </el-row>
       </div>
@@ -227,11 +225,16 @@ export default {
     cancelDialog () {
       this.showDialog = false
     },
-    goDetail (pid) {
-
-      this.$router.push(
-        `/project/detail/${pid}/space`
-      )
+    goDetail (project) {
+      this.$router.push({
+        name: 'project.detail.space',
+        params: {
+          pid: project.id
+        },
+        query: {
+          name: project.address
+        }
+      })
     }
   }
 }

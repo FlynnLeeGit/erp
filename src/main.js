@@ -9,12 +9,14 @@ import * as utils from './plugins/utils'
 import InlineEdit from '@/components/InlineEdit.vue'
 import Search from '@/components/Search.vue'
 import Card from '@/components/Card.vue'
+import CardPlus from '@/components/CardPlus.vue'
 
 Vue.use(ElementUI)
 Vue.prototype.$utils = utils
 Vue.component(InlineEdit.name, InlineEdit)
 Vue.component(Search.name, Search)
 Vue.component(Card.name, Card)
+Vue.component(CardPlus.name, CardPlus)
 
 Vue.config.devtools = true
 

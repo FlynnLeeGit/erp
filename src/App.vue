@@ -5,7 +5,10 @@
         <el-row>
           <el-col :span='18'>
             <h2>
-              <i class="fa fa-list _pointer" @click='TOGGLE_SIDE_HIDE'></i>
+              <el-tooltip content='切换侧边栏显示'>
+                <i class="fa fa-list _pointer"
+                   @click='TOGGLE_SIDE_HIDE'></i>
+              </el-tooltip>
               中孚空间OA系统
             </h2>
           </el-col>

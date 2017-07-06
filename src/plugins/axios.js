@@ -40,14 +40,14 @@ axios.interceptors.response.use(
 )
 
 export default {
-  get (url, options) {
+  get (url, options, useCache = true) {
     let key = url
 
     if (options) {
       key = JSON.stringify({ ...options, url })
     }
 
-    if (configApi.cached && configApi.cached.has(key)) {
+    if (configApi.cached && configApi.cached.has(key) && useCache) {
       console.log(`使用api缓存${key}`) // eslint-disable-line
       return Promise.resolve(configApi.cached.get(key))
     }

@@ -24,6 +24,9 @@ export const editMat = (qid, data) =>
 export const delMat = (qid, auxid) =>
   axios.delete(`/_api/quota/quotas/${qid}/auxiliaries/${auxid}`)
 
+export const getBrandsByMat = mid =>
+  axios.get(`/_api/quota/auxiliarymaterials/${mid}/brands`)
+
 export const release = data => axios.post(`/_api/quota/releases`, data)
 export { getMap } from '../api'
 export { get as getArtList } from '../artficial/api'

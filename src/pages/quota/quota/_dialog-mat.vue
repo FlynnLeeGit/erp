@@ -1,18 +1,31 @@
 <template>
   <el-dialog title='添加辅材计量'
-             :visible.sync='visible'
-             label-width="80px">
-    <el-form :model='row'>
+             :visible.sync='visible'>
+    <el-form ref='matForm'
+             :model='row'
+             label-width="80px"
+             :rules='formRules'>
       <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
-      <el-form-item label='辅材名称'>
-        <el-select v-model='row.quotaAuxiliaryMaterial.id'>
+      <el-form-item label='规格'>
+        <el-select v-model='row.quotaAuxiliaryMaterial.id'
+                   @change='handleMatChange'>
           <el-option :key='mat.id'
                      :label='mat.name'
                      v-for='mat in map.matList'
                      :value='mat.id'
                      :disabled="optionDisabled(qRow,mat)">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label='辅材品牌'
+                    prop='brand'>
+        <el-select v-model='row.brand'
+                   placeholder="请先选择规格">
+          <el-option v-for='(b,bIdx) in brands'
+                     :value='b'
+                     :key='bIdx'>
           </el-option>
         </el-select>
       </el-form-item>
@@ -37,7 +50,7 @@
   </el-dialog>
 </template>
 <script>
-import { addMat } from './api'
+import { addMat, getBrandsByMat } from './api'
 
 export default {
   props: {
@@ -54,12 +67,19 @@ export default {
       },
       initialRow: {
         counter: 0,
+        brand: '',
         quotaAuxiliaryMaterial: {
           id: ''
         }
       },
+      brands: [],
       isSubmiting: false,
       qRow: {},
+      formRules: {
+        brand: [
+          { required: true, message: '品牌不能为空' }
+        ]
+      }
     }
   },
   methods: {
@@ -71,13 +91,17 @@ export default {
       return qRow.quotaAuxiliaryCounters && this.$utils.valueInArray(qRow.quotaAuxiliaryCounters, mat.id, 'quotaAuxiliaryMaterial.id')
     },
     submit (data) {
-      this.isSubmiting = true
-      addMat(this.qRow.id, data).then(({ data }) => {
-        this.$message.success(`添加辅材计量至 ${this.qRow.name} 成功`)
-        this.close()
-        this.$root.$emit('quota.quota.update', this.qRow, data)
-      }).finally(() => {
-        this.isSubmiting = false
+      this.$refs.matForm.validate(valid => {
+        if (valid) {
+          this.isSubmiting = true
+          addMat(this.qRow.id, data).then(({ data }) => {
+            this.$message.success(`添加辅材计量至 ${this.qRow.name} 成功`)
+            this.close()
+            this.$root.$emit('quota.quota.update', this.qRow, data)
+          }).finally(() => {
+            this.isSubmiting = false
+          })
+        }
       })
     },
     open (qRow) {
@@ -87,6 +111,12 @@ export default {
     },
     close () {
       this.visible = false
+    },
+    handleMatChange (mid) {
+      this.row.brand = ''
+      getBrandsByMat(mid).then(({ data }) => {
+        this.brands = data
+      })
     }
   }
 }

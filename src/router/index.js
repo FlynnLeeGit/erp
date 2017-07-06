@@ -49,7 +49,7 @@ const quotaRoutes = {
       path: 'auxmaterial',
       name: 'quota.auxmaterial',
       meta: {
-        title: '辅材规格'
+        title: '规格管理'
       },
       component: auxmaterial
     },
@@ -92,7 +92,7 @@ const purchaseRoutes = {
       path: 'material',
       name: 'purchase.material',
       meta: {
-        title: '材料管理'
+        title: '辅材管理'
       },
       component: material
     }
@@ -146,7 +146,7 @@ const projectRoutes = {
       path: 'collect',
       name: 'project.collect',
       meta: {
-        title: '常用定额管理'
+        title: '常用定额标注'
       },
       component: projectCollect
     },

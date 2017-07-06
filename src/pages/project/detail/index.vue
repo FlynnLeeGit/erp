@@ -5,7 +5,11 @@
                @click="$router.push({name:'project.list'})">
       返回
     </el-button>
-    <el-tabs type='card'
+    <el-alert show-icon
+              title='项目地址'
+              :description='$route.query.name'></el-alert>
+    <el-tabs class="_mt1"
+             type='card'
              v-model="activeName"
              @tab-click="handleClick">
       <el-tab-pane label="空间管理"
@@ -31,14 +35,10 @@ export default {
       const pid = this.$route.params.pid
       this.$router.push({
         name: tab.name,
-        params: {
-          pid
-        }
+        params: this.$route.params,
+        query: this.$route.query
       })
     }
-  },
-  created () {
-    console.log(this.$route)
   }
 }
 </script>

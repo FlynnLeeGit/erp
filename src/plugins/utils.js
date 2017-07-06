@@ -77,7 +77,7 @@ export const recursionFieldValue = (obj, fields) => {
 /**
  * 判断值是否存在于指定的数组中的对象字段中
  * @param {* 数组对象} arr
- * @param {* 值} val
+ * @param {* 值} value
  * @param {* 寻找的字段} field
  */
 export const valueInArray = (arr, value, field = 'id') => {
@@ -96,4 +96,25 @@ export const sortByChs = (sortKey, a, b) => {
   return a[sortKey].localeCompare(b[sortKey]) > 0
 }
 
+/**
+ * 将秒级时间戳转为当地时间
+ * @param {* 时间 } time 
+ */
 export const toLocaleString = time => new Date(time * 1000).toLocaleDateString()
+
+/**
+ * 根据给出字段将数据分组
+ * @param {* 数组} arr 
+ * @param {* 分组用字段} field
+ * @return [ object ] 
+ */
+export const groupByField = (arr, field) => {
+  const obj = {}
+  arr.forEach(item => {
+    if (!obj[item[field]]) {
+      obj[item[field]] = []
+    }
+    obj[item[field]].push(item)
+  })
+  return obj
+}

@@ -9,7 +9,6 @@
                      prop='description'
                      :fn='edit'
                      type='textarea'>
-  
           <pre>{{row.description}}</pre>
         </inline-edit>
       </el-form-item>
