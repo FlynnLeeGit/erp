@@ -25,6 +25,7 @@ import projectList from '@/pages/project/list/index.vue'
 import projectDetail from '@/pages/project/detail/index.vue'
 import projectDetailSpace from '@/pages/project/detail/space/index.vue'
 import projectDetailBudget from '@/pages/project/detail/budget/index.vue'
+import projectDetailBudgetItems from '@/pages/project/items/index.vue'
 
 Vue.use(Router)
 
@@ -151,7 +152,15 @@ const projectRoutes = {
       component: projectCollect
     },
     {
-      path: 'detail/:pid',
+      path: ':pid/detail/budget/:bid/items',
+      name: 'project.detail.budget.items',
+      meta: {
+        title: '预算定额列表'
+      },
+      component: projectDetailBudgetItems
+    },
+    {
+      path: ':pid/detail',
       name: 'project.detail',
       meta: {
         title: '详情'

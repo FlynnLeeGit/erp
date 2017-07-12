@@ -37,15 +37,27 @@ export const getPage = (tableData, pageSize, page) =>
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 
 /**
+ * 支持.语法递归寻找对象中的键值 如 obj = { a: {b:1} } recursionFieldValue（obj,'a.b')可得到1
+ * @param {* 查询对象} obj
+ * @param {* 查询字段 可支持a.b.c的语法} field
+ */
+export const recursionFieldValue = (obj, fields) => {
+  return fields.split('.').reduce((prev, next) => prev[next], obj)
+}
+
+/**
  * 数组list变成map表
  * @example [{id:1,name:'名称1'},{id:2,name:'名称2'}]=>{1:'名称1',2:'名称2'}
  * @param {* 数组list} list
  * @param {* 映射的名称字段} mapField
  */
-export const listToMap = (list, mapField = 'name') => {
+export const listToMap = (list, mapField = 'name', idField = 'id') => {
   const obj = {}
   list.forEach(item => {
-    obj[item.id] = item[mapField]
+    obj[recursionFieldValue(item, idField)] = recursionFieldValue(
+      item,
+      mapField
+    )
   })
   return obj
 }
@@ -63,15 +75,6 @@ export const replaceObjectFields = (oldObj, newObj, fields = 'all') => {
   fields.forEach(f => {
     oldObj[f] = newObj[f]
   })
-}
-
-/**
- * 支持.语法递归寻找对象中的键值 如 obj = { a: {b:1} } recursionFieldValue（obj,'a.b')可得到1
- * @param {* 查询对象} obj
- * @param {* 查询字段 可支持a.b.c的语法} field
- */
-export const recursionFieldValue = (obj, fields) => {
-  return fields.split('.').reduce((prev, next) => prev[next], obj)
 }
 
 /**
@@ -98,15 +101,15 @@ export const sortByChs = (sortKey, a, b) => {
 
 /**
  * 将秒级时间戳转为当地时间
- * @param {* 时间 } time 
+ * @param {* 时间 } time
  */
 export const toLocaleString = time => new Date(time * 1000).toLocaleDateString()
 
 /**
  * 根据给出字段将数据分组
- * @param {* 数组} arr 
+ * @param {* 数组} arr
  * @param {* 分组用字段} field
- * @return [ object ] 
+ * @return [ object ]
  */
 export const groupByField = (arr, field) => {
   const obj = {}

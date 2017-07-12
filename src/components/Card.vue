@@ -33,11 +33,16 @@ export default {
   margin-bottom: 6px;
   .el-card__header {
     color: #fff;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
   }
   .el-card__body {
     padding: 10px 20px;
     font-size: 13px;
   }
+
   &.-default .el-card__header {
     background-color: #8492A6;
   }

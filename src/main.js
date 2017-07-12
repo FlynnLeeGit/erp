@@ -13,6 +13,7 @@ import CardPlus from '@/components/CardPlus.vue'
 
 Vue.use(ElementUI)
 Vue.prototype.$utils = utils
+Vue.prototype.$log = console.log
 Vue.component(InlineEdit.name, InlineEdit)
 Vue.component(Search.name, Search)
 Vue.component(Card.name, Card)

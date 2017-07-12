@@ -227,7 +227,7 @@ export default {
     },
     goDetail (project) {
       this.$router.push({
-        name: 'project.detail.space',
+        name: 'project.detail.budget',
         params: {
           pid: project.id
         },

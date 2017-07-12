@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-row :gutter="10"
-            class="_mt1"
             v-loading='isFetching'>
       <el-col :span='6'
               v-for='(s,index) in tableData'

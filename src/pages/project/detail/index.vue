@@ -1,22 +1,20 @@
 <template>
   <div>
-    <el-button class="detail-back-btn"
-               type='info'
-               @click="$router.push({name:'project.list'})">
-      返回
-    </el-button>
-    <el-alert show-icon
-              title='项目地址'
-              :description='$route.query.name'></el-alert>
-    <el-tabs class="_mt1"
-             type='card'
+    <div class="detail-back">
+      <el-button type='info'
+                 @click="$router.push({name:'project.list'})">
+        返回项目列表
+      </el-button>
+      <span>当前项目 [{{ $route.query.name }}]</span>
+    </div>
+    <el-tabs type='card'
              v-model="activeName"
              @tab-click="handleClick">
-      <el-tab-pane label="空间管理"
-                   name="project.detail.space">
-      </el-tab-pane>
       <el-tab-pane label="预算管理"
                    name="project.detail.budget">
+      </el-tab-pane>
+      <el-tab-pane label="空间管理"
+                   name="project.detail.space">
       </el-tab-pane>
     </el-tabs>
     <router-view>
@@ -42,8 +40,8 @@ export default {
   }
 }
 </script>
-<style>
-.detail-back-btn {
+<style lang='scss'>
+.detail-back {
   position: absolute;
   margin-top: -54px;
   margin-left: 90px;
