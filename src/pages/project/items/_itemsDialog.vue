@@ -1,55 +1,31 @@
 <template>
-  <el-dialog title='添加定额'
-             :visible.sync='visible'>
-    <el-form ref='form'
-             label-width="80px">
-      <el-form-item label='定额'>
-        <el-cascader v-model='selectedCollect'
-                     expand-trigger="hover"
-                     :options="collectOptionsCopy"
-                     filterable
-                     @change='addInList'
-                     :show-all-levels="false"
-                     placeholder="请选择定额模版">
-        </el-cascader>
-  
-      </el-form-item>
-  
-      <el-form-item label='已选模版'>
-        <el-tag class="_ml1"
-                type='primary'
-                closable
-                @close='closeTag(index,q)'
-                v-for='(q,index) in selectedQuotas'
-                :key='index'>
-          {{collectQuotaMap[q.value]}}
-        </el-tag>
-      </el-form-item>
-    </el-form>
+  <el-dialog size="large"
+             :visible.sync="visible"
+             title="添加定额（多选）">
+    <collect-table v-if='visible'
+                   :disabled-rows='disabledRows'
+                   :selection.sync='selectedQuotas'
+                   picker-mode>
+    </collect-table>
     <div slot='footer'
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
                  :loading='isSubmiting'
                  @click="submitAdd()">
-        确认
+        确认 添加
       </el-button>
+  
     </div>
   
   </el-dialog>
 </template>
 <script>
 import { add } from './api'
+import collectTable from '../collect/_collectTable.vue'
 export default {
-  props: {
-    collectOptions: {
-      type: Array,
-      default: () => []
-    },
-    collectQuotaMap: {
-      type: Object,
-      default: () => ({})
-    }
+  components: {
+    collectTable
   },
   data () {
     return {
@@ -60,56 +36,40 @@ export default {
       // 空间id
       sid: 0,
 
-      collectOptionsCopy: [],
-      selectedCollect: ['', ''],
+      // 已经添加过的禁用
+      disabledRows: [],
+
       isSubmiting: false,
 
       selectedQuotas: []
     }
   },
   methods: {
-    init () {
-      this.collectOptionsCopy = this.$utils.deepCopy(this.collectOptions)
-      this.selectedCollect = ['', '']
-      this.selectedQuotas = []
-    },
     submitAdd () {
       this.isSubmiting = true
-      const data = {
-        [this.sid]: this.selectedQuotas.map(d => d.value)
+      const sendData = {
+        [this.sid]: this.selectedQuotas
       }
-      add(this.bid, data).then(({ data }) => {
-        console.log(data)
-        this.close()
-      }).finally(() => {
-        this.isSubmiting = false
-      })
-    },
-    addInList (val) {
-      const groupIndex = val[0]
-      const quotaTemplateId = val[1]
-      this.$log(groupIndex, quotaTemplateId)
+      add(this.bid, sendData)
+        .then(({ data }) => {
+          this.$emit('updated', data)
+          this.$message.success('添加定额成功')
 
-      const opts = this.collectOptionsCopy[groupIndex].children
-      const opt = opts.filter(o => o.value === quotaTemplateId)[0]
-      opt.disabled = true
-      this.selectedQuotas.push(opt)
-    },
-    toDisableSelectOption () {
+          this.close()
+        })
+        .finally(() => {
+          this.isSubmiting = false
+        })
 
     },
-    open (sid, bid) {
+    open (sid, bid, quotasOnSpace) {
       this.sid = sid
       this.bid = bid
-      this.init()
+      this.disabledRows = quotasOnSpace.map(q => q.id)
       this.visible = true
     },
     close () {
       this.visible = false
-    },
-    closeTag (index, quotaTemplateId) {
-      this.selectedQuotas.splice(index, 1)
-
     }
   }
 }

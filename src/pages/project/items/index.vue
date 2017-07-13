@@ -8,15 +8,26 @@
           <el-button @click="openDialog(space.id)"
                      type='success'
                      size='small'>
-            添加空间定额
+            添加定额
           </el-button>
           [空间]{{space.name}}
-  
         </h4>
         <el-table class="_mt1"
                   :data='quotaTable(space.id)'
                   empty-text="暂无此空间模版数据"
                   border>
+          <el-table-column label="操作"
+                           width="80"
+                           align="center">
+            <template scope="scope">
+              <el-button size="mini"
+                         :loading='isDeleting && delId===scope.row.id && delSid === space.id'
+                         @click='handleDelete(space.id,scope.row)'
+                         type="danger">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
           <el-table-column label='#'
                            width="50"
                            prop='id'>
@@ -43,7 +54,7 @@
               {{scope.row.quotaTemplate.wastage}}
             </template>
           </el-table-column>
-          <el-table-column label='工程用量'
+          <el-table-column label='工程用量[可编辑]'
                            width="60">
             <template scope='scope'>
               <inline-edit type='number'
@@ -55,16 +66,28 @@
               </inline-edit>
             </template>
           </el-table-column>
-          <el-table-column label='劳务利润率'
+          <el-table-column label='劳务利润率[可编辑]'
                            width="80">
             <template scope='scope'>
-              {{scope.row.rateOfArtificialProfit}}
+              <inline-edit type='number'
+                           :data='scope.row'
+                           prop='rateOfArtificialProfit'
+                           :fn='editFn.bind(this,space.id,scope.row.id)'
+                           :direct-update='false'
+                           @updated='handleUpdateBudget'>
+              </inline-edit>
             </template>
           </el-table-column>
-          <el-table-column label='企业利润率'
+          <el-table-column label='企业利润率[可编辑]'
                            width="80">
             <template scope='scope'>
-              {{scope.row.rateOfCompanyProfit}}
+              <inline-edit type='number'
+                           :data='scope.row'
+                           prop='rateOfCompanyProfit'
+                           :fn='editFn.bind(this,space.id,scope.row.id)'
+                           :direct-update='false'
+                           @updated='handleUpdateBudget'>
+              </inline-edit>
             </template>
           </el-table-column>
           <el-table-column label='综合单价'
@@ -141,18 +164,16 @@
   
     <!-- quota dialog -->
     <items-dialog ref='dialog'
-                  :collect-options='collectOptions'
-                  :collect-quota-map='collectQuotaMap'>
+                  @updated='handleUpdateBudget'>
   
     </items-dialog>
   
   </div>
 </template>
 <script>
-import { get, edit, add, del, getSpaces, getCollects } from './api'
+import { get, edit, add, del, getSpaces } from './api'
 import itemsDialog from './_itemsDialog.vue'
 
-import { generateOptions } from './helpers'
 export default {
   components: {
     itemsDialog
@@ -165,7 +186,11 @@ export default {
       spaceList: [],
       collectOptions: [],
       collectQuotaMap: {},
-      isFetching: false
+
+      isFetching: false,
+      isDeleting: false,
+      delSid: 0,
+      delId: 0,
     }
   },
   computed: {
@@ -183,14 +208,12 @@ export default {
   methods: {
     initData () {
       this.isFetching = true
-      Promise.all([get(this.bid), getSpaces(this.pid), getCollects()])
-        .then(([one, two, three]) => {
+      Promise.all([get(this.bid), getSpaces(this.pid)])
+        .then(([one, two]) => {
           if (one.data) {
             this.budgetData = one.data
           }
           this.spaceList = two.data
-          this.collectOptions = generateOptions(three.data)
-          this.collectQuotaMap = this.$utils.listToMap(three.data, 'quotaTemplate.name', 'quotaTemplate.id')
         })
         .finally(() => {
           this.isFetching = false
@@ -203,10 +226,26 @@ export default {
       return edit(this.bid, sid, iid, editRow)
     },
     handleUpdateBudget (newBudget) {
-      console.log(newBudget)
+      this.budgetData = newBudget
+    },
+    handleDelete (sid, row) {
+      this.$confirm('确认取消？')
+        .then(() => {
+          this.isDeleting = true
+          this.delSid = sid
+          this.delId = row.id
+          return del(this.bid, sid, row.id)
+        })
+        .then(({ data }) => {
+          this.handleUpdateBudget(data)
+          this.$message.success('删除定额成功！')
+        })
+        .finally(() => {
+          this.isDeleting = false
+        })
     },
     openDialog (sid) {
-      this.$refs.dialog.open(sid, this.bid)
+      this.$refs.dialog.open(sid, this.bid, this.quotaTable(sid))
     }
 
   }
