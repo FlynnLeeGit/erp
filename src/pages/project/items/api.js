@@ -45,3 +45,4 @@ export const del = (bid, sid, iid) =>
   )
 
 export { get as getSpaces } from '../detail/space/api'
+

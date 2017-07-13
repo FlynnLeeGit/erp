@@ -2,8 +2,8 @@
   <el-dialog size="large"
              :visible.sync="visible"
              title="添加定额（多选）">
-    <collect-table v-if='visible'
-                   :disabled-rows='disabledRows'
+  
+    <collect-table :disabled-rows='disabledRows'
                    :selection.sync='selectedQuotas'
                    picker-mode>
     </collect-table>
@@ -36,6 +36,8 @@ export default {
       // 空间id
       sid: 0,
 
+      activeName: '',
+
       // 已经添加过的禁用
       disabledRows: [],
 
@@ -66,6 +68,7 @@ export default {
       this.sid = sid
       this.bid = bid
       this.disabledRows = quotasOnSpace.map(q => q.id)
+      this.selectedQuotas = []
       this.visible = true
     },
     close () {

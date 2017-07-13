@@ -1,19 +1,24 @@
 <template>
   <div>
     <el-row class="_mt1">
-      <el-switch v-model='onlyShowCollect'
-                 on-color="#13ce66"
-                 off-color="#ff4949"></el-switch>
-      <span>只显示常用定额</span>
-      <search class="_fr"
-              v-model='searchField'
+      <search v-model='searchField'
               :fields='searchFields'
               :table-data='tableData'
               :filter-table-data.sync='filterTableData'>
       </search>
     </el-row>
-    <el-table class="_mt2"
-              border
+    <el-tabs v-model='selectedTag'
+             @tab-click='handleChangeTag'>
+      <el-tab-pane label='全部'
+                   name='all'>
+      </el-tab-pane>
+      <el-tab-pane v-for='(tagId,tagName) in tags'
+                   :key='tagName'
+                   :label='tagName'
+                   :name='tagName'>
+      </el-tab-pane>
+    </el-tabs>
+    <el-table border
               :row-class-name='rowCls'
               v-loading='isFetching'
               style="width:100%"
@@ -26,6 +31,8 @@
       </el-table-column>
       <el-table-column label='标签'
                        align='center'
+                       prop="tag"
+                       sortable
                        width='80'>
         <template scope='scope'>
           <el-tag type='primary'
@@ -177,7 +184,7 @@
   </div>
 </template>
 <script>
-import { get, edit, del, add, getQuota } from './api'
+import { get, edit, del, add, getQuota, getByVersion } from './api'
 
 export default {
   props: {
@@ -200,6 +207,8 @@ export default {
   },
   data () {
     return {
+      getQuotasFunction: () => { },
+
       quotas: [],
       quotaCollects: [],
       filterTableData: [],
@@ -207,6 +216,7 @@ export default {
       row: {},
       onlyShowCollect: false,
 
+      selectedTag: 'all',
       searchField: '',
       searchFields: ['tag', 'id', 'name', 'type', 'stage', 'secType', 'unit', 'workType', 'wastage', 'position', 'content', 'description'],
 
@@ -249,35 +259,32 @@ export default {
           }
           return q
         })
-        // 是否只显示打了标签的
-        .filter(q => this.onlyShowCollect ? q.tagId : q)
         // 排除禁用的行
         .filter(q => this.disabledRows.indexOf(q.id) === -1)
+        .filter(q => this.selectedTag === q.tag || this.selectedTag === 'all')
     }
   },
   created () {
-    this.initData()
     if (this.pickerMode) {
       this.initPickerMode()
-
     }
     if (this.editerMode) {
       this.initEditerMode()
-
     }
-
+    this.initData()
   },
   methods: {
     initPickerMode () {
       this.onlyShowCollect = this.pickerMode
       this.pageSize = 20
+      this.getQuotasFunction = () => getByVersion(this.$route.query.bversion)
     },
     initEditerMode () {
-
+      this.getQuotasFunction = () => getQuota()
     },
     initData () {
       this.isFetching = true
-      Promise.all([getQuota(), get()])
+      Promise.all([this.getQuotasFunction(), get()])
         .then(([one, two]) => {
           this.quotas = one.data
           this.quotaCollects = two.data
@@ -342,6 +349,9 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+    },
+    handleChangeTag (tag) {
+      console.log(tag.name)
     }
   }
 }

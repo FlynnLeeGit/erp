@@ -9,14 +9,18 @@
               type='default'>
           <el-button type='info'
                      slot='header-slot'
-                     class="_fr"
+                     class="_fr -has-link"
                      size='small'>
             <router-link target='_blank'
-                         :to="{ name:'project.detail.budget.items',params:{pid:pid,bid:b.id},query:{pname:$route.query.name,bname:b.name} }">
+                         :to="{ name:'project.detail.budget.items',params:{pid:pid,bid:b.id},query:{pname:$route.query.name,bversion:b.version,bname:b.name} }">
               进入{{b.name}}
             </router-link>
           </el-button>
-          {{b.description}}
+          <p>
+            <span>定额版本库:{{b.version}}</span>
+            <span class="_ml1 _text">({{map.version[b.version]}})</span>
+          </p>
+          <p class="_mt1">{{b.description}}</p>
           <p class='_mt1 _text'>
             劳务利润率 {{b.rateOfArtificialProfit * 100 }}%
             <br>公司利润率 {{b.rateOfCompanyProfit * 100 }}%
@@ -37,7 +41,7 @@
         </card>
       </el-col>
       <el-col :span='6'>
-        <card-plus style="height:140px;"
+        <card-plus style="height:160px;"
                    @click='handleAdd'>
         </card-plus>
       </el-col>
@@ -73,6 +77,16 @@
                            v-model='row.rateOfCompanyProfit'>
           </el-input-number>
         </el-form-item>
+        <el-form-item label='定额版本库'>
+          <el-select disabled
+                     v-model='selectedVersion'>
+            <el-option v-for='v in versionList'
+                       :key='v.id'
+                       :label='v.description'
+                       :value='v.version'>
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot='footer'
            class="dialog-footer">
@@ -95,11 +109,14 @@
   </div>
 </template>
 <script>
-import { get, edit, add, del } from './api'
+import { get, edit, add, del, getVersionList } from './api'
 export default {
   data () {
     return {
       tableData: [],
+      selectedVersion: '',
+      versionList: [],
+
       map: {},
       isFetching: false,
       isDeleting: false,
@@ -131,9 +148,12 @@ export default {
   methods: {
     initData () {
       this.isFetching = true
-      return Promise.all([get(this.pid)])
-        .then(([one]) => {
+      return Promise.all([get(this.pid), getVersionList()])
+        .then(([one, two]) => {
           this.tableData = one.data
+          this.versionList = two.data
+          this.selectedVersion = this.versionList[this.versionList.length - 1].version
+          this.map.version = this.$utils.listToMap(this.versionList, 'description', 'version')
         })
         .finally(() => {
           this.isFetching = false

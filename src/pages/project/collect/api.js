@@ -7,3 +7,4 @@ export const edit = data =>
 export const del = cid => axios.delete(`/_api/project/quotacollects/${cid}`)
 
 export { get as getQuota } from '../../quota/quota/api'
+export { getByVersion } from '../../quota/release/api'

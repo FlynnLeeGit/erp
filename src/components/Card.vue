@@ -33,9 +33,14 @@ export default {
   margin-bottom: 6px;
   .el-card__header {
     color: #fff;
-    a {
-      color: #fff;
-      text-decoration: none;
+    .el-button.-has-link {
+      padding: 0;
+      a {
+        color: #fff;
+        display: block;
+        padding: 7px 9px;
+        text-decoration: none;
+      }
     }
   }
   .el-card__body {
