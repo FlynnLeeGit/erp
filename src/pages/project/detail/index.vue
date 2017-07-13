@@ -43,7 +43,7 @@ export default {
 <style lang='scss'>
 .detail-back {
   position: absolute;
-  margin-top: -54px;
+  margin-top: -40px;
   margin-left: 90px;
 }
 </style>

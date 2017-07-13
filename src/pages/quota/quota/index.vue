@@ -81,7 +81,7 @@
             </inline-edit>
           </template>
         </el-table-column>
-
+  
         <el-table-column label="单位"
                          width='50'>
           <template scope='scope'>
@@ -186,7 +186,7 @@
   
       <!--pagination-->
       <el-pagination class="_mt2"
-                     :page-sizes='[100,300,500,1000]'
+                     :page-sizes='[50,100,300,500]'
                      :total='filterTableData.length'
                      :current-page.sync="currentPage"
                      layout='total,sizes,prev,pager,next,jumper'
@@ -240,7 +240,7 @@ export default {
 
       // pagination
       currentPage: 1,
-      pageSize: 100,
+      pageSize: 50,
 
       // search
       searchField: '',

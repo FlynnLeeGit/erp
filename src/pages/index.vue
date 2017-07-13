@@ -11,7 +11,7 @@
   
       <h3>{{$route.meta.title}}</h3>
   
-      <router-view class="_mt3">
+      <router-view class="_mt1">
       </router-view>
     </el-col>
   </el-row>

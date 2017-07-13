@@ -1,6 +1,15 @@
 <template>
   <div>
+    <div class="title-txt">
+      项目:[{{$route.query.pname}}][{{$route.query.bname}}]
+    </div>
     <section v-loading='isFetching'>
+      <el-alert type='info'
+                v-if="budgetData.totalPrice"
+                title='概要'
+                :description="budgetDesc"
+                show-icon>
+      </el-alert>
       <div class="_mt2"
            v-for='space in spaceList'
            :key='space.id'>
@@ -184,8 +193,6 @@ export default {
         items: {}
       },
       spaceList: [],
-      collectOptions: [],
-      collectQuotaMap: {},
 
       isFetching: false,
       isDeleting: false,
@@ -199,6 +206,21 @@ export default {
     },
     bid () {
       return +this.$route.params.bid
+    },
+    budgetDesc () {
+      const b = this.budgetData
+      return `总售价：${b.totalPrice}元
+             公司总利润：${b.totalCompanyProfit}元
+
+             人工售价：${b.totalArtificialPrice}元
+             人工成本：${b.totalArtificialCost}元
+             人工劳务利润：${b.totalLabourArtificialProfit}元
+             人工公司利润：${b.totalCompanyArtificialProfit}元
+
+             辅材售价：${b.totalAuxiliaryMaterialPrice}元
+             辅材成本：${b.totalAuxiliaryMaterialCost}元
+             辅材公司利润：${b.totalCompanyAuxiliaryMaterialProfit}元
+            `
     }
   },
   created () {
@@ -249,7 +271,14 @@ export default {
     }
 
   }
-
-
 }
 </script>
+
+<style lang="scss">
+.title-txt {
+  position: absolute;
+  margin-top: -32px;
+  margin-left: 121px;
+}
+</style>
+

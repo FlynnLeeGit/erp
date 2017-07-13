@@ -51,7 +51,7 @@
                      size='mini'
                      @click='handleDelete(scope.row)'
                      type='danger'>
-            <i class="fa fa-close"></i>取消
+            <i class="fa fa-close"></i>取消常用
           </el-button>
         </template>
       </el-table-column>
