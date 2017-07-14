@@ -55,3 +55,4 @@ export const createPdf = (bid, data) =>
   })
 
 export { get as getSpaces } from '../detail/space/api'
+// export {get as getProjectInfo } from '../list/api'

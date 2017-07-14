@@ -1,56 +1,45 @@
 <template>
   <el-dialog :visible.sync='visible'
              title="pdf文档生成">
-    <el-form label-width='140px'
-             @submit.native='submit()'>
-  
+    <el-form label-width='120px'>
       <el-form-item label='甲方名称'>
-        <el-input v-model='form.partyAName'>
-  
+        <el-input v-model='form.partyAName'
+                  placeholder="请输入甲方名称">
         </el-input>
       </el-form-item>
+  
       <el-form-item label='甲方电话'>
-        <el-input v-model='form.partyAMobile'>
-  
+        <el-input v-model='form.partyAMobile'
+                  placeholder="请输入甲方电话">
         </el-input>
       </el-form-item>
+  
       <el-form-item label='甲方邮箱'>
-        <el-input v-model='form.partyAEmail'>
-  
+        <el-input v-model='form.partyAEmail'
+                  placeholder="请输入甲方邮箱">
         </el-input>
       </el-form-item>
-      <el-form-item label='套内面积'>
-        <el-input v-model='form.area'>
   
-        </el-input>
+      <el-form-item label='套内面积'>
+        <el-input-number v-model='form.area'
+                         :min="0"
+                         :step='10'>
+        </el-input-number>
+        <span class="_ml1">平方米 [步进10]</span>
       </el-form-item>
   
       <el-form-item label='施工地址'>
-        <el-input v-model='form.address'>
-  
+        <el-input v-model='form.address'
+                  placeholder="请输入地址">
         </el-input>
       </el-form-item>
   
       <el-form-item label='房型'>
-        <el-input v-model='form.houseType'>
-  
+        <el-input v-model='form.houseType'
+                  placeholder="请输入房型">
         </el-input>
       </el-form-item>
-      <el-form-item label='编制日期'>
-        <el-input v-model='form.compileDate'>
   
-        </el-input>
-      </el-form-item>
-      <el-form-item label='公司地址'>
-        <el-input v-model='form.companyAddress'>
-  
-        </el-input>
-      </el-form-item>
-      <el-form-item label='投诉电话'>
-        <el-input v-model='form.complaintsMobile'>
-  
-        </el-input>
-      </el-form-item>
       <el-form-item label='设计师'>
         <el-input v-model='form.designer'>
   
@@ -76,46 +65,71 @@
   
         </el-input>
       </el-form-item>
-      <el-form-item label='总造价'>
-        <el-input v-model='form.totalConst'>
   
-        </el-input>
+      <el-form-item label='一、半包施工项(含辅材人工)'>
+        <span class="_text">{{matAndArtTotalPrice}} 元</span>
       </el-form-item>
-      <el-form-item label='甲指甲供材料'>
-        <el-input v-model='form.aNairMaterial'>
   
-        </el-input>
+      <el-form-item label='二、甲指乙供材料'>
+        <el-input-number v-model='form.aToBMaterial'
+                         :min="0"
+                         :step="1000"
+                         :debounce="800">
+        </el-input-number>
+        <span class="_mt1">元 [步进1000]</span>
       </el-form-item>
-      <el-form-item label='甲指乙供材料'>
-        <el-input v-model='form.aToBMaterial'>
   
-        </el-input>
-      </el-form-item>
-      <el-form-item label='配套措施与管理费'>
-        <el-input v-model='form.facilitiesManagementPrice'>
+      <el-form-item label='三、甲指甲供材料'>
+        <el-input-number v-model='form.aNairMaterial'
+                         :min="0"
+                         :step="1000"
+                         :debounce="800">
+        </el-input-number>
+        <span class="_mt1">元 [步进1000]</span>
   
-        </el-input>
       </el-form-item>
+  
+      <el-form-item label='四、配套措施与管理费'>
+        <el-input-number v-model='form.facilitiesManagementPrice'
+                         :min="0"
+                         :step="1000"
+                         :debounce="800">
+        </el-input-number>
+        <span class="_mt1">元 [步进1000]</span>
+      </el-form-item>
+  
+      <el-form-item label='五、总造价'>
+        <span class="_text">
+          {{totalConst}} 元
+        </span>
+      </el-form-item>
+  
       <el-form-item label='首付款'>
-        <el-input v-model='form.firstPayment'>
-  
-        </el-input>
+        <span class="_text">
+          {{firstPayment}} 元
+        </span>
+        <span class="_ml1">[签订合同支付第四项全额]</span>
       </el-form-item>
+  
       <el-form-item label='二期款'>
-        <el-input v-model='form.secondPayment'>
-  
-        </el-input>
+        <span class="_text">
+          {{secondPayment}} 元
+        </span>
+        <span class="_ml1">[水电验收完成后支付(一+五)*40%+二]</span>
       </el-form-item>
-      <el-form-item label='三期款'>
-        <el-input v-model='form.thirdPayment'>
   
-        </el-input>
+      <el-form-item label='三期款'>
+        <span class="_text">
+          {{thirdPayment}} 元
+        </span>
+        <span class="_ml1">[泥木验收完成后支付(一+五)*50%]</span>
       </el-form-item>
   
       <el-form-item label='尾款'>
-        <el-input v-model='form.lastPayment'>
-  
-        </el-input>
+        <span class="_text">
+          {{lastPayment}} 元
+        </span>
+        <span class="_ml1">[竣工验收完成后支付(一+五)*10%]</span>
       </el-form-item>
   
     </el-form>
@@ -148,34 +162,46 @@ export default {
       // 预算id
       bid: 0,
       form: {
-        partyAName: 'A',
-        partyAMobile: '001',
-        partyAEmail: 'a@com',
+        partyAName: '',
+        partyAMobile: '',
+        partyAEmail: '',
         area: 0,
-        address: 'address',
-        houseType: '1ting',
-        companyAddress: 'companyAddress',
-        complaintsMobile: '002',
-        designer: 'designer',
-        designerMobile: '003',
-        partyBName: 'B',
-        partyBMobile: '004',
+        address: '',
+        houseType: '',
+        designer: '',
+        designerMobile: '',
+        partyBName: '',
+        partyBMobile: '',
         tax: 0,
-        totalConst: 0,
-        aNairMaterial: 0,
         aToBMaterial: 0,
-        facilitiesManagementPrice: 0,
-        firstPayment: 0,
-        secondPayment: 0,
-        thirdPayment: 0,
-        lastPayment: 0
+        aNairMaterial: 0,
+        facilitiesManagementPrice: 0
       },
-      pdfUrl: ''
+      pdfUrl: '',
+      matAndArtTotalPrice: 0
     }
   },
+  computed: {
+    totalConst () {
+      return (this.matAndArtTotalPrice + this.form.aToBMaterial + this.form.facilitiesManagementPrice + this.form.tax).toFixed(2)
+    },
+    firstPayment () {
+      return this.form.facilitiesManagementPrice.toFixed(2)
+    },
+    secondPayment () {
+      return ((this.matAndArtTotalPrice + this.form.tax) * 0.4 + this.form.aToBMaterial).toFixed(2)
+    },
+    thirdPayment () {
+      return ((this.matAndArtTotalPrice + this.form.tax) * 0.5).toFixed(2)
+    },
+    lastPayment () {
+      return ((this.matAndArtTotalPrice + this.form.tax) * 0.1).toFixed(2)
+    },
+  },
   methods: {
-    open (bid) {
+    open (bid, matAndArtTotalPrice) {
       this.bid = bid
+      this.matAndArtTotalPrice = matAndArtTotalPrice
       this.visible = true
     },
     close () {
@@ -183,7 +209,14 @@ export default {
     },
     submitCreate () {
       this.isCreating = true
-      createPdf(this.bid, this.form)
+      const sendData = Object.assign(this.form, {
+        totalConst: this.totalConst,
+        firstPayment: this.firstPayment,
+        secondPayment: this.secondPayment,
+        thirdPayment: this.thirdPayment,
+        lastPayment: this.lastPayment
+      })
+      createPdf(this.bid, sendData)
         .then(({ data }) => {
           this.pdfUrl = window.URL.createObjectURL(data)
           this.isCreating = false

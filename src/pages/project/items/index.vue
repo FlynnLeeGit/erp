@@ -9,12 +9,12 @@
           <el-button class="_mt1"
                      type="primary"
                      @click='handleOpenRateDialog(bid)'>
-            利润率批量修改
+            <i class="fa fa-line-chart"></i> 利润率修改
           </el-button>
           <el-button class="_mt1"
-                     @click='openPdfDialog(bid)'
+                     @click='openPdfDialog(bid,budgetData.totalPrice)'
                      type="primary">
-            生成PDF文档
+            <i class="fa fa-file-pdf-o"></i> 生成PDF
           </el-button>
         </el-col>
         <el-col :span='20'>
@@ -298,8 +298,8 @@ export default {
     handleOpenRateDialog (bid) {
       this.$refs.rateDialog.open(bid)
     },
-    openPdfDialog (bid) {
-      this.$refs.pdfDialog.open(bid)
+    openPdfDialog (bid, matAndArtTotalPrice) {
+      this.$refs.pdfDialog.open(bid, matAndArtTotalPrice)
     }
 
   }
