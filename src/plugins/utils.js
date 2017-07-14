@@ -37,6 +37,15 @@ export const getPage = (tableData, pageSize, page) =>
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 
 /**
+ * 从数组中移除制定元素
+ * @param {* Array} arr
+ * @param {* Object} item
+ */
+export const removeItemInArray = (arr, item) => {
+  arr.splice(arr.indexOf(item), 1)
+}
+
+/**
  * 支持.语法递归寻找对象中的键值 如 obj = { a: {b:1} } recursionFieldValue（obj,'a.b')可得到1
  * @param {* 查询对象} obj
  * @param {* 查询字段 可支持a.b.c的语法} field

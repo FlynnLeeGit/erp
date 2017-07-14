@@ -99,7 +99,7 @@
   
     <!--pagination-->
     <el-pagination class="_mt2"
-                   :page-sizes='[50,100,200]'
+                   :page-sizes='[20,50,100,200]'
                    :total='filterTableData.length'
                    :current-page.sync="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
@@ -181,7 +181,7 @@ export default {
 
       // pagination
       currentPage: 1,
-      pageSize: 50,
+      pageSize: 20,
 
       // search
       searchField: '',
@@ -236,7 +236,7 @@ export default {
         })
         .then(() => {
           this.$message.success('删除成功')
-          this.tableData.splice(this.delIdx, 1)
+          this.$utils.removeItemInArray(this.tableData, row)
         })
         .finally(() => {
           this.isDeleting = false

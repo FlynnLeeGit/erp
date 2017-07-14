@@ -59,7 +59,7 @@
         <template scope="scope">
   
           <el-button size="mini"
-                     :loading='isDeleting && scope.$index === delIdx'
+                     :loading='isDeleting && scope.row.id === delId'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -98,7 +98,7 @@
                            :min='0'
                            :step='10'>
           </el-input-number>
-           <span class="_ml1">[步进10]</span>
+          <span class="_ml1">[步进10]</span>
           <span class="_ml2">元</span>
         </el-form-item>
   
@@ -113,8 +113,6 @@
         </el-button>
       </div>
     </el-dialog>
-
-    hello
   
   </div>
 </template>
@@ -134,7 +132,7 @@ export default {
         price: 0
       },
       // edit && del
-      delIdx: 0,
+      delId: 0,
       isFetching: false,
       isDeleting: false,
 
@@ -185,7 +183,7 @@ export default {
       this.showDialog = true
     },
     handleDelete (index, row) {
-      this.delIdx = this.tableData.indexOf(row)
+      this.delId = row.id
       this.$confirm('确认删除？')
         .then(() => {
           this.isDeleting = true
@@ -193,7 +191,7 @@ export default {
         })
         .then(() => {
           this.$message.success('删除成功')
-          this.tableData.splice(this.delIdx, 1)
+          this.$utils.removeItemInArray(this.tableData, row)
         })
         .finally(() => {
           this.isDeleting = false
