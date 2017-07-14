@@ -18,7 +18,7 @@
     "vuex-router-sync": "^4.2.0"
   },
   "devDependencies": {
-    "autodll-webpack-plugin": "^0.0.7",
+    "autodll-webpack-plugin": "^0.2.1",
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",

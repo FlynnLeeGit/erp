@@ -6,7 +6,9 @@ const AutoWebpackPlugin = require('autodll-webpack-plugin')
 const pkg = require('./package.json')
 
 console.log('API_SERVER', API_SERVER)
-module.exports = {
+const isProd = process.env.NODE_ENV === 'production'
+
+const config = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -46,6 +48,7 @@ module.exports = {
   resolve: {
     alias: {
       vue$: 'vue/dist/vue.esm.js',
+
       '@': path.resolve('src')
     }
   },
@@ -70,22 +73,22 @@ module.exports = {
       template: 'template/index.html',
       hash: true
     }),
-    // new AutoWebpackPlugin({
-    //   inject: true,
-    //   context: __dirname,
-    //   filename: '[name]_[hash:5].js',
-    //   path: '/',
-    //   entry: {
-    //     vender: Object.keys(pkg.dependencies)
-    //   }
-    // })
+    new AutoWebpackPlugin({
+      debug: true,
+      inject: true,
+      context: __dirname,
+      filename: '[name]_[hash:5].js',
+      entry: {
+        vender: Object.keys(pkg.dependencies)
+      }
+    })
   ]
 }
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
+if (isProd) {
+  config.devtool = '#source-map'
   // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
+  config.plugins = (config.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
@@ -102,3 +105,5 @@ if (process.env.NODE_ENV === 'production') {
     })
   ])
 }
+
+module.exports = config
