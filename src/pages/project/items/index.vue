@@ -4,12 +4,25 @@
       项目:[{{$route.query.pname}}][{{$route.query.bname}}]
     </div>
     <section v-loading='isFetching'>
-      <el-alert type='info'
-                v-if="budgetData.totalPrice"
-                title='概要'
-                :description="budgetDesc"
-                show-icon>
-      </el-alert>
+      <el-row :gutter="10">
+        <el-col :span="4">
+          <el-button class="_mt1"
+                     type="primary"
+                     @click='handleOpenRateDialog(bid)'
+                     size="large">
+            利润率批量修改
+          </el-button>
+        </el-col>
+        <el-col :span='20'>
+          <el-alert type='info'
+                    v-if="budgetData.totalPrice"
+                    title='汇总信息'
+                    :description="budgetDesc"
+                    show-icon>
+          </el-alert>
+        </el-col>
+  
+      </el-row>
       <div class="_mt2"
            v-for='space in spaceList'
            :key='space.id'>
@@ -176,16 +189,22 @@
                   @updated='handleUpdateBudget'>
   
     </items-dialog>
+    <rate-dialog ref="rateDialog"
+                 @updated='handleUpdateBudget'>
+  
+    </rate-dialog>
   
   </div>
 </template>
 <script>
 import { get, edit, add, del, getSpaces } from './api'
 import itemsDialog from './_itemsDialog.vue'
+import rateDialog from './_rateDialog.vue'
 
 export default {
   components: {
-    itemsDialog
+    itemsDialog,
+    rateDialog
   },
   data () {
     return {
@@ -268,6 +287,9 @@ export default {
     },
     openDialog (sid) {
       this.$refs.dialog.open(sid, this.bid, this.quotaTable(sid))
+    },
+    handleOpenRateDialog (bid) {
+      this.$refs.rateDialog.open(bid)
     }
 
   }

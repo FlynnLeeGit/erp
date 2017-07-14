@@ -27,7 +27,7 @@
                        sortable
                        prop='name'
                        :sort-method="$utils.sortByChs.bind(this,'name')"
-                       width="180">
+                       width="350">
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='edit'

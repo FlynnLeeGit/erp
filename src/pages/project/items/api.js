@@ -44,5 +44,8 @@ export const del = (bid, sid, iid) =>
     transformOpt
   )
 
-export { get as getSpaces } from '../detail/space/api'
+// 修改项目定额下面的利润率
+export const updateRate = (bid, data) =>
+  axios.put(`/_api/project/budgets/${bid}/profit`, data, transformOpt)
 
+export { get as getSpaces } from '../detail/space/api'
