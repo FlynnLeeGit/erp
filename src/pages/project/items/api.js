@@ -48,4 +48,10 @@ export const del = (bid, sid, iid) =>
 export const updateRate = (bid, data) =>
   axios.put(`/_api/project/budgets/${bid}/profit`, data, transformOpt)
 
+//  预览预算的pdf版本
+export const createPdf = (bid, data) =>
+  axios.post(`/_api/project/budgets/${bid}/pdfs`, data, {
+    responseType: 'blob'
+  })
+
 export { get as getSpaces } from '../detail/space/api'

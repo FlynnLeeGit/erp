@@ -71,13 +71,30 @@
                        :key='gKey'
                        :label='g'
                        :value='+gKey'>
-  
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label='套内面积'>
+          <el-input-number :min='0'
+                           :step="10"
+                           :debounce="800"
+                           v-model="row.area">
+          </el-input-number>
+          <span class="_ml1">平方米</span>
+        </el-form-item>
+        <el-form-item label='客户邮箱'>
+          <el-input placeholder='请输入客户邮箱'
+                    v-model='row.email'>
+          </el-input>
         </el-form-item>
         <el-form-item label='地址'>
           <el-input placeholder='请输入项目地址'
                     v-model='row.address'>
+          </el-input>
+        </el-form-item>
+        <el-form-item label='房型'>
+          <el-input placeholder='请输入项目房型'
+                    v-model='row.houseType'>
           </el-input>
         </el-form-item>
         <el-form-item label='状态'
@@ -129,6 +146,9 @@ export default {
         mobile: '',
         gender: '',
         address: '',
+        email: '',
+        area: 0,
+        houseType: '',
         archiveType: 1
       },
       editRow: {},

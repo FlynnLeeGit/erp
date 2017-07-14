@@ -73,15 +73,15 @@ const config = {
       template: 'template/index.html',
       hash: true
     }),
-    new AutoWebpackPlugin({
-      debug: true,
-      inject: true,
-      context: __dirname,
-      filename: '[name]_[hash:5].js',
-      entry: {
-        vender: Object.keys(pkg.dependencies)
-      }
-    })
+    // new AutoWebpackPlugin({
+    //   debug: true,
+    //   inject: true,
+    //   context: __dirname,
+    //   filename: '[name]_[hash:5].js',
+    //   entry: {
+    //     vender: Object.keys(pkg.dependencies)
+    //   }
+    // })
   ]
 }
 

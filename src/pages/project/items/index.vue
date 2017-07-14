@@ -8,9 +8,13 @@
         <el-col :span="4">
           <el-button class="_mt1"
                      type="primary"
-                     @click='handleOpenRateDialog(bid)'
-                     size="large">
+                     @click='handleOpenRateDialog(bid)'>
             利润率批量修改
+          </el-button>
+          <el-button class="_mt1"
+                     @click='openPdfDialog(bid)'
+                     type="primary">
+            生成PDF文档
           </el-button>
         </el-col>
         <el-col :span='20'>
@@ -193,6 +197,7 @@
                  @updated='handleUpdateBudget'>
   
     </rate-dialog>
+    <pdf-dialog ref='pdfDialog'></pdf-dialog>
   
   </div>
 </template>
@@ -200,11 +205,13 @@
 import { get, edit, add, del, getSpaces } from './api'
 import itemsDialog from './_itemsDialog.vue'
 import rateDialog from './_rateDialog.vue'
+import pdfDialog from './_pdfDialog.vue'
 
 export default {
   components: {
     itemsDialog,
-    rateDialog
+    rateDialog,
+    pdfDialog
   },
   data () {
     return {
@@ -290,6 +297,9 @@ export default {
     },
     handleOpenRateDialog (bid) {
       this.$refs.rateDialog.open(bid)
+    },
+    openPdfDialog (bid) {
+      this.$refs.pdfDialog.open(bid)
     }
 
   }
