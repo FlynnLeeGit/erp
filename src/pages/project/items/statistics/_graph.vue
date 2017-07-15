@@ -3,9 +3,15 @@
   </div>
 </template>
 <script>
-import echarts from 'echarts'
-import macarons from './macarons.json'
-echarts.registerTheme('macarons', macarons)
+import echarts from 'echarts/lib/echarts'
+
+import 'echarts/lib/chart/pie'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/title'
+
+import macaronsTheme from './macarons.json'
+echarts.registerTheme('macarons', macaronsTheme)
 
 const GRAPH_MAP = {
   totalArtificialCost: '人工成本',

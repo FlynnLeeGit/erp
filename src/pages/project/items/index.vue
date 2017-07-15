@@ -34,7 +34,7 @@ export default {
   },
   data () {
     return {
-      currentView: 'budgetStatistics'
+      currentView: 'budgetDetail'
     }
   }
 }
