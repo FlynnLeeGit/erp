@@ -1,8 +1,12 @@
 <template>
   <el-dialog :visible.sync='visible'
              title="pdf文档生成">
+  
     <el-form label-width='120px'>
-      <el-form-item label='甲方名称'>
+      <h3>基本信息</h3>
+      <hr>
+      <el-form-item label='甲方名称'
+                    class="_mt1">
         <el-input v-model='form.partyAName'
                   placeholder="请输入甲方名称">
         </el-input>
@@ -41,31 +45,32 @@
       </el-form-item>
   
       <el-form-item label='设计师'>
-        <el-input v-model='form.designer'>
+        <el-input v-model='form.designer'
+                  placeholder="请输入设计师姓名">
   
         </el-input>
       </el-form-item>
       <el-form-item label='设计师电话'>
-        <el-input v-model='form.designerMobile'>
+        <el-input v-model='form.designerMobile'
+                  placeholder="请输入设计师电话">
   
         </el-input>
       </el-form-item>
       <el-form-item label='乙方代表'>
-        <el-input v-model='form.partyBName'>
+        <el-input v-model='form.partyBName'
+                  placeholder="请输入乙方代表姓名">
   
         </el-input>
       </el-form-item>
       <el-form-item label='乙方电话'>
-        <el-input v-model='form.partyBMobile'>
-  
-        </el-input>
-      </el-form-item>
-      <el-form-item label='税金'>
-        <el-input v-model='form.tax'>
+        <el-input v-model='form.partyBMobile'
+                  placeholder="请输入乙方电话">
   
         </el-input>
       </el-form-item>
   
+      <h3>装修工程造价</h3>
+      <hr>
       <el-form-item label='一、半包施工项(含辅材人工)'>
         <span class="_text">{{matAndArtTotalPrice}} 元</span>
       </el-form-item>
@@ -98,12 +103,24 @@
         <span class="_mt1">元 [步进1000]</span>
       </el-form-item>
   
-      <el-form-item label='五、总造价'>
+      <el-form-item label='五、税金'>
+        <el-input-number v-model='form.tax'
+                         :min="0"
+                         :step="100"
+                         :debounce="800">
+        </el-input-number>
+        <span class="_mt1">元 [步进100]</span>
+      </el-form-item>
+  
+      <el-form-item label='六、总造价'>
         <span class="_text">
           {{totalConst}} 元
         </span>
+        <span class="_mt1">[一 + 二 + 四 + 五]</span>
       </el-form-item>
   
+      <h3>付款方式</h3>
+      <hr>
       <el-form-item label='首付款'>
         <span class="_text">
           {{firstPayment}} 元
@@ -115,21 +132,21 @@
         <span class="_text">
           {{secondPayment}} 元
         </span>
-        <span class="_ml1">[水电验收完成后支付(一+五)*40%+二]</span>
+        <span class="_ml1">[水电验收完成后支付(一 + 五) * 40% + 二]</span>
       </el-form-item>
   
       <el-form-item label='三期款'>
         <span class="_text">
           {{thirdPayment}} 元
         </span>
-        <span class="_ml1">[泥木验收完成后支付(一+五)*50%]</span>
+        <span class="_ml1">[泥木验收完成后支付(一 + 五) * 50%]</span>
       </el-form-item>
   
       <el-form-item label='尾款'>
         <span class="_text">
           {{lastPayment}} 元
         </span>
-        <span class="_ml1">[竣工验收完成后支付(一+五)*10%]</span>
+        <span class="_ml1">[竣工验收完成后支付(一 + 五) * 10%]</span>
       </el-form-item>
   
     </el-form>
@@ -147,7 +164,7 @@
                  type="text">
         <a :href="pdfUrl"
            style="color:inherit;"
-           target="_blank">点击查看pdf</a>
+           target="_blank">点击查看pdf[{{createTime}}]</a>
       </el-button>
     </div>
   </el-dialog>
@@ -178,6 +195,7 @@ export default {
         facilitiesManagementPrice: 0
       },
       pdfUrl: '',
+      createTime: '',
       matAndArtTotalPrice: 0
     }
   },
@@ -199,9 +217,20 @@ export default {
     },
   },
   methods: {
-    open (bid, matAndArtTotalPrice) {
+    initForm (projectInfo) {
+      this.form.area = projectInfo.area
+      this.form.address = projectInfo.address
+      this.form.houseType = projectInfo.houseType
+      this.form.partyAName = projectInfo.username
+      this.form.partyAMobile = projectInfo.mobile
+      this.form.partyAEmail = projectInfo.email
+      this.form.designer = projectInfo.user.name
+      this.form.designerMobile = projectInfo.user.mobile
+    },
+    open (bid, matAndArtTotalPrice, projectInfo) {
       this.bid = bid
       this.matAndArtTotalPrice = matAndArtTotalPrice
+      this.initForm(projectInfo)
       this.visible = true
     },
     close () {
@@ -219,6 +248,7 @@ export default {
       createPdf(this.bid, sendData)
         .then(({ data }) => {
           this.pdfUrl = window.URL.createObjectURL(data)
+          this.createTime = new Date().toLocaleTimeString()
           this.isCreating = false
         })
         .catch(() => {

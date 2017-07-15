@@ -70,6 +70,20 @@ export const listToMap = (list, mapField = 'name', idField = 'id') => {
   })
   return obj
 }
+/**
+ * 将对象格式的列表转为数组列表 {
+ *  1:{name:'lee'},
+ *  2:{name:'fee'}
+ * } => [{name:'lee',mapId:1},{name:'fee',mapId:2}]
+ *
+ * @param {* Object } objs 对象列表
+ * @param {*} mapIdName 映射键值到mapIdName字段上
+ */
+export const mapToList = (objs, mapIdName = 'mapId') =>
+  Object.keys(objs).map(k => {
+    objs[k][mapIdName] = k
+    return objs[k]
+  })
 
 /**
  * 指定字段更新老对象的值
@@ -84,6 +98,19 @@ export const replaceObjectFields = (oldObj, newObj, fields = 'all') => {
   fields.forEach(f => {
     oldObj[f] = newObj[f]
   })
+}
+
+/**
+ * 获取数组中值对应的第一个元素
+ * @param {* [Object]} arr 数组
+ * @param {* String } value 目标值
+ * @param {* String} field 目标字段
+ */
+export const getItemInArray = (arr, value, field = 'id') => {
+  const filterItems = arr.filter(
+    item => item[field].toString() === value.toString()
+  )
+  return filterItems.length ? filterItems[0] : {}
 }
 
 /**

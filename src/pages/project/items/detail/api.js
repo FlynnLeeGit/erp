@@ -54,5 +54,5 @@ export const createPdf = (bid, data) =>
     responseType: 'blob'
   })
 
-export { get as getSpaces } from '../detail/space/api'
-// export {get as getProjectInfo } from '../list/api'
+export { get as getSpaces } from '@/pages/project/detail/space/api'
+export { get as getProjects } from '@/pages/project/list/api'

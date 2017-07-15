@@ -22,7 +22,7 @@
 </template>
 <script>
 import { add } from './api'
-import collectTable from '../collect/_collectTable.vue'
+import collectTable from '@/pages/project/collect/_collectTable.vue'
 export default {
   components: {
     collectTable
