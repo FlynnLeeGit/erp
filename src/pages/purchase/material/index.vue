@@ -159,6 +159,7 @@
     <el-dialog title='辅材'
                :visible.sync='showDialog'>
       <el-form :model='row'
+               :rules="rules"
                label-width="80px">
         <el-form-item label='供应商'>
           <el-select v-model='row.purchaseSupplierId'>
@@ -171,7 +172,7 @@
   
         </el-form-item>
   
-        <el-form-item label='包装品牌'>
+        <el-form-item label='品牌'>
           <el-input placeholder='请输入包装品牌'
                     v-model='row.brand'></el-input>
         </el-form-item>
@@ -205,7 +206,8 @@
           </el-select>
         </el-form-item>
   
-        <el-form-item label='规格数量'>
+        <el-form-item label='规格数量'
+                      v-if="row.quotaAuxiliaryMaterialId">
           <el-input-number placeholder='请输入规格数量'
                            :min='0'
                            :step='10'
@@ -217,10 +219,12 @@
         <el-form-item label='规格单价'>
           <span class="_text">{{(row.packPrice / row.specAmount).toFixed(2)}}</span>
           <span class="_ml2">元</span>
+          <span class="_ml1 _text">[ = 包装价格 / 规格数量 ]</span>
         </el-form-item>
   
-        <el-form-item label='辅材型号'>
-          <el-input placeholder='请输入辅材型号'
+        <el-form-item label='辅材型号'
+                      prop="model">
+          <el-input placeholder='请输入辅材型号(必填)'
                     v-model='row.model'>
           </el-input>
         </el-form-item>
@@ -301,7 +305,13 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'quotaAuxiliaryMaterialId', 'purchaseSupplierId', 'packUnit', 'specAmount', 'packPrice', 'specPrice', 'brand']
+      searchFields: ['id', 'quotaAuxiliaryMaterialId', 'purchaseSupplierId', 'packUnit', 'specAmount', 'packPrice', 'specPrice', 'brand'],
+
+      rules: {
+        model: [
+          { required: true, message: '辅材型号不能为空' }
+        ]
+      }
     }
   },
   created () {

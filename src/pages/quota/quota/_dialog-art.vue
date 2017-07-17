@@ -6,7 +6,7 @@
       <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
-      <el-form-item label='人工工种'>
+      <el-form-item label='工种'>
         <el-select v-model='row.quotaArtficial.id'>
           <el-option v-for='art in map.artList'
                      :key='art.id'
@@ -16,7 +16,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label='人工计量'>
+      <el-form-item label='用量'>
         <el-input-number :debounce='800'
                          :min='0'
                          v-model='row.counter'

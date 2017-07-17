@@ -29,7 +29,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label='辅材计量'>
+      <el-form-item label='用量'>
         <el-input-number v-model='row.counter'
                          :debounce='800'
                          :min='0'

@@ -50,7 +50,7 @@ const quotaRoutes = {
       path: 'auxmaterial',
       name: 'quota.auxmaterial',
       meta: {
-        title: '规格管理'
+        title: '辅材规格'
       },
       component: auxmaterial
     },
@@ -66,7 +66,7 @@ const quotaRoutes = {
       path: 'release',
       name: 'quota.release',
       meta: {
-        title: '版本管理'
+        title: '版本比对'
       },
       component: release
     }
@@ -139,7 +139,7 @@ const projectRoutes = {
       path: 'list',
       name: 'project.list',
       meta: {
-        title: '列表'
+        title: ''
       },
       component: projectList
     },

@@ -20,17 +20,14 @@
                      :value='tKey'>
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item v-if='row.type'
-                    prop='secType'
-                    label='二级分类'>
-        <el-select v-model='row.secType'>
+        <el-select v-if='row.type' v-model='row.secType' class="_ml1">
           <el-option :key='t'
                      v-for='t in map.type[row.type]'
                      :value='t'>
           </el-option>
         </el-select>
       </el-form-item>
+   
       <el-form-item label='单位'
                     prop='unit'>
         <el-select v-model='row.unit'>
@@ -75,7 +72,6 @@
                          :min='0'
                          :debounce="800"
                          :step='0.01'>
-  
         </el-input-number>
         <span class="_ml1">[步进0.01]</span>
       </el-form-item>

@@ -23,7 +23,7 @@
                        prop='id'
                        width="80">
       </el-table-column>
-      <el-table-column label="名称"
+      <el-table-column label="规格"
                        sortable
                        prop='name'
                        :sort-method="$utils.sortByChs.bind(this,'name')"
@@ -36,7 +36,7 @@
           </inline-edit>
         </template>
       </el-table-column>
-      <el-table-column label="单位"
+      <el-table-column label="定额单位"
                        sortable
                        prop='specUnit'
                        :sort-method="$utils.sortByChs.bind(this,'specUnit')"
@@ -49,7 +49,26 @@
           </inline-edit>
         </template>
       </el-table-column>
-      <el-table-column label="规格描述"
+      <el-table-column label="类型"
+                       sortable
+                       prop='type'
+                       width="100">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       type='select'
+                       prop='type'>
+            <template slot='options'>
+              <option v-for='t in map.specType'
+                      :key='t'
+                      :value='t'
+                      v-text='t'>
+              </option>
+            </template>
+          </inline-edit>
+        </template>
+      </el-table-column>
+      <el-table-column label="描述"
                        sortable
                        prop='specDesc'
                        :sort-method="$utils.sortByChs.bind(this,'specDesc')"
@@ -62,6 +81,20 @@
           </inline-edit>
         </template>
       </el-table-column>
+
+      <el-table-column label="最大单位价格"
+                       sortable
+                       prop='limitPrice'
+                       width="120">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       :fn='edit'
+                       type='number'
+                       prop='limitPrice'>
+          </inline-edit>
+        </template>
+      </el-table-column>
+
       <el-table-column label="计算策略"
                        sortable
                        prop='calcStrategy'
@@ -108,24 +141,43 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='添加辅材'
+    <el-dialog title='添加辅材规格'
                :visible.sync='showDialog'>
       <el-form :model='row'
                :rules='formRules'
-               label-width='80px'>
-        <el-form-item label='名称'
+               label-width='120px'>
+        <el-form-item label='规格'
                       prop='name'>
           <el-input placeholder='请输入辅材名称'
                     v-model='row.name'></el-input>
         </el-form-item>
-        <el-form-item label='单位'>
+        <el-form-item label='定额单位'>
           <el-input placeholder='请输入辅材单位(个,m,桶等)'
                     v-model='row.specUnit'></el-input>
         </el-form-item>
-        <el-form-item label='规格描述'>
+        <el-form-item label="类型">
+          <el-select v-model="row.type"
+                     placeholder="请选择类型">
+            <el-option v-for="t in map.specType"
+                       :key="t"
+                       :value='t'
+                       :label='t'>
+  
+            </el-option>
+          </el-select>
+  
+        </el-form-item>
+        <el-form-item label='描述'>
           <el-input placeholder='描述'
                     v-model='row.specDesc'></el-input>
         </el-form-item>
+  
+        <el-form-item label="最大单位价格">
+          <el-input v-model="row.limitPrice"
+                    placeholder="请输入最大单位价格 防止采购人员误输入不合理的价格">
+          </el-input>
+        </el-form-item>
+  
         <el-form-item label='计算策略'
                       prop='calcStrategy'>
           <el-select v-model='row.calcStrategy'>
@@ -165,8 +217,10 @@ export default {
       initialRow: {
         name: '',
         specUnit: '',
+        type: '',
         specDesc: '',
-        calcStrategy: '1'
+        calcStrategy: '1',
+        limitPrice: ''
       },
       // edit && del
 

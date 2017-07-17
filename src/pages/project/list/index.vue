@@ -53,16 +53,18 @@
     </div>
   
     <!--dialog-->
-    <el-dialog title='项目'
+    <el-dialog title='创建项目'
                :visible.sync='showDialog'>
       <el-form :model='row'
                label-width='80px'>
-        <el-form-item label='用户'>
+        <h4>客户信息</h4>
+        <hr>
+        <el-form-item label='客户名称' class="_mt1">
           <el-input placeholder='请输入客户名称'
                     v-model='row.username'></el-input>
         </el-form-item>
-        <el-form-item label='联系号码'>
-          <el-input placeholder='请输入联系号码'
+        <el-form-item label='联系电话'>
+          <el-input placeholder='请输入联系电话'
                     v-model='row.mobile'></el-input>
         </el-form-item>
         <el-form-item label='性别'>
@@ -74,6 +76,23 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label='客户邮箱'>
+          <el-input placeholder='请输入客户邮箱'
+                    v-model='row.email'>
+          </el-input>
+        </el-form-item>
+        <h4>项目信息</h4>
+        <hr>
+        <el-form-item label='项目地址' class="_mt1">
+          <el-input placeholder='请输入项目地址'
+                    v-model='row.address'>
+          </el-input>
+        </el-form-item>
+        <el-form-item label='房型'>
+          <el-input placeholder='请输入项目房型(例如：三房两厅)'
+                    v-model='row.houseType'>
+          </el-input>
+        </el-form-item>
         <el-form-item label='套内面积'>
           <el-input-number :min='0'
                            :step="10"
@@ -81,21 +100,6 @@
                            v-model="row.area">
           </el-input-number>
           <span class="_ml1">平方米</span>
-        </el-form-item>
-        <el-form-item label='客户邮箱'>
-          <el-input placeholder='请输入客户邮箱'
-                    v-model='row.email'>
-          </el-input>
-        </el-form-item>
-        <el-form-item label='地址'>
-          <el-input placeholder='请输入项目地址'
-                    v-model='row.address'>
-          </el-input>
-        </el-form-item>
-        <el-form-item label='房型'>
-          <el-input placeholder='请输入项目房型'
-                    v-model='row.houseType'>
-          </el-input>
         </el-form-item>
         <el-form-item label='状态'
                       v-if="opt==='edit'">

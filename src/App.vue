@@ -9,7 +9,7 @@
                 <i class="fa fa-list _pointer"
                    @click='TOGGLE_SIDE_HIDE'></i>
               </el-tooltip>
-              中孚空间OA系统
+              中孚空间ERP
             </h2>
           </el-col>
           <el-col v-if='user'

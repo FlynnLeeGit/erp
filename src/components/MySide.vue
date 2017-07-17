@@ -4,10 +4,10 @@
     <template>
       <el-menu-item-group title="定额管理"
                           v-if='userPass.quota'>
-        <el-menu-item index="/quota/artficial">人工</el-menu-item>
-        <el-menu-item index="/quota/auxmaterial">规格</el-menu-item>
+        <el-menu-item index="/quota/artficial">人工管理</el-menu-item>
+        <el-menu-item index="/quota/auxmaterial">辅材规格</el-menu-item>
         <el-menu-item index="/quota/quota">定额模版</el-menu-item>
-        <el-menu-item index="/quota/release">版本</el-menu-item>
+        <el-menu-item index="/quota/release">版本比对</el-menu-item>
       </el-menu-item-group>
       <el-menu-item-group title="采购管理"
                           v-if='userPass.purchase'>
@@ -16,8 +16,8 @@
       </el-menu-item-group>
       <el-menu-item-group title="项目管理"
                           v-if='userPass.project'>
-        <el-menu-item index="/project/collect">常用定额标注</el-menu-item>
         <el-menu-item index="/project/list">项目列表</el-menu-item>
+        <el-menu-item index="/project/collect">常用定额</el-menu-item>
       </el-menu-item-group>
       <el-menu-item-group title="账号管理"
                           v-if='userPass.account'>
