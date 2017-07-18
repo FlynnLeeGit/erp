@@ -218,7 +218,7 @@ import dialogQuota from './_dialog-quota.vue'
 import dialogArt from './_dialog-art.vue'
 import dialogMat from './_dialog-mat.vue'
 
-import { get, getArtList, getMatList, getMap, edit, del, release } from './api'
+import { get, getArtList, getMatList, getMap, edit, del, release, getMaterials } from './api'
 
 export default {
   components: {
@@ -272,8 +272,8 @@ export default {
     // api methods
     initData () {
       this.isFetching = true
-      Promise.all([get(), getMap(), getArtList(), getMatList()])
-        .then(([one, two, three, four]) => {
+      Promise.all([get(), getMap(), getArtList(), getMatList(), getMaterials()])
+        .then(([one, two, three, four, five]) => {
           // table
           this.tableData = one.data
           // map
@@ -281,6 +281,8 @@ export default {
           // art && mat
           this.artMap.artList = three.data
           this.matMap.matList = four.data
+          this.matMap.matGroupList = this.$utils.groupByField(four.data, 'type')
+          this.matMap.groupMaterials = this.$utils.groupByField(five.data, 'brand')
         })
         .finally(() => {
           this.isFetching = false

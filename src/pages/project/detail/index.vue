@@ -5,7 +5,7 @@
                  @click="$router.push({name:'project.list'})">
         返回项目列表
       </el-button>
-      <span>当前项目 [{{ $route.query.name }}]</span>
+      <span>当前项目 [{{ $route.query.pname }}]</span>
     </div>
     <el-tabs type='card'
              v-model="activeName"

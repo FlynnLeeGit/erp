@@ -31,3 +31,4 @@ export const release = data => axios.post(`/_api/quota/releases`, data)
 export { getMap } from '../api'
 export { get as getArtList } from '../artficial/api'
 export { get as getMatList } from '../auxmaterial/api'
+export { get as getMaterials } from '../../purchase/material/api'

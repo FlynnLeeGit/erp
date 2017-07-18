@@ -32,6 +32,13 @@
         </template>
       </el-table-column>
   
+      <el-table-column label="辅材规格"
+                       class-name='_text'>
+        <template scope='scope'>
+          {{scope.row.quotaAuxiliaryMaterial.name}}
+        </template>
+      </el-table-column>
+  
       <el-table-column label="品牌"
                        sortable
                        prop='brand'
@@ -41,6 +48,31 @@
                        prop='brand'
                        :fn='edit'
                        type='text'>
+          </inline-edit>
+        </template>
+      </el-table-column>
+  
+      <el-table-column label="辅材型号"
+                       prop='model'
+                       width="100">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='model'
+                       :fn='edit'
+                       type='text'>
+          </inline-edit>
+        </template>
+      </el-table-column>
+  
+      <el-table-column label="采购价格(元)"
+                       prop='packPrice'
+                       sortable
+                       width="130">
+        <template scope='scope'>
+          <inline-edit :data='scope.row'
+                       prop='packPrice'
+                       :fn='edit'
+                       type='number'>
           </inline-edit>
         </template>
       </el-table-column>
@@ -58,26 +90,7 @@
         </template>
       </el-table-column>
   
-      <el-table-column label="包装价格(元)"
-                       prop='packPrice'
-                       sortable
-                       width="130">
-        <template scope='scope'>
-          <inline-edit :data='scope.row'
-                       prop='packPrice'
-                       :fn='edit'
-                       type='number'>
-          </inline-edit>
-        </template>
-      </el-table-column>
-  
-      <el-table-column label="辅材规格"
-                       class-name='_text'>
-        <template scope='scope'>
-          {{scope.row.quotaAuxiliaryMaterial.name}}
-        </template>
-      </el-table-column>
-      <el-table-column label="规格数量"
+      <el-table-column label="包装含量"
                        prop='specAmount'
                        sortable
                        width="100">
@@ -89,23 +102,12 @@
           </inline-edit>
         </template>
       </el-table-column>
-      <el-table-column label="规格单价"
+  
+      <el-table-column label="单价"
                        prop='specPrice'
                        sortable
                        class-name="_text"
                        width="100">
-      </el-table-column>
-  
-      <el-table-column label="型号"
-                       prop='model'
-                       width="100">
-        <template scope='scope'>
-          <inline-edit :data='scope.row'
-                       prop='model'
-                       :fn='edit'
-                       type='text'>
-          </inline-edit>
-        </template>
       </el-table-column>
   
       <el-table-column label="启用"
@@ -161,7 +163,10 @@
       <el-form :model='row'
                :rules="rules"
                label-width="80px">
-        <el-form-item label='供应商'>
+        <h4>采购信息</h4>
+        <hr>
+        <el-form-item label='供应商'
+                      class="_mt1">
           <el-select v-model='row.purchaseSupplierId'>
             <el-option v-for='s in list.supplier'
                        :label='s.company'
@@ -169,27 +174,6 @@
                        :key='s.id'>
             </el-option>
           </el-select>
-  
-        </el-form-item>
-  
-        <el-form-item label='品牌'>
-          <el-input placeholder='请输入包装品牌'
-                    v-model='row.brand'></el-input>
-        </el-form-item>
-  
-        <el-form-item label='包装单位'>
-          <el-input placeholder='请输入包装单位(袋,包)'
-                    v-model='row.packUnit'>
-          </el-input>
-        </el-form-item>
-  
-        <el-form-item label='包装价格'>
-          <el-input-number placeholder='请输入包装价格'
-                           :step='100'
-                           v-model='row.packPrice'>
-          </el-input-number>
-          <span class="_ml2">元</span>
-          <span class="_ml1">[步进100]</span>
         </el-form-item>
   
         <el-form-item label='辅材规格'>
@@ -206,8 +190,37 @@
           </el-select>
         </el-form-item>
   
-        <el-form-item label='规格数量'
-                      v-if="row.quotaAuxiliaryMaterialId">
+        <el-form-item label='品牌'>
+          <el-input placeholder='请输入包装品牌'
+                    v-model='row.brand'></el-input>
+        </el-form-item>
+  
+        <el-form-item label='辅材型号'
+                      prop="model">
+          <el-input placeholder='请输入辅材型号(必填)'
+                    v-model='row.model'>
+          </el-input>
+        </el-form-item>
+  
+        <el-form-item label='采购价格'>
+          <el-input-number placeholder='请输入采购价格'
+                           :step='100'
+                           v-model='row.packPrice'>
+          </el-input-number>
+          <span class="_ml2">元</span>
+          <span class="_ml1">[步进100]</span>
+        </el-form-item>
+  
+        <h4>包装信息</h4>
+        <hr>
+        <el-form-item label='包装单位'
+                      class="_mt1">
+          <el-input placeholder='请输入包装单位(袋,包)'
+                    v-model='row.packUnit'>
+          </el-input>
+        </el-form-item>
+  
+        <el-form-item label='包装含量'>
           <el-input-number placeholder='请输入规格数量'
                            :min='0'
                            :step='10'
@@ -216,17 +229,10 @@
           <span class="_ml1">[步进10]</span>
         </el-form-item>
   
-        <el-form-item label='规格单价'>
-          <span class="_text">{{(row.packPrice / row.specAmount).toFixed(2)}}</span>
+        <el-form-item label='单价'>
+          <span class="_text">{{(row.packPrice / row.specAmount).toFixed(3)}}</span>
           <span class="_ml2">元</span>
-          <span class="_ml1 _text">[ = 包装价格 / 规格数量 ]</span>
-        </el-form-item>
-  
-        <el-form-item label='辅材型号'
-                      prop="model">
-          <el-input placeholder='请输入辅材型号(必填)'
-                    v-model='row.model'>
-          </el-input>
+          <span class="_ml1 _text">[ = 采购价格 / 包装含量 ]</span>
         </el-form-item>
   
         <el-form-item label='启用?'>

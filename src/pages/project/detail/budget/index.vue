@@ -12,7 +12,7 @@
                      class="_fr -has-link"
                      size='small'>
             <router-link target='_blank'
-                         :to="{ name:'project.detail.budget.items',params:{pid:pid,bid:b.id},query:{pname:$route.query.name,bversion:b.version,bname:b.name} }">
+                         :to="{ name:'project.detail.budget.items',params:{pid:pid,bid:b.id},query:{pname:$route.query.pname,bversion:b.version,bname:b.name} }">
               进入{{b.name}}
             </router-link>
           </el-button>

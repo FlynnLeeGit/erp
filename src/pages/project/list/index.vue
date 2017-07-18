@@ -256,7 +256,7 @@ export default {
           pid: project.id
         },
         query: {
-          name: project.address
+          pname: project.address
         }
       })
     }

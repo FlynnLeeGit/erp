@@ -8,27 +8,37 @@
       <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
-      <el-form-item label='规格'>
-        <el-select v-model='row.quotaAuxiliaryMaterial.id'
-                   @change='handleMatChange'>
-          <el-option :key='mat.id'
-                     :label='mat.name'
-                     v-for='mat in map.matList'
-                     :value='mat.id'
-                     :disabled="optionDisabled(qRow,mat)">
-          </el-option>
-        </el-select>
-      </el-form-item>
+  
       <el-form-item label='辅材品牌'
                     prop='brand'>
-        <el-select v-model='row.brand'
-                   placeholder="请先选择规格">
-          <el-option v-for='(b,bIdx) in brands'
-                     :value='b'
-                     :key='bIdx'>
+        <el-select v-model="row.brand"
+                   @change="handleBrandChange"
+                   placeholder="选择品牌">
+          <el-option v-for="(modelList,brand) in map.groupMaterials"
+                     :key="brand"
+                     :value="brand">
           </el-option>
         </el-select>
+  
       </el-form-item>
+  
+      <el-form-item label="型号"
+                    prop="model">
+        <el-select v-if="row.brand"
+                   placeholder="选择型号"
+                   v-model="row.model">
+          <el-option v-for="m in map.groupMaterials[row.brand]"
+                     :key="m.id"
+                     :disabled="modelOptionsDisabled(m)"
+                     @click.native="handleClickModel(m)"
+                     :value="m.model">
+          </el-option>
+        </el-select>
+        <span v-else
+              class="_text">请先选择品牌</span>
+  
+      </el-form-item>
+  
       <el-form-item label='用量'>
         <el-input-number v-model='row.counter'
                          :debounce='800'
@@ -50,7 +60,7 @@
   </el-dialog>
 </template>
 <script>
-import { addMat, getBrandsByMat } from './api'
+import { addMat } from './api'
 
 export default {
   props: {
@@ -68,27 +78,29 @@ export default {
       initialRow: {
         counter: 0,
         brand: '',
-        quotaAuxiliaryMaterial: {
-          id: ''
-        }
+        model: '',
+        quotaAuxiliaryMaterial: {}
       },
-      brands: [],
       isSubmiting: false,
       qRow: {},
       formRules: {
         brand: [
           { required: true, message: '品牌不能为空' }
+        ],
+        model: [
+          { required: true, message: '型号不能为空' }
         ]
       }
     }
   },
   methods: {
     // 还原row为初始空内容状态
-    restoreRow (qid) {
+    restoreRow () {
       this.row = this.$utils.deepCopy(this.initialRow)
     },
-    optionDisabled (qRow, mat) {
-      return qRow.quotaAuxiliaryCounters && this.$utils.valueInArray(qRow.quotaAuxiliaryCounters, mat.id, 'quotaAuxiliaryMaterial.id')
+    modelOptionsDisabled (m) {
+      m.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, m.quotaAuxiliaryMaterialId, 'quotaAuxiliaryMaterial.id')
+      return m.disabled
     },
     submit (data) {
       this.$refs.matForm.validate(valid => {
@@ -106,17 +118,18 @@ export default {
     },
     open (qRow) {
       this.qRow = qRow
-      this.restoreRow(qRow.id)
+      this.restoreRow()
       this.visible = true
     },
     close () {
       this.visible = false
     },
-    handleMatChange (mid) {
-      this.row.brand = ''
-      getBrandsByMat(mid).then(({ data }) => {
-        this.brands = data
-      })
+    handleBrandChange (brand) {
+      this.row.model = ''
+      this.row.quotaAuxiliaryMaterial.id = ''
+    },
+    handleClickModel (model) {
+      this.row.quotaAuxiliaryMaterial.id = model.quotaAuxiliaryMaterialId
     }
   }
 }

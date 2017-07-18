@@ -82,7 +82,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="最大单位价格"
+      <el-table-column label="采购限价"
                        sortable
                        prop='limitPrice'
                        width="120">
@@ -152,7 +152,7 @@
                     v-model='row.name'></el-input>
         </el-form-item>
         <el-form-item label='定额单位'>
-          <el-input placeholder='请输入辅材单位(个,m,桶等)'
+          <el-input placeholder='定额内使用单位(m,kg等)'
                     v-model='row.specUnit'></el-input>
         </el-form-item>
         <el-form-item label="类型">
@@ -172,9 +172,9 @@
                     v-model='row.specDesc'></el-input>
         </el-form-item>
   
-        <el-form-item label="最大单位价格">
+        <el-form-item label="采购限价">
           <el-input v-model="row.limitPrice"
-                    placeholder="请输入最大单位价格 防止采购人员误输入不合理的价格">
+                    placeholder="请输入采购限价 防止采购人员误输入不合理的价格">
           </el-input>
         </el-form-item>
   

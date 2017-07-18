@@ -1,6 +1,8 @@
 <template>
   <div class="_rel">
     <div class="title-txt">
+      <el-button type="primary"
+                 @click='goBudgetList'>返回预算列表</el-button>
       项目:[{{$route.query.pname}}][{{$route.query.bname}}]
     </div>
   
@@ -35,6 +37,15 @@ export default {
   data () {
     return {
       currentView: 'budgetDetail'
+    }
+  },
+  methods: {
+    goBudgetList () {
+      this.$router.push({
+        name: 'project.detail.budget',
+        query: this.$route.query,
+        params: this.$route.params
+      })
     }
   }
 }
