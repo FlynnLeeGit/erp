@@ -177,27 +177,31 @@
         </el-form-item>
   
         <el-form-item label='辅材规格'>
-          <el-select v-model='row.quotaAuxiliaryMaterialId'
-                     filterable
-                     remote
-                     placeholder="输入规格名称查询"
-                     :remote-method='auxRemoteMethod'>
-            <el-option v-for='item in remoteOptions'
-                       :key='item.id'
-                       :value='item.id'
-                       :label='item.name'>
+          <el-select v-model="auxGroup">
+            <el-option v-for="(list,auxType) in map.groupAuxmaterial"
+                       :key="auxType"
+                       :value="auxType">
+  
+            </el-option>
+          </el-select>
+          <el-select v-if="auxGroup"
+                     v-model="row.quotaAuxiliaryMaterialId">
+            <el-option v-for="item in map.groupAuxmaterial[auxGroup]"
+                       :key="item.id"
+                       :value="item.id"
+                       :label="item.name">
             </el-option>
           </el-select>
         </el-form-item>
   
         <el-form-item label='品牌'>
-          <el-input placeholder='请输入包装品牌'
+          <el-input placeholder='请输入包装品牌(如：多乐士)'
                     v-model='row.brand'></el-input>
         </el-form-item>
   
         <el-form-item label='辅材型号'
                       prop="model">
-          <el-input placeholder='请输入辅材型号(必填)'
+          <el-input placeholder='请输入辅材型号(必填)(如：五合一)'
                     v-model='row.model'>
           </el-input>
         </el-form-item>
@@ -282,6 +286,7 @@ export default {
 
         isEnable: true
       },
+      auxGroup: '',
       // edit && del
 
       delId: 0,
@@ -292,14 +297,13 @@ export default {
       // map && list
       list: {
         auxmaterial: [],
-        supplier: []
+        supplier: [],
       },
       map: {
         auxmaterial: {},
-        supplier: {}
+        supplier: {},
+        groupAuxmaterial: {}
       },
-
-      remoteOptions: [],
 
       // dialog
       isSubmiting: false,
@@ -342,7 +346,6 @@ export default {
       Promise.all([get(), getAuxmaterial(), getSupplier()])
         .then(([one, two, three]) => {
           this.tableData = one.data
-
           this.list = {
             auxmaterial: two.data,
             supplier: three.data
@@ -396,9 +399,6 @@ export default {
       }).finally(() => {
         this.isSubmiting = false
       })
-    },
-    auxRemoteMethod (query) {
-      this.remoteOptions = this.list.auxmaterial.filter(item => item.name.indexOf(query) > -1)
     },
     cancelDialog () {
       this.showDialog = false
