@@ -1,6 +1,6 @@
 import axios from 'axios'
 import configApi from './configApi'
-import store from '../store'
+import router from '../router'
 
 Promise.prototype.finally = function (callback) {
   let P = this.constructor
@@ -24,7 +24,8 @@ axios.interceptors.response.use(
           Message.error(response.data.message)
           break
         case 401:
-          Message.error('401')
+          Message.error('登陆信息已过期，请重新登录！')
+          router.push('/login')
           break
         case 403:
           Message.error('您没有权限访问')

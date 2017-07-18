@@ -347,12 +347,11 @@ export default {
             auxmaterial: two.data,
             supplier: three.data
           }
-
           this.map = {
             auxmaterial: this.$utils.listToMap(two.data),
             supplier: this.$utils.listToMap(three.data, 'company'),
+            groupAuxmaterial: this.$utils.groupByField(two.data, 'type')
           }
-
         })
         .finally(() => {
           this.isFetching = false
