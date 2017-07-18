@@ -21,9 +21,14 @@
         </inline-edit>
       </template>
     </el-table-column>
-    <el-table-column label='辅材 品牌'>
+    <el-table-column label='品牌'>
       <template scope='scope'>
         <span class="_text">{{scope.row.brand}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label='型号'>
+      <template scope='scope'>
+        <span class="_text">{{scope.row.model}}</span>
       </template>
     </el-table-column>
     <el-table-column label='规格 名称'>
