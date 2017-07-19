@@ -44,7 +44,8 @@ const actions = {
   },
   INIT ({ dispatch }) {
     return Promise.all([
-      dispatch('quota/GET_MAP', null, { root: true }),
+      dispatch('quota/auxmaterial/GET', null, { root: true }),
+      dispatch('purchase/supplier/GET', null, { root: true }),
       dispatch('GET')
     ])
   }

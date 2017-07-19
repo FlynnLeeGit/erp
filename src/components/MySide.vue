@@ -11,7 +11,7 @@
       </el-menu-item-group>
       <el-menu-item-group title="采购管理"
                           v-if='userPass.purchase'>
-        <el-menu-item index="/purchase/supply">供应商</el-menu-item>
+        <el-menu-item index="/purchase/supplier">供应商</el-menu-item>
         <el-menu-item index="/purchase/material">辅材采购管理</el-menu-item>
       </el-menu-item-group>
       <el-menu-item-group title="项目管理"

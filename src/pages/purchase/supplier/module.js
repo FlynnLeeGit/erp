@@ -1,6 +1,6 @@
 import createStore from '@/plugins/createStore'
 
-import { find, findIndex } from '@/plugins/utils'
+import { find, findIndex, listToMap } from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
 
@@ -43,15 +43,14 @@ const actions = {
     return del(id)
   },
   INIT ({ dispatch }) {
-    return Promise.all([
-      dispatch('GET')
-    ])
+    return Promise.all([dispatch('GET')])
   }
 }
 
 const getters = {
   list: state => state.list,
-  currentDelId: state => state.currentDelId
+  currentDelId: state => state.currentDelId,
+  map: state => listToMap(state.list, 'company')
 }
 
 export default createStore({

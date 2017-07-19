@@ -1,6 +1,6 @@
 import createStore from '@/plugins/createStore'
 
-import { find, findIndex } from '@/plugins/utils'
+import { find, findIndex, groupByField, listToMap } from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
 
@@ -52,6 +52,8 @@ const actions = {
 
 const getters = {
   list: state => state.list,
+  groupList: state => groupByField(state.list, 'type'),
+  map: state => listToMap(state.list),
   currentDelId: state => state.currentDelId
 }
 

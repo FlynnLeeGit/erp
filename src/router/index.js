@@ -12,7 +12,7 @@ import quotaTpl from '@/pages/quota/quota/index.vue'
 import release from '@/pages/quota/release/index.vue'
 
 import purchase from '@/pages/purchase/index.vue'
-import supply from '@/pages/purchase/supply/index.vue'
+import supplier from '@/pages/purchase/supplier/index.vue'
 import material from '@/pages/purchase/material/index.vue'
 
 import account from '@/pages/account/index.vue'
@@ -82,18 +82,18 @@ const purchaseRoutes = {
   },
   children: [
     {
-      path: 'supply',
-      name: 'purchase.supply',
+      path: 'supplier',
+      name: 'purchase.supplier',
       meta: {
-        title: '供应商管理'
+        title: ''
       },
-      component: supply
+      component: supplier
     },
     {
       path: 'material',
       name: 'purchase.material',
       meta: {
-        title: '辅材采购管理'
+        title: ''
       },
       component: material
     }

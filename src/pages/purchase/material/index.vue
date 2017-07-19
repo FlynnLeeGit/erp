@@ -1,5 +1,9 @@
 <template>
   <div>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item>采购管理</el-breadcrumb-item>
+      <el-breadcrumb-item>辅材采购管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-button @click='handleAdd()'
                type='primary'>
       添加
@@ -7,12 +11,12 @@
     <search class="_fr"
             v-model='searchField'
             :fields='searchFields'
-            :table-data='tableData'
+            :table-data='list'
             :map="searchMap"
             :filter-table-data.sync='filterTableData'>
     </search>
   
-    <el-table v-loading='isFetching'
+    <el-table v-loading='$isAjax.INIT'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -46,7 +50,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='brand'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='text'>
           </inline-edit>
         </template>
@@ -58,7 +63,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='model'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='text'>
           </inline-edit>
         </template>
@@ -71,7 +77,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='packPrice'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='number'>
           </inline-edit>
         </template>
@@ -84,7 +91,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='packUnit'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='text'>
           </inline-edit>
         </template>
@@ -97,7 +105,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='specAmount'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='number'>
           </inline-edit>
         </template>
@@ -116,7 +125,8 @@
         <template scope='scope'>
           <inline-edit type='select'
                        :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        prop='isEnable'>
             <template slot='options'>
               <option :value="false">禁用</option>
@@ -140,9 +150,9 @@
         <template scope="scope">
   
           <el-button size="mini"
-                     :loading='isDeleting && scope.row.id=== delId'
+                     :loading='$isAjax.DELETE && scope.row.id=== currentDelId'
                      type="danger"
-                     @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                     @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -168,7 +178,7 @@
         <el-form-item label='供应商'
                       class="_mt1">
           <el-select v-model='row.purchaseSupplierId'>
-            <el-option v-for='s in list.supplier'
+            <el-option v-for='s in suppliers'
                        :label='s.company'
                        :value='s.id'
                        :key='s.id'>
@@ -178,7 +188,7 @@
   
         <el-form-item label='辅材规格'>
           <el-select v-model="auxGroup">
-            <el-option v-for="(list,auxType) in map.groupAuxmaterial"
+            <el-option v-for="(list,auxType) in auxmaterialGroupList"
                        :key="auxType"
                        :value="auxType">
   
@@ -186,7 +196,7 @@
           </el-select>
           <el-select v-if="auxGroup"
                      v-model="row.quotaAuxiliaryMaterialId">
-            <el-option v-for="item in map.groupAuxmaterial[auxGroup]"
+            <el-option v-for="item in auxmaterialGroupList[auxGroup]"
                        :key="item.id"
                        :value="item.id"
                        :label="item.name">
@@ -252,9 +262,9 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
+        <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.CREATE'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -266,13 +276,11 @@
 </template>
 
 <script>
-import { get, add, edit, del, getAuxmaterial, getSupplier } from './api'
-
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
       // table
-      tableData: [],
       filterTableData: [],
       row: {},
       initialRow: {
@@ -291,24 +299,7 @@ export default {
       auxGroup: '',
       // edit && del
 
-      delId: 0,
-      isFetching: false,
-      isDeleting: false,
-
-
-      // map && list
-      list: {
-        auxmaterial: [],
-        supplier: [],
-      },
-      map: {
-        auxmaterial: {},
-        supplier: {},
-        groupAuxmaterial: {}
-      },
-
       // dialog
-      isSubmiting: false,
       showDialog: false,
 
       // pagination
@@ -327,61 +318,43 @@ export default {
     }
   },
   created () {
-    this.initData()
+    this.INIT()
   },
   computed: {
+    ...mapGetters('purchase/material', ['$isAjax', 'list', 'currentDelId']),
+    ...mapGetters('quota/auxmaterial', {
+      auxmaterials: 'list',
+      auxmaterialMap: 'map',
+      auxmaterialGroupList: 'groupList'
+    }),
+    ...mapGetters('purchase/supplier', {
+      suppliers: 'list',
+      supplierMap: 'map',
+    }),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
     // 搜索 id->name 映射表
     searchMap () {
       return {
-        purchaseSupplierId: this.map.supplier,
-        quotaAuxiliaryMaterialId: this.map.auxmaterial
+        purchaseSupplierId: this.supplierMap,
+        quotaAuxiliaryMaterialId: this.auxmaterialMap
       }
     }
   },
   methods: {
-    edit,
-    initData () {
-      this.isFetching = true
-      Promise.all([get(), getAuxmaterial(), getSupplier()])
-        .then(([one, two, three]) => {
-          this.tableData = one.data
-          this.list = {
-            auxmaterial: two.data,
-            supplier: three.data
-          }
-          this.map = {
-            auxmaterial: this.$utils.listToMap(two.data),
-            supplier: this.$utils.listToMap(three.data, 'company'),
-            groupAuxmaterial: this.$utils.groupByField(two.data, 'type')
-          }
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
-
+    ...mapActions('purchase/material', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
-      this.remoteOptions = this.list.auxmaterial
     },
-    handleDelete (index, row) {
-      this.delId = row.id
+    handleDelete (row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.isDeleting = true
-          return del(row.id)
-        })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.tableData.splice(this.delIdx, 1)
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.DELETE(row.id).then(() => {
+            this.$message.success('删除成功')
+          })
         })
     },
     // pagination
@@ -389,20 +362,16 @@ export default {
       this.pageSize = val
     },
     // dialog methods
-    submitAdd (addRow) {
-      this.isSubmiting = true
-      add(addRow).then(({ data }) => {
+    submitAdd (row) {
+      this.CREATE(row).then(() => {
         this.$message.success("添加成功")
-        this.showDialog = false
-        this.tableData.push(data)
+        this.closeDialog()
         this.$nextTick(() => {
           this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
         })
-      }).finally(() => {
-        this.isSubmiting = false
       })
     },
-    cancelDialog () {
+    closeDialog () {
       this.showDialog = false
     }
   }

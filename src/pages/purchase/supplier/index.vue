@@ -1,5 +1,9 @@
 <template>
   <div>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item>采购管理</el-breadcrumb-item>
+      <el-breadcrumb-item>供应商</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-button @click='handleAdd()'
                type='primary'>
       添加
@@ -186,13 +190,13 @@ export default {
     this.INIT()
   },
   computed: {
-    ...mapGetters('purchase/supply', ['$isAjax', 'list', 'currentDelId']),
+    ...mapGetters('purchase/supplier', ['$isAjax', 'list', 'currentDelId']),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
   },
   methods: {
-    ...mapActions('purchase/supply', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
+    ...mapActions('purchase/supplier', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
