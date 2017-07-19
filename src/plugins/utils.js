@@ -36,6 +36,14 @@ export const getPage = (tableData, pageSize, page) =>
 
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 
+export const find = (arr, value, field = 'id') =>
+  arr.filter(item => item[field] === value)[0]
+
+export const findIndex = (arr, value, field = 'id') => {
+  const findItem = find(arr, value, field)
+  return arr.indexOf(findItem)
+}
+
 /**
  * 从数组中移除制定元素
  * @param {* Array} arr
