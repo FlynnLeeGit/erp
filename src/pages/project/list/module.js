@@ -12,6 +12,7 @@ const state = {
 
 const mutations = {
   GET_SUCCESS (state, { res }) {
+   
     state.list = res
   },
   GET_BY_ID_SUCCESS (state, { res }) {

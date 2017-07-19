@@ -24,7 +24,7 @@ const createStore = ({
   // 添加$isAjax $ajaxError变量
   state = Object.assign(state, {
     $isAjax: {},
-    $ajaxError: {}
+    // $ajaxError: {}
   })
 
   // clone actions 对象,注入mutaions后调用
@@ -32,7 +32,7 @@ const createStore = ({
 
   Object.keys(actions).forEach(actionName => {
     actions[actionName] = (store, payload) => {
-      store.commit(`${actionName}_START`)
+      store.commit(`${actionName}_START`, payload)
       // 返回该Promise 异步请求
       return cloneActions
         [actionName](store, payload)
@@ -65,7 +65,7 @@ const createStore = ({
     }
     mutations[`${type}_FAILURE`] = (state, payload) => {
       Vue.set(state.$isAjax, type, false)
-      Vue.set(state.$ajaxError, type, payload)
+      // Vue.set(state.$ajaxError, type, payload)
       if (cloneMutations[`${type}_FAILURE`]) {
         cloneMutations[`${type}_FAILURE`](state, payload)
       }
@@ -73,7 +73,7 @@ const createStore = ({
   })
 
   getters.$isAjax = state => state.$isAjax
-  getters.$ajaxError = state => state.$ajaxError
+  // getters.$ajaxError = state => state.$ajaxError
 
   return {
     namespaced,

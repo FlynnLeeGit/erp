@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-breadcrumb separator="/">
+    <el-breadcrumb>
       <el-breadcrumb-item>项目列表</el-breadcrumb-item>
     </el-breadcrumb>
     <div v-loading='$isAjax.INIT'>

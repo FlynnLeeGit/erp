@@ -1,5 +1,9 @@
 <template>
   <div>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item>定额管理</el-breadcrumb-item>
+      <el-breadcrumb-item>定额人工费</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-button @click='handleAdd()'
                type='primary'>
       添加
@@ -15,7 +19,6 @@
               :data="sliceTableData"
               border
               class="_mt2"
-              highlight-current-row
               :default-sort="{prop: 'id'}"
               style="width: 100%">
       <el-table-column label="＃"

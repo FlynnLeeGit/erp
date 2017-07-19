@@ -1,18 +1,21 @@
 <template>
   <div>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item>定额管理</el-breadcrumb-item>
+      <el-breadcrumb-item>定额辅材规格</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-button @click='handleAdd()'
-               :loading='isSubmiting'
                type='primary'>
       添加
     </el-button>
     <search class="_fr"
             v-model='searchField'
             :fields='searchFields'
-            :table-data='tableData'
+            :table-data='list'
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='isFetching'
+    <el-table v-loading='$isAjax.INIT'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -30,7 +33,8 @@
                        width="350">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :direct-modify='false'
+                       :fn='UPDATE'
                        type='text'
                        prop='name'>
           </inline-edit>
@@ -43,7 +47,8 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='text'
                        prop='specUnit'>
           </inline-edit>
@@ -55,7 +60,8 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='select'
                        prop='type'>
             <template slot='options'>
@@ -75,33 +81,36 @@
                        width="120">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='text'
                        prop='specDesc'>
           </inline-edit>
         </template>
       </el-table-column>
-
+  
       <el-table-column label="采购限价"
                        sortable
                        prop='limitPrice'
                        width="120">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='number'
                        prop='limitPrice'>
           </inline-edit>
         </template>
       </el-table-column>
-
+  
       <el-table-column label="计算策略"
                        sortable
                        prop='calcStrategy'
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        type='select'
                        prop='calcStrategy'>
             {{calcStrategyFormatter(scope.row)}}
@@ -120,7 +129,7 @@
                        width='160'>
         <template scope="scope">
           <el-button size="mini"
-                     :loading='isDeleting && scope.row.id === delId'
+                     :loading='$isAjax.DELETE && scope.row.id === currentDelId'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">
             删除
@@ -192,9 +201,9 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
+        <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.CREATE'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -205,13 +214,12 @@
 </template>
 
 <script>
-import { get, getMap, add, edit, del } from './api'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
     return {
       // table
-      tableData: [],
       filterTableData: [],
       row: {},
       initialRow: {
@@ -224,13 +232,7 @@ export default {
       },
       // edit && del
 
-      delId: 0,
-      isFetching: false,
-      isDeleting: false,
-
-      map: {},
       // dialog
-      isSubmiting: false,
       showDialog: false,
 
       // pagination
@@ -244,34 +246,22 @@ export default {
       formRules: {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
-        ],
-        calcStrategy: [
-          { required: true }
         ]
       }
     }
   },
   created () {
-    this.initData()
+    this.INIT()
   },
   computed: {
+    ...mapGetters('quota/auxmaterial', ['$isAjax', 'list', 'currentDelId']),
+    ...mapGetters('quota', ['map']),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
   },
   methods: {
-    edit,
-    initData () {
-      this.isFetching = true
-      Promise.all([get(), getMap()])
-        .then(([one, two]) => {
-          this.tableData = one.data
-          this.map = two.data.quota_template
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('quota/auxmaterial', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
     // table methods
     calcStrategyFormatter (row) {
       return this.map.calcStrategy[row.calcStrategy]
@@ -280,40 +270,30 @@ export default {
       this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
     },
-
     handleDelete (index, row) {
-      this.delId = row.id
       this.$confirm('确认删除？')
         .then(() => {
-          this.isDeleting = true
-          return del(row.id)
-        })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.$utils.removeItemInArray(this.tableData, row)
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.DELETE(row.id).then(() => {
+            this.$message.success('删除成功')
+          })
         })
     },
     // pagination
     handleSizeChange (val) {
       this.pageSize = val
     },
-
+    closeDialog () {
+      this.showDialog = false
+    },
     submitAdd (data) {
-      this.isSubmiting = true
-      add(data).then(({ data }) => {
+      this.CREATE(data).then(() => {
         this.$message.success("添加成功")
-        this.showDialog = false
-        this.tableData.push(data)
+        this.closeDialog()
         this.$nextTick(() => {
           this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
         })
-      }).finally(() => {
-        this.isSubmiting = false
       })
-    },
+    }
   }
 }
 </script>

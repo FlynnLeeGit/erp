@@ -1,5 +1,7 @@
 import createStore from '@/plugins/createStore'
+
 import artficial from './artficial/module'
+import auxmaterial from './auxmaterial/module'
 
 import { getMap } from './api'
 
@@ -30,6 +32,7 @@ export default createStore({
   actions,
   getters,
   modules: {
-    artficial
+    artficial,
+    auxmaterial
   }
 })

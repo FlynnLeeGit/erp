@@ -7,11 +7,11 @@
     <search class="_fr"
             v-model='searchField'
             :fields='searchFields'
-            :table-data='tableData'
+            :table-data='list'
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='isFetching'
+    <el-table v-loading='$isAjax.INIT'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -24,12 +24,13 @@
       </el-table-column>
       <el-table-column label="公司"
                        sortable
-                       :sort-method="$utils.sortByChs.bind(this,'company')"
+                       :sort-method="$utils.sortByChs.bind(null,'company')"
                        prop='company'
                        width="180">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        prop='company'
                        type='text'>
           </inline-edit>
@@ -38,11 +39,12 @@
       <el-table-column label="联系人"
                        prop='contact'
                        sortable
-                       :sort-method="$utils.sortByChs.bind(this,'contact')"
+                       :sort-method="$utils.sortByChs.bind(null,'contact')"
                        width="150">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        prop='contact'
                        type='text'>
           </inline-edit>
@@ -51,23 +53,25 @@
       <el-table-column label="手机号"
                        prop='mobile'
                        sortable
-                       :sort-method="$utils.sortByChs.bind(this,'mobile')"
+                       :sort-method="$utils.sortByChs.bind(null,'mobile')"
                        width="150">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        prop='mobile'
                        type='text'>
           </inline-edit>
         </template>
       </el-table-column>
       <el-table-column label="备注"
-                       :sort-method="$utils.sortByChs.bind(this,'note')"
+                       :sort-method="$utils.sortByChs.bind(null,'note')"
                        prop='note'
                        sortable>
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='UPDATE'
+                       :direct-modify='false'
                        prop='note'
                        type='text'>
           </inline-edit>
@@ -93,9 +97,9 @@
         <template scope="scope">
   
           <el-button size="mini"
-                     :loading='isDeleting && scope.$index === delIdx'
+                     :loading='$isAjax.DELETE && scope.row.id === currentDelId'
                      type="danger"
-                     @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                     @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -138,9 +142,9 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
+        <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.CREATE'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -152,13 +156,12 @@
 </template>
 
 <script>
-import { get, add, edit, del } from './api'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   data () {
     return {
       // table
-      tableData: [],
       filterTableData: [],
       row: {},
       initialRow: {
@@ -167,16 +170,7 @@ export default {
         mobile: '',
         note: ''
       },
-      // edit && del
-      delIdx: 0,
-      isFetching: false,
-      isDeleting: false,
-
-      map: {
-
-      },
       // dialog
-      isSubmiting: false,
       showDialog: false,
 
       // pagination
@@ -189,43 +183,27 @@ export default {
     }
   },
   created () {
-    this.initData()
+    this.INIT()
   },
   computed: {
+    ...mapGetters('purchase/supply', ['$isAjax', 'list', 'currentDelId']),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
   },
   methods: {
-    edit,
-    initData () {
-      this.isFetching = true
-      Promise.all([get()])
-        .then(([one]) => {
-          this.tableData = one.data
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('purchase/supply', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
       this.showDialog = true
     },
-    handleDelete (index, row) {
-      this.delIdx = this.tableData.indexOf(row)
+    handleDelete (row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.isDeleting = true
-          return del(row.id)
-        })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.tableData.splice(this.delIdx, 1)
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.DELETE(row.id).then(() => {
+            this.$message.success('删除成功')
+          })
         })
     },
     // pagination
@@ -234,19 +212,15 @@ export default {
     },
     // dialog methods
     submitAdd (data) {
-      this.isSubmiting = true
-      add(data).then(({ data }) => {
+      this.CREATE(data).then(() => {
         this.$message.success("添加成功")
-        this.showDialog = false
-        this.tableData.push(data)
+        this.closeDialog()
         this.$nextTick(() => {
           this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
         })
-      }).finally(() => {
-        this.isSubmiting = false
       })
     },
-    cancelDialog () {
+    closeDialog () {
       this.showDialog = false
     }
   }

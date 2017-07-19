@@ -42,7 +42,7 @@ const quotaRoutes = {
       path: 'artficial',
       name: 'quota.artficial',
       meta: {
-        title: '定额人工费'
+        title: ''
       },
       component: artficial
     },
@@ -50,7 +50,7 @@ const quotaRoutes = {
       path: 'auxmaterial',
       name: 'quota.auxmaterial',
       meta: {
-        title: '定额辅材规格'
+        title: ''
       },
       component: auxmaterial
     },

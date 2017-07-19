@@ -1,6 +1,7 @@
 import axios from 'axios'
 import configApi from './configApi'
 import router from '../router'
+import { deepCopy } from './utils'
 
 Promise.prototype.finally = function (callback) {
   let P = this.constructor
@@ -55,7 +56,8 @@ export default {
 
     if (configApi.cached && configApi.cached.has(key) && useCache) {
       console.log(`使用api缓存${key}`) // eslint-disable-line
-      return Promise.resolve(configApi.cached.get(key))
+      // 为了让vuex 认为这是新的response
+      return Promise.resolve(deepCopy(configApi.cached.get(key)))
     }
     return axios.get(url, options).then(res => {
       if (configApi.cached) configApi.cached.set(key, res)
