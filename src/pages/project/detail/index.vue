@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div v-loading='$isAjax.GET_BY_ID'>
     <el-breadcrumb separator="/">
       <el-breadcrumb-item :to="{name:'project.list'}">项目列表</el-breadcrumb-item>
-      <el-breadcrumb-item>{{ $route.query.pname }}</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ currentProject.address }}-{{currentProject.houseType}}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-tabs type='card'
              class="_mt1"
@@ -20,19 +20,28 @@
   </div>
 </template>
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
       activeName: this.$route.name
     }
   },
+  computed: {
+    ...mapGetters('project/list', ['currentProject', '$isAjax']),
+    pid () {
+      return this.$route.params.pid
+    }
+  },
+  created () {
+    this.GET_BY_ID(this.pid)
+  },
   methods: {
+    ...mapActions('project/list', ['GET_BY_ID']),
     handleClick (tab) {
-      const pid = this.$route.params.pid
       this.$router.push({
         name: tab.name,
-        params: this.$route.params,
-        query: this.$route.query
+        params: this.$route.params
       })
     }
   }

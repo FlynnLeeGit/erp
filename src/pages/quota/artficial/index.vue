@@ -7,11 +7,11 @@
     <search class="_fr"
             v-model='searchField'
             :fields='searchFields'
-            :table-data='tableData'
+            :table-data='list'
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='isFetching'
+    <el-table v-loading='$isAjax.INIT'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -32,6 +32,7 @@
           <inline-edit :data='scope.row'
                        :fn='edit'
                        type='select'
+                       :direct-modify='false'
                        prop='workType'>
             <template slot='options'>
               <option v-for='(w,wIdx) in map.workType'
@@ -48,6 +49,7 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
+                       :direct-modify='false'
                        :fn='edit'
                        type='number'
                        prop='price'>
@@ -57,9 +59,8 @@
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-  
           <el-button size="mini"
-                     :loading='isDeleting && scope.row.id === delId'
+                     :loading='$isAjax.DELETE && scope.row.id === currentDelId'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -69,7 +70,7 @@
     <!--pagination-->
     <el-pagination class="_mt2"
                    :page-sizes='[50,100,200]'
-                   :total='tableData.length'
+                   :total='filterTableData.length'
                    :current-page.sync="currentPage"
                    layout='total,sizes,prev,pager,next,jumper'
                    :page-size='pageSize'
@@ -107,38 +108,28 @@
            class="dialog-footer">
         <el-button @click="cancelDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.CREATE'
                    @click="submitAdd(row)">
           添 加
         </el-button>
       </div>
     </el-dialog>
-  
   </div>
 </template>
 
 <script>
-import { get, getMap, add, edit, del } from './api'
-
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data () {
     return {
       // table
-      tableData: [],
       filterTableData: [],
       row: {},
       initialRow: {
         workType: '',
         price: 0
       },
-      // edit && del
-      delId: 0,
-      isFetching: false,
-      isDeleting: false,
-
-      map: {},
       // dialog
-      isSubmiting: false,
       showDialog: false,
 
       // pagination
@@ -157,25 +148,19 @@ export default {
     }
   },
   created () {
-    this.initData()
+    this.INIT()
   },
   computed: {
+    ...mapGetters('quota/artficial', ['$isAjax', 'currentDelId', 'list']),
+    ...mapGetters('quota', ['map']),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     },
   },
   methods: {
-    edit,
-    initData () {
-      this.isFetching = true
-      Promise.all([get(), getMap()])
-        .then(([one, two]) => {
-          this.tableData = one.data
-          this.map = two.data.quota_template
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
+    ...mapActions('quota/artficial', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
+    edit (editRow) {
+      return this.UPDATE(editRow)
     },
     // table methods
     handleAdd () {
@@ -183,18 +168,11 @@ export default {
       this.showDialog = true
     },
     handleDelete (index, row) {
-      this.delId = row.id
       this.$confirm('确认删除？')
         .then(() => {
-          this.isDeleting = true
-          return del(row.id)
-        })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.$utils.removeItemInArray(this.tableData, row)
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.DELETE(row.id).then(() => {
+            this.$message.success('删除人工成功！')
+          })
         })
     },
     // pagination
@@ -203,16 +181,12 @@ export default {
     },
     // dialog methods
     submitAdd (data) {
-      this.isSubmiting = true
-      add(data).then(({ data }) => {
+      this.CREATE(data).then(() => {
         this.$message.success("添加成功")
-        this.showDialog = false
-        this.tableData.push(data)
+        this.cancelDialog()
         this.$nextTick(() => {
           this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
         })
-      }).finally(() => {
-        this.isSubmiting = false
       })
     },
     cancelDialog () {

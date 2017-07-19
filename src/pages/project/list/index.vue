@@ -3,18 +3,18 @@
     <el-breadcrumb separator="/">
       <el-breadcrumb-item>项目列表</el-breadcrumb-item>
     </el-breadcrumb>
-    <div v-loading='isFetching'>
+    <div v-loading='$isAjax.INIT'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'
            :key='tKey'>
         <h5>
           {{t}}的项目
-          <span class="_text">[{{filterTableData[tKey].length}}]</span>
+          <span class="_text">[{{archiveLists[tKey].length}}]</span>
         </h5>
         <el-row :gutter="10"
                 class="_mt1">
           <el-col :span='6'
-                  v-for='project in filterTableData[tKey]'
+                  v-for='project in archiveLists[tKey]'
                   :key='project.id'>
             <card :title='project.address'
                   :type='archiveThemeMap[tKey]'>
@@ -36,7 +36,7 @@
                     编辑
                   </el-button>
                   <el-button @click.stop='handleDelete(project)'
-                             :loading='isDeleting && delId === project.id'
+                             :loading='$isAjax.DELETE && currentDelId === project.id'
                              type='text'
                              class="_p0 _text-danger">
                     删除
@@ -123,13 +123,13 @@
         <el-button @click="cancelDialog()">取 消</el-button>
         <el-button v-if="opt==='add'"
                    type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.CREATE'
                    @click="submitAdd(row)">
           添 加
         </el-button>
         <el-button v-if="opt==='edit'"
                    type="primary"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.UPDATE'
                    @click="submitEdit(row)">
           更 新
         </el-button>
@@ -139,16 +139,11 @@
   </div>
 </template>
 <script>
-import { get, edit, add, del, getMap } from './api'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data () {
     return {
-      tableData: [],
-      map: {},
-      isFetching: false,
-      isDeleting: false,
-      delId: 0,
-
       row: {},
       initialRow: {
         username: '',
@@ -160,8 +155,6 @@ export default {
         houseType: '',
         archiveType: 1
       },
-      editRow: {},
-
       archiveThemeMap: {
         1: 'primary',
         2: 'default',
@@ -169,38 +162,19 @@ export default {
         4: 'success'
       },
 
-
       opt: 'add',
       showDialog: false,
-      isSubmiting: false
     }
-  },
-  created () {
-    this.initData()
   },
   computed: {
-    filterTableData () {
-      const getData = type => this.tableData.filter(p => p.archiveType === type)
-      return {
-        1: getData(1),
-        2: getData(2),
-        3: getData(3),
-        4: getData(4)
-      }
-    }
+    ...mapGetters('project/list', ['$isAjax', 'archiveLists', 'currentDelId']),
+    ...mapGetters('project', ['map'])
+  },
+  created () {
+    this.INIT()
   },
   methods: {
-    initData () {
-      this.isFetching = true
-      return Promise.all([get(), getMap()])
-        .then(([one, two]) => {
-          this.tableData = one.data
-          this.map = two.data.project_info
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('project/list', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
     handleAdd () {
       this.opt = 'add'
       this.showDialog = true
@@ -209,47 +183,26 @@ export default {
     handleEdit (data) {
       this.opt = 'edit'
       this.showDialog = true
-      this.editRow = data
-      this.row = this.$utils.deepCopy(this.editRow)
+      this.row = this.$utils.deepCopy(data)
     },
     handleDelete (row) {
-      this.delId = row.id
-      this.$confirm('确认删除？')
-        .then(() => {
-          this.isDeleting = true
-          return del(row.id)
+      this.$confirm('确认删除？').then(() => {
+        this.DELETE(row.id).then(() => {
+          this.$message.success('删除项目成功')
         })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.tableData.splice(this.tableData.indexOf(row), 1)
-        })
-        .finally(() => {
-          this.isDeleting = false
-        })
+      })
     },
     submitAdd (row) {
-      this.isSubmiting = true
-      add(row)
-        .then(({ data }) => {
-          this.$message.success('添加成功！')
-          this.tableData.push(data)
-          this.showDialog = false
-        })
-        .finally(() => {
-          this.isSubmiting = false
-        })
+      this.CREATE(row).then(() => {
+        this.$message.success('创建项目成功')
+        this.cancelDialog()
+      })
     },
     submitEdit (row) {
-      this.isSubmiting = true
-      edit(row)
-        .then(({ data }) => {
-          this.$message.success('更新成功！')
-          this.$utils.replaceObjectFields(this.editRow, data)
-          this.showDialog = false
-        })
-        .finally(() => {
-          this.isSubmiting = false
-        })
+      this.UPDATE(row).then(() => {
+        this.$message.success('更新项目信息成功')
+        this.cancelDialog()
+      })
     },
     cancelDialog () {
       this.showDialog = false
@@ -259,9 +212,6 @@ export default {
         name: 'project.detail.budget',
         params: {
           pid: project.id
-        },
-        query: {
-          pname: project.address
         }
       })
     }
