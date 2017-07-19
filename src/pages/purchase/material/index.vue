@@ -208,11 +208,12 @@
   
         <el-form-item label='采购价格'>
           <el-input-number placeholder='请输入采购价格'
-                           :step='100'
+                           :debounce="1000"
+                           :step='10'
                            v-model='row.packPrice'>
           </el-input-number>
           <span class="_ml2">元</span>
-          <span class="_ml1">[步进100]</span>
+          <span class="_ml1">[步进10]</span>
         </el-form-item>
   
         <h4>包装信息</h4>
@@ -228,6 +229,7 @@
           <el-input-number placeholder='请输入规格数量'
                            :min='0'
                            :step='10'
+                           :debounce="1000"
                            v-model='row.specAmount'>
           </el-input-number>
           <span class="_ml1">[步进10]</span>
