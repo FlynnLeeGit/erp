@@ -79,7 +79,7 @@
             <el-tag type='primary'
                     v-for='m in scope.row.purchaseMaterials'
                     :key='m.id'>
-              {{m.brand}}-{{m.packPrice}}元/{{m.packUnit}}
+              {{m.brand}}-[{{m.model}}]
             </el-tag>
           </div>
           <el-tag v-else
