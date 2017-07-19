@@ -1,13 +1,11 @@
 <template>
   <div>
-    <div class="detail-back">
-      <el-button type='info'
-                 @click="$router.push({name:'project.list'})">
-        返回项目列表
-      </el-button>
-      <span>当前项目 [{{ $route.query.pname }}]</span>
-    </div>
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item :to="{name:'project.list'}">项目列表</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ $route.query.pname }}</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-tabs type='card'
+             class="_mt1"
              v-model="activeName"
              @tab-click="handleClick">
       <el-tab-pane label="预算管理"

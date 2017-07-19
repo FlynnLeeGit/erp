@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item>项目列表</el-breadcrumb-item>
+    </el-breadcrumb>
     <div v-loading='isFetching'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'
@@ -59,7 +62,8 @@
                label-width='80px'>
         <h4>客户信息</h4>
         <hr>
-        <el-form-item label='客户名称' class="_mt1">
+        <el-form-item label='客户名称'
+                      class="_mt1">
           <el-input placeholder='请输入客户名称'
                     v-model='row.username'></el-input>
         </el-form-item>
@@ -83,7 +87,8 @@
         </el-form-item>
         <h4>项目信息</h4>
         <hr>
-        <el-form-item label='项目地址' class="_mt1">
+        <el-form-item label='项目地址'
+                      class="_mt1">
           <el-input placeholder='请输入项目地址'
                     v-model='row.address'>
           </el-input>

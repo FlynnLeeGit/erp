@@ -171,7 +171,7 @@ const projectRoutes = {
           path: 'space',
           name: 'project.detail.space',
           meta: {
-            title: '空间管理'
+            title: ''
           },
           component: projectDetailSpace
         },
@@ -179,7 +179,7 @@ const projectRoutes = {
           path: 'budget',
           name: 'project.detail.budget',
           meta: {
-            title: '预算管理'
+            title: ''
           },
           component: projectDetailBudget
         }
