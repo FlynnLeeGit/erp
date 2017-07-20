@@ -39,7 +39,7 @@
                      align='center'>
       <template scope='scope'>
         <el-button size='mini'
-                   :loading="$isAjax.DELETE_ARTFICIAL_COUNT && qid===currentDelQid && scope.row.id === currentDelArtId"
+                   :loading="$isAjax.delete_artficial_count && qid===currentDelQid && scope.row.id === currentDelArtId"
                    @click='handleDelete(scope.row)'
                    type='danger'>
           删除

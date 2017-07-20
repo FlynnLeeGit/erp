@@ -17,7 +17,7 @@ const mutations = {
 }
 
 const actions = {
-  GET_MAP () {
+  get_map () {
     return getMap()
   }
 }

@@ -84,7 +84,7 @@ export default {
     // 是否直接更新原始data数据
     directModify: {
       type: Boolean,
-      default: true
+      default: false
     },
     rows: {
       type: Number,

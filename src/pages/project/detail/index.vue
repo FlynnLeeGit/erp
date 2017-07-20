@@ -1,5 +1,5 @@
 <template>
-  <div v-loading='$isAjax.GET_BY_ID'>
+  <div v-loading='$isAjax.get_by_id'>
     <el-breadcrumb separator="/">
       <el-breadcrumb-item :to="{name:'project.list'}">项目列表</el-breadcrumb-item>
       <el-breadcrumb-item>{{ currentProject.address }}-{{currentProject.houseType}}</el-breadcrumb-item>
@@ -34,10 +34,10 @@ export default {
     }
   },
   created () {
-    this.GET_BY_ID(this.pid)
+    this.get_by_id(this.pid)
   },
   methods: {
-    ...mapActions('project/list', ['GET_BY_ID']),
+    ...mapActions('project/list', ['get_by_id']),
     handleClick (tab) {
       this.$router.push({
         name: tab.name,

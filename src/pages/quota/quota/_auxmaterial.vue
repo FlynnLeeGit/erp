@@ -51,7 +51,7 @@
       <template scope='scope'>
         <el-button size='mini'
                    @click='handleDelete(scope.row)'
-                   :loading='$isAjax.DELETE_AUXMATERIAL_COUNT && qid === currentDelQid && currentDelAuxId===scope.row.id'
+                   :loading='$isAjax.delete_auxmaterial_count && qid === currentDelQid && currentDelAuxId===scope.row.id'
                    type='danger'>
           删除
         </el-button>

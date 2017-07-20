@@ -29,7 +29,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
-                 :loading='$isAjax.CREATE_ARTFICIAL_COUNT'
+                 :loading='$isAjax.create_artficial_count'
                  @click="submit(row)">
         添 加
       </el-button>

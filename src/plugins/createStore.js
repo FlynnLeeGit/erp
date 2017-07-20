@@ -31,18 +31,18 @@ const createStore = ({
   const cloneActions = Object.assign({}, actions)
 
   Object.keys(actions).forEach(actionName => {
-    const actionTypeName = actionName.toUpperCase()
+    const upperType = actionName.toUpperCase()
     actions[actionName] = (store, payload) => {
-      store.commit(`${actionTypeName}_START`, { req: payload })
+      store.commit(`${upperType}_START`, { req: payload })
       // 返回该Promise 异步请求
       return cloneActions
         [actionName](store, payload)
         .then(({ data }) => {
-          store.commit(`${actionTypeName}_SUCCESS`, { req: payload, res: data })
+          store.commit(`${upperType}_SUCCESS`, { req: payload, res: data })
           return Promise.resolve(data)
         })
         .catch(err => {
-          store.commit(`${actionTypeName}_FAILURE`, err)
+          store.commit(`${upperType}_FAILURE`, err)
           return Promise.reject(err)
         })
     }
@@ -62,24 +62,24 @@ const createStore = ({
   const cloneMutations = Object.assign({}, mutations)
 
   Object.keys(actions).forEach(type => {
-    type = type.toUpperCase()
-    mutations[`${type}_START`] = (state, payload) => {
+    const upperType = type.toUpperCase()
+    mutations[`${upperType}_START`] = (state, payload) => {
       Vue.set(state.$isAjax, type, true)
-      if (cloneMutations[`${type}_START`]) {
-        cloneMutations[`${type}_START`](state, payload)
+      if (cloneMutations[`${upperType}_START`]) {
+        cloneMutations[`${upperType}_START`](state, payload)
       }
     }
-    mutations[`${type}_SUCCESS`] = (state, payload) => {
-      if (cloneMutations[`${type}_SUCCESS`]) {
-        cloneMutations[`${type}_SUCCESS`](state, payload)
-      }
+    mutations[`${upperType}_SUCCESS`] = (state, payload) => {
       Vue.set(state.$isAjax, type, false)
+      if (cloneMutations[`${upperType}_SUCCESS`]) {
+        cloneMutations[`${upperType}_SUCCESS`](state, payload)
+      }
     }
-    mutations[`${type}_FAILURE`] = (state, payload) => {
+    mutations[`${upperType}_FAILURE`] = (state, payload) => {
       Vue.set(state.$isAjax, type, false)
       // Vue.set(state.$ajaxError, type, payload)
-      if (cloneMutations[`${type}_FAILURE`]) {
-        cloneMutations[`${type}_FAILURE`](state, payload)
+      if (cloneMutations[`${upperType}_FAILURE`]) {
+        cloneMutations[`${upperType}_FAILURE`](state, payload)
       }
     }
   })

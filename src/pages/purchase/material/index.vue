@@ -16,7 +16,7 @@
             :filter-table-data.sync='filterTableData'>
     </search>
   
-    <el-table v-loading='$isAjax.INIT'
+    <el-table v-loading='$isAjax.init'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -50,8 +50,7 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='brand'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='text'>
           </inline-edit>
         </template>
@@ -63,8 +62,7 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='model'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='text'>
           </inline-edit>
         </template>
@@ -77,8 +75,7 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='packPrice'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='number'>
           </inline-edit>
         </template>
@@ -91,8 +88,7 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='packUnit'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='text'>
           </inline-edit>
         </template>
@@ -105,8 +101,7 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='specAmount'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='number'>
           </inline-edit>
         </template>
@@ -125,8 +120,7 @@
         <template scope='scope'>
           <inline-edit type='select'
                        :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        prop='isEnable'>
             <template slot='options'>
               <option :value="false">禁用</option>
@@ -150,7 +144,7 @@
         <template scope="scope">
   
           <el-button size="mini"
-                     :loading='$isAjax.DELETE && scope.row.id=== currentDelId'
+                     :loading='$isAjax.delete && scope.row.id=== currentDelId'
                      type="danger"
                      @click="handleDelete(scope.row)">删除</el-button>
         </template>
@@ -264,7 +258,7 @@
            class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='$isAjax.CREATE'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -318,7 +312,7 @@ export default {
     }
   },
   created () {
-    this.INIT()
+    this.init()
   },
   computed: {
     ...mapGetters('purchase/material', ['$isAjax', 'list', 'currentDelId']),
@@ -343,7 +337,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('purchase/material', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
+    ...mapActions('purchase/material', ['init', 'create', 'update', 'delete']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
@@ -352,7 +346,7 @@ export default {
     handleDelete (row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.DELETE(row.id).then(() => {
+          this.delete(row.id).then(() => {
             this.$message.success('删除成功')
           })
         })
@@ -363,7 +357,7 @@ export default {
     },
     // dialog methods
     submitAdd (row) {
-      this.CREATE(row).then(() => {
+      this.create(row).then(() => {
         this.$message.success("添加成功")
         this.closeDialog()
         this.$nextTick(() => {

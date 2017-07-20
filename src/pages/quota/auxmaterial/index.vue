@@ -15,7 +15,7 @@
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='$isAjax.INIT'
+    <el-table v-loading='$isAjax.init'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -33,8 +33,7 @@
                        width="350">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :direct-modify='false'
-                       :fn='UPDATE'
+                       :fn='update'
                        type='text'
                        prop='name'>
           </inline-edit>
@@ -47,8 +46,7 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='text'
                        prop='specUnit'>
           </inline-edit>
@@ -60,8 +58,7 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='select'
                        prop='type'>
             <template slot='options'>
@@ -81,8 +78,7 @@
                        width="120">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='text'
                        prop='specDesc'>
           </inline-edit>
@@ -95,8 +91,7 @@
                        width="120">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='number'
                        prop='limitPrice'>
           </inline-edit>
@@ -109,8 +104,7 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        type='select'
                        prop='calcStrategy'>
             {{calcStrategyFormatter(scope.row)}}
@@ -129,7 +123,7 @@
                        width='160'>
         <template scope="scope">
           <el-button size="mini"
-                     :loading='$isAjax.DELETE && scope.row.id === currentDelId'
+                     :loading='$isAjax.delete && scope.row.id === currentDelId'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">
             删除
@@ -203,7 +197,7 @@
            class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='$isAjax.CREATE'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -251,7 +245,7 @@ export default {
     }
   },
   created () {
-    this.INIT()
+    this.init()
   },
   computed: {
     ...mapGetters('quota/auxmaterial', ['$isAjax', 'list', 'currentDelId']),
@@ -261,7 +255,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('quota/auxmaterial', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
+    ...mapActions('quota/auxmaterial', ['init', 'create', 'update', 'delete']),
     // table methods
     calcStrategyFormatter (row) {
       return this.map.calcStrategy[row.calcStrategy]
@@ -273,7 +267,7 @@ export default {
     handleDelete (index, row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.DELETE(row.id).then(() => {
+          this.delete(row.id).then(() => {
             this.$message.success('删除成功')
           })
         })
@@ -286,7 +280,7 @@ export default {
       this.showDialog = false
     },
     submitAdd (data) {
-      this.CREATE(data).then(() => {
+      this.create(data).then(() => {
         this.$message.success("添加成功")
         this.closeDialog()
         this.$nextTick(() => {

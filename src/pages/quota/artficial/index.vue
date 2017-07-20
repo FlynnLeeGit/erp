@@ -15,7 +15,7 @@
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='$isAjax.INIT'
+    <el-table v-loading='$isAjax.init'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -29,13 +29,12 @@
       <el-table-column label="工种"
                        sortable
                        prop='workType'
-                       :sort-method="$utils.sortByChs.bind(this,'workType')"
+                       :sort-method="$utils.sortByChs.bind(null,'workType')"
                        width="180">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='edit'
+                       :fn='update'
                        type='select'
-                       :direct-modify='false'
                        prop='workType'>
             <template slot='options'>
               <option v-for='(w,wIdx) in map.workType'
@@ -52,8 +51,7 @@
                        width="100">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :direct-modify='false'
-                       :fn='edit'
+                       :fn='update'
                        type='number'
                        prop='price'>
           </inline-edit>
@@ -63,7 +61,7 @@
                        width='160'>
         <template scope="scope">
           <el-button size="mini"
-                     :loading='$isAjax.DELETE && scope.row.id === currentDelId'
+                     :loading='$isAjax.delete && scope.row.id === currentDelId'
                      type="danger"
                      @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -98,7 +96,7 @@
         </el-form-item>
         <el-form-item label='价格'>
           <el-input-number v-model.number='row.price'
-                           :debounce='800'
+                           :debounce='1000'
                            :min='0'
                            :step='10'>
           </el-input-number>
@@ -109,9 +107,9 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
+        <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='$isAjax.CREATE'
+                   :loading='$isAjax.creta'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -151,7 +149,7 @@ export default {
     }
   },
   created () {
-    this.INIT()
+    this.init()
   },
   computed: {
     ...mapGetters('quota/artficial', ['$isAjax', 'currentDelId', 'list']),
@@ -161,10 +159,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('quota/artficial', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
-    edit (editRow) {
-      return this.UPDATE(editRow)
-    },
+    ...mapActions('quota/artficial', ['init', 'create', 'udpate', 'delete']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
@@ -173,7 +168,7 @@ export default {
     handleDelete (index, row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.DELETE(row.id).then(() => {
+          this.delete(row.id).then(() => {
             this.$message.success('删除人工成功！')
           })
         })
@@ -184,15 +179,15 @@ export default {
     },
     // dialog methods
     submitAdd (data) {
-      this.CREATE(data).then(() => {
+      this.create(data).then(() => {
         this.$message.success("添加成功")
-        this.cancelDialog()
+        this.closeDialog()
         this.$nextTick(() => {
           this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
         })
       })
     },
-    cancelDialog () {
+    closeDialog () {
       this.showDialog = false
     }
   }

@@ -58,7 +58,7 @@ const quotaRoutes = {
       path: 'quota',
       name: 'quota.quota',
       meta: {
-        title: '定额模版'
+        title: ''
       },
       component: quotaTpl
     },

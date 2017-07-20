@@ -15,7 +15,7 @@
             :filter-table-data.sync='filterTableData'>
     </search>
     </el-input>
-    <el-table v-loading='$isAjax.INIT'
+    <el-table v-loading='$isAjax.init'
               :data="sliceTableData"
               border
               class="_mt2"
@@ -33,8 +33,7 @@
                        width="180">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        prop='company'
                        type='text'>
           </inline-edit>
@@ -47,8 +46,7 @@
                        width="150">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        prop='contact'
                        type='text'>
           </inline-edit>
@@ -61,8 +59,7 @@
                        width="150">
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        prop='mobile'
                        type='text'>
           </inline-edit>
@@ -74,8 +71,7 @@
                        sortable>
         <template scope='scope'>
           <inline-edit :data='scope.row'
-                       :fn='UPDATE'
-                       :direct-modify='false'
+                       :fn='update'
                        prop='note'
                        type='text'>
           </inline-edit>
@@ -101,7 +97,7 @@
         <template scope="scope">
   
           <el-button size="mini"
-                     :loading='$isAjax.DELETE && scope.row.id === currentDelId'
+                     :loading='$isAjax.delete && scope.row.id === currentDelId'
                      type="danger"
                      @click="handleDelete(scope.row)">删除</el-button>
         </template>
@@ -148,7 +144,7 @@
            class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='$isAjax.CREATE'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -187,7 +183,7 @@ export default {
     }
   },
   created () {
-    this.INIT()
+    this.init()
   },
   computed: {
     ...mapGetters('purchase/supplier', ['$isAjax', 'list', 'currentDelId']),
@@ -196,7 +192,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('purchase/supplier', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
+    ...mapActions('purchase/supplier', ['init', 'create', 'update', 'delete']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
@@ -205,7 +201,7 @@ export default {
     handleDelete (row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.DELETE(row.id).then(() => {
+          this.delete(row.id).then(() => {
             this.$message.success('删除成功')
           })
         })
@@ -216,7 +212,7 @@ export default {
     },
     // dialog methods
     submitAdd (data) {
-      this.CREATE(data).then(() => {
+      this.create(data).then(() => {
         this.$message.success("添加成功")
         this.closeDialog()
         this.$nextTick(() => {

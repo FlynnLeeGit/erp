@@ -20,8 +20,8 @@ const mutations = {
     const updateIdx = findIndex(state.list, req.id)
     state.list.splice(updateIdx, 1, res)
   },
-  DELETE_START (state, id) {
-    state.currentDelId = id
+  DELETE_START (state, { req }) {
+    state.currentDelId = req
   },
   DELETE_SUCCESS (state, { req }) {
     const delIdx = findIndex(state.list, req)
@@ -30,23 +30,23 @@ const mutations = {
 }
 
 const actions = {
-  GET () {
+  get () {
     return get()
   },
-  CREATE (store, req) {
+  create (state, req) {
     return create(req)
   },
-  UPDATE (store, req) {
+  update (state, req) {
     return update(req)
   },
-  DELETE ({ commit }, id) {
+  delete (state, id) {
     return del(id)
   },
-  INIT ({ dispatch }) {
+  init ({ dispatch }) {
     return Promise.all([
-      dispatch('quota/auxmaterial/GET', null, { root: true }),
-      dispatch('purchase/supplier/GET', null, { root: true }),
-      dispatch('GET')
+      dispatch('quota/auxmaterial/get', null, { root: true }),
+      dispatch('purchase/supplier/get', null, { root: true }),
+      dispatch('get')
     ])
   }
 }

@@ -97,7 +97,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
-                 :loading='$isAjax.CREATE'
+                 :loading='$isAjax.create'
                  @click="submitAdd(row)">
         添 加
       </el-button>

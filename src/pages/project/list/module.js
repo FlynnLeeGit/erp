@@ -12,7 +12,6 @@ const state = {
 
 const mutations = {
   GET_SUCCESS (state, { res }) {
-   
     state.list = res
   },
   GET_BY_ID_SUCCESS (state, { res }) {
@@ -25,35 +24,34 @@ const mutations = {
     const updateIdx = findIndex(state.list, req.id)
     state.list.splice(updateIdx, 1, res)
   },
+  DELETE_START (state, { req }) {
+    state.currentDelId = req
+  },
   DELETE_SUCCESS (state, { req }) {
     const delIdx = findIndex(state.list, req)
     state.list.splice(delIdx, 1)
-  },
-  SET_CURRENT_DEL_ID (state, currentDelId) {
-    state.currentDelId = currentDelId
   }
 }
 
 const actions = {
-  GET () {
+  get () {
     return get()
   },
-  GET_BY_ID (store, pid) {
+  get_by_id (store, pid) {
     return getById(pid)
   },
-  CREATE (store, req) {
+  create (store, req) {
     return create(req)
   },
-  UPDATE (store, req) {
+  update (store, req) {
     return update(req)
   },
-  DELETE ({ commit }, id) {
-    commit('SET_CURRENT_DEL_ID', id)
+  delete (store, id) {
     return del(id)
   },
-  INIT ({ dispatch }) {
+  init ({ dispatch }) {
     return Promise.all([
-      dispatch('project/GET_MAP', null, { root: true }),
+      dispatch('project/get_map', null, { root: true }),
       dispatch('GET')
     ])
   }

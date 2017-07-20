@@ -3,7 +3,7 @@
     <el-breadcrumb>
       <el-breadcrumb-item>项目列表</el-breadcrumb-item>
     </el-breadcrumb>
-    <div v-loading='$isAjax.INIT'>
+    <div v-loading='$isAjax.init'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'
            :key='tKey'>
@@ -36,7 +36,7 @@
                     编辑
                   </el-button>
                   <el-button @click.stop='handleDelete(project)'
-                             :loading='$isAjax.DELETE && currentDelId === project.id'
+                             :loading='$isAjax.delete && currentDelId === project.id'
                              type='text'
                              class="_p0 _text-danger">
                     删除
@@ -123,13 +123,13 @@
         <el-button @click="cancelDialog()">取 消</el-button>
         <el-button v-if="opt==='add'"
                    type="success"
-                   :loading='$isAjax.CREATE'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
         <el-button v-if="opt==='edit'"
                    type="primary"
-                   :loading='$isAjax.UPDATE'
+                   :loading='$isAjax.update'
                    @click="submitEdit(row)">
           更 新
         </el-button>
@@ -171,10 +171,10 @@ export default {
     ...mapGetters('project', ['map'])
   },
   created () {
-    this.INIT()
+    this.init()
   },
   methods: {
-    ...mapActions('project/list', ['INIT', 'CREATE', 'UPDATE', 'DELETE']),
+    ...mapActions('project/list', ['init', 'create', 'update', 'delete']),
     handleAdd () {
       this.opt = 'add'
       this.showDialog = true
@@ -187,19 +187,19 @@ export default {
     },
     handleDelete (row) {
       this.$confirm('确认删除？').then(() => {
-        this.DELETE(row.id).then(() => {
+        this.delete(row.id).then(() => {
           this.$message.success('删除项目成功')
         })
       })
     },
     submitAdd (row) {
-      this.CREATE(row).then(() => {
+      this.create(row).then(() => {
         this.$message.success('创建项目成功')
         this.cancelDialog()
       })
     },
     submitEdit (row) {
-      this.UPDATE(row).then(() => {
+      this.update(row).then(() => {
         this.$message.success('更新项目信息成功')
         this.cancelDialog()
       })

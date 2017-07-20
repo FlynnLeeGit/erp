@@ -49,8 +49,8 @@ const mutations = {
     // 字段替换更新
     replaceObjectFields(updateItem, res)
   },
-  DELETE_START (state, id) {
-    state.currentDelId = id
+  DELETE_START (state, { req }) {
+    state.currentDelId = req
   },
   DELETE_SUCCESS (state, { req }) {
     const delIdx = findIndex(state.list, req)
@@ -116,10 +116,10 @@ const actions = {
   init ({ dispatch }) {
     return Promise.all([
       dispatch('get'),
-      dispatch('quota/GET_MAP', null, { root: true }),
-      dispatch('quota/artficial/GET', null, { root: true }),
-      dispatch('quota/auxmaterial/GET', null, { root: true }),
-      dispatch('purchase/material/GET', null, { root: true })
+      dispatch('quota/get_map', null, { root: true }),
+      dispatch('quota/artficial/get', null, { root: true }),
+      dispatch('quota/auxmaterial/get', null, { root: true }),
+      dispatch('purchase/material/get', null, { root: true })
     ])
   }
 }
