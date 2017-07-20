@@ -32,42 +32,26 @@ Vue.use(Router)
 const quotaRoutes = {
   path: 'quota',
   name: 'quota',
-  meta: {
-    title: '定额'
-  },
   component: quota,
-
   children: [
     {
       path: 'artficial',
       name: 'quota.artficial',
-      meta: {
-        title: ''
-      },
       component: artficial
     },
     {
       path: 'auxmaterial',
       name: 'quota.auxmaterial',
-      meta: {
-        title: ''
-      },
       component: auxmaterial
     },
     {
       path: 'quota',
       name: 'quota.quota',
-      meta: {
-        title: ''
-      },
       component: quotaTpl
     },
     {
       path: 'release',
       name: 'quota.release',
-      meta: {
-        title: ''
-      },
       component: release
     }
   ]
@@ -77,24 +61,15 @@ const purchaseRoutes = {
   path: 'purchase',
   component: purchase,
   name: 'purchase',
-  meta: {
-    title: '采购管理'
-  },
   children: [
     {
       path: 'supplier',
       name: 'purchase.supplier',
-      meta: {
-        title: ''
-      },
       component: supplier
     },
     {
       path: 'material',
       name: 'purchase.material',
-      meta: {
-        title: ''
-      },
       component: material
     }
   ]
@@ -103,25 +78,16 @@ const purchaseRoutes = {
 const accountRoutes = {
   path: 'account',
   name: 'account',
-  meta: {
-    title: '账号管理'
-  },
   component: account,
   children: [
     {
       path: 'users',
       name: 'account.users',
-      meta: {
-        title: '用户列表'
-      },
       component: accoutUsers
     },
     {
       path: 'password',
       name: 'account.password',
-      meta: {
-        title: '密码修改'
-      },
       component: accountPassword
     }
   ]
@@ -129,58 +95,37 @@ const accountRoutes = {
 
 const projectRoutes = {
   path: 'project',
-  name: 'project',
-  meta: {
-    title: '项目'
-  },
+  name: '项目管理',
   component: project,
   children: [
     {
       path: 'list',
-      name: 'project.list',
-      meta: {
-        title: ''
-      },
+      name: '项目列表',
       component: projectList
     },
     {
       path: 'collect',
-      name: 'project.collect',
-      meta: {
-        title: '常用定额标注'
-      },
+      name: '常用定额',
       component: projectCollect
     },
     {
-      path: ':pid/detail/budget/:bid/items',
-      name: 'project.detail.budget.items',
-      meta: {
-        title: '预算定额列表'
-      },
+      path: ':pid/budget/:bid/items',
+      name: '预算详情',
       component: projectDetailBudgetItems
     },
     {
-      path: ':pid/detail',
-      name: 'project.detail',
-      meta: {
-        title: '详情'
-      },
+      path: ':pid',
+      name: '项目详情',
       component: projectDetail,
       children: [
         {
           path: 'space',
-          name: 'project.detail.space',
-          meta: {
-            title: ''
-          },
+          name: '空间管理',
           component: projectDetailSpace
         },
         {
           path: 'budget',
-          name: 'project.detail.budget',
-          meta: {
-            title: ''
-          },
+          name: '预算管理',
           component: projectDetailBudget
         }
       ]
@@ -191,11 +136,8 @@ const projectRoutes = {
 const routes = [
   {
     path: '/',
-    name: 'index',
+    name: '首页',
     component: index,
-    meta: {
-      title: '首页'
-    },
     children: [quotaRoutes, purchaseRoutes, accountRoutes, projectRoutes]
   },
   {

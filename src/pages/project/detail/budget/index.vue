@@ -10,10 +10,7 @@
                      slot='header-slot'
                      class="_fr -has-link"
                      size='small'>
-            <router-link target='_blank'
-                         :to="{ name:'project.detail.budget.items',params:{pid:pid,bid:b.id},query:{pname:$route.query.pname,bversion:b.version,bname:b.name} }">
-              进入{{b.name}}
-            </router-link>
+            <a :href="itemsHref(b)" target="_blank">进入{{b.name}}</a>
           </el-button>
           <p>
             <span>定额版本库:{{b.version}}</span>
@@ -102,7 +99,6 @@
                    @click="submitEdit(row)">
           更 新
         </el-button>
-  
       </div>
     </el-dialog>
   </div>
@@ -181,6 +177,9 @@ export default {
     },
     closeDialog () {
       this.showDialog = false
+    },
+    itemsHref (b) {
+      return `/project/${this.pid}/budget/${b.id}/items`
     }
   }
 }

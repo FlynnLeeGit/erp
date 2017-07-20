@@ -1,8 +1,5 @@
 <template>
   <div>
-    <el-breadcrumb>
-      <el-breadcrumb-item>项目列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <div v-loading='$isAjax.init'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'
@@ -209,7 +206,7 @@ export default {
     },
     goDetail (project) {
       this.$router.push({
-        name: 'project.detail.budget',
+        name: '预算管理',
         params: {
           pid: project.id
         }

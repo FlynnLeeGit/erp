@@ -1,20 +1,21 @@
 <template>
   <div>
-    <section>
-      <el-breadcrumb>
-        <el-breadcrumb-item :to="{name:'project.list'}">项目列表</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ currentProject.address }}-{{currentProject.houseType}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </section>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item :to="{name:'项目列表'}">项目列表</el-breadcrumb-item>
+      <el-breadcrumb-item>
+        {{currentProject.address}} 
+        {{activeName}}
+      </el-breadcrumb-item>
+    </el-breadcrumb>
     <el-tabs type='card'
              class="_mt1"
              v-model="activeName"
              @tab-click="handleClick">
-      <el-tab-pane label="预算管理"
-                   name="project.detail.budget">
+      <el-tab-pane name="预算管理"
+                   label="预算管理">
       </el-tab-pane>
-      <el-tab-pane label="空间管理"
-                   name="project.detail.space">
+      <el-tab-pane name="空间管理"
+                   label="空间管理">
       </el-tab-pane>
     </el-tabs>
     <router-view>
@@ -33,7 +34,7 @@ export default {
     ...mapGetters('project/detail', ['currentProject']),
     pid () {
       return this.$route.params.pid
-    }
+    },
   },
   created () {
     this.get_by_id(this.pid)
