@@ -1,6 +1,6 @@
 import createStore from '@/plugins/createStore'
 
-import { find, findIndex } from '@/plugins/utils'
+import { find, findIndex, groupByField } from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
 
@@ -53,7 +53,9 @@ const actions = {
 
 const getters = {
   list: state => state.list,
-  currentDelId: state => state.currentDelId
+  currentDelId: state => state.currentDelId,
+  // 将材料根据品牌分组
+  groupList: state => groupByField(state.list, 'brand')
 }
 
 export default createStore({

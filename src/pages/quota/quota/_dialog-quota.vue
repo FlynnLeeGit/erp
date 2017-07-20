@@ -10,7 +10,7 @@
         <el-input placeholder='请输入定额名称'
                   v-model='row.name'></el-input>
       </el-form-item>
-
+  
       <el-form-item label='分类'
                     prop='type'>
         <el-select v-model='row.type'
@@ -20,14 +20,16 @@
                      :value='tKey'>
           </el-option>
         </el-select>
-        <el-select v-if='row.type' v-model='row.secType' class="_ml1">
+        <el-select v-if='row.type'
+                   v-model='row.secType'
+                   class="_ml1">
           <el-option :key='t'
                      v-for='t in map.type[row.type]'
                      :value='t'>
           </el-option>
         </el-select>
       </el-form-item>
-   
+  
       <el-form-item label='单位'
                     prop='unit'>
         <el-select v-model='row.unit'>
@@ -95,7 +97,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
-                 :loading='isSubmiting'
+                 :loading='$isAjax.CREATE'
                  @click="submitAdd(row)">
         添 加
       </el-button>
@@ -103,14 +105,9 @@
   </el-dialog>
 </template>
 <script>
-import { add, edit } from './api'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
-  props: {
-    map: {
-      type: Object,
-      default: {}
-    }
-  },
   data () {
     return {
       visible: false,
@@ -127,7 +124,6 @@ export default {
         quotaArtficialCounters: [],
         quotaAuxiliaryCounters: []
       },
-      isSubmiting: false,
       formRules: {
         // name: [
         //   { required: true, message: '定额名称不能为空' }
@@ -153,11 +149,13 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('quota', ['map']),
+    ...mapGetters('quota/quota', ['$isAjax'])
+  },
   methods: {
+    ...mapActions('quota/quota', ['create']),
     // 还原row为初始空内容状态
-    restoreRow (originalRow) {
-      this.row = Object.assign({}, originalRow)
-    },
     formValidate () {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate(valid => {
@@ -171,19 +169,16 @@ export default {
     },
     submitAdd (data) {
       this.formValidate().then(() => {
-        this.isSubmiting = true
-        add(data)
-          .then(({ data }) => {
+        this.create(data)
+          .then(() => {
             this.$message.success("添加成功")
+            this.$emit('created')
             this.close()
-            this.$emit('added', data)
-          }).finally(() => {
-            this.isSubmiting = false
           })
       })
     },
     open () {
-      this.restoreRow(this.initialRow)
+      this.row = Object.assign({}, this.initialRow)
       this.visible = true
     },
     close () {

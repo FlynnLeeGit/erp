@@ -23,7 +23,7 @@ const createStore = ({
 
   // 添加$isAjax $ajaxError变量
   state = Object.assign(state, {
-    $isAjax: {},
+    $isAjax: {}
     // $ajaxError: {}
   })
 
@@ -31,19 +31,30 @@ const createStore = ({
   const cloneActions = Object.assign({}, actions)
 
   Object.keys(actions).forEach(actionName => {
+    const actionTypeName = actionName.toUpperCase()
     actions[actionName] = (store, payload) => {
-      store.commit(`${actionName}_START`, payload)
+      store.commit(`${actionTypeName}_START`, { req: payload })
       // 返回该Promise 异步请求
       return cloneActions
         [actionName](store, payload)
         .then(({ data }) => {
-          store.commit(`${actionName}_SUCCESS`, { req: payload, res: data })
+          store.commit(`${actionTypeName}_SUCCESS`, { req: payload, res: data })
           return Promise.resolve(data)
         })
         .catch(err => {
-          store.commit(`${actionName}_FAILURE`, err)
+          store.commit(`${actionTypeName}_FAILURE`, err)
           return Promise.reject(err)
         })
+    }
+  })
+
+  // test mutations
+  // 检测mutaion中是否有双下划线的错误写法
+  Object.keys(mutations).forEach(m => {
+    if (/__+/.test(m)) {
+      console.warn(
+        `${m} includes double or more underlines '_',maybe you type wrong number underlines`
+      )
     }
   })
 
@@ -51,6 +62,7 @@ const createStore = ({
   const cloneMutations = Object.assign({}, mutations)
 
   Object.keys(actions).forEach(type => {
+    type = type.toUpperCase()
     mutations[`${type}_START`] = (state, payload) => {
       Vue.set(state.$isAjax, type, true)
       if (cloneMutations[`${type}_START`]) {

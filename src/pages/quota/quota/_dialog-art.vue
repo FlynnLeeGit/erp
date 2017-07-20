@@ -8,7 +8,7 @@
       </el-form-item>
       <el-form-item label='工种'>
         <el-select v-model='row.quotaArtficial.id'>
-          <el-option v-for='art in map.artList'
+          <el-option v-for='art in artList'
                      :key='art.id'
                      :label='art.workType'
                      :value='art.id'
@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label='用量'>
-        <el-input-number :debounce='800'
+        <el-input-number :debounce='1000'
                          :min='0'
                          v-model='row.counter'
                          :step='0.1'>
@@ -29,7 +29,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
-                 :loading='isSubmiting'
+                 :loading='$isAjax.CREATE_ARTFICIAL_COUNT'
                  @click="submit(row)">
         添 加
       </el-button>
@@ -37,15 +37,9 @@
   </el-dialog>
 </template>
 <script>
-import { addArt } from './api'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  props: {
-    map: {
-      type: Object,
-      default: {}
-    }
-  },
   data () {
     return {
       visible: false,
@@ -59,12 +53,17 @@ export default {
         }
       },
 
-      isSubmiting: false,
-      qIndex: -1,
       qRow: {},
     }
   },
+  computed: {
+    ...mapGetters('quota/artficial', {
+      artList: 'list'
+    }),
+    ...mapGetters('quota/quota', ['$isAjax'])
+  },
   methods: {
+    ...mapActions('quota/quota', ['create_artficial_count']),
     // 还原row为初始空内容状态
     optionDisabled (qRow, art) {
       return qRow.quotaArtficialCounters && this.$utils.valueInArray(qRow.quotaArtficialCounters, art.id, 'quotaArtficial.id')
@@ -73,13 +72,12 @@ export default {
       this.row = this.$utils.deepCopy(this.initialRow)
     },
     submit (data) {
-      this.isSubmiting = true
-      addArt(this.qRow.id, data).then(({ data }) => {
+      this.create_artficial_count({
+        qid: this.qRow.id,
+        data
+      }).then(() => {
         this.$message.success(`添加人工计量至 ${this.qRow.name} 成功`)
         this.close()
-        this.$root.$emit('quota.quota.update', this.qRow, data)
-      }).finally(() => {
-        this.isSubmiting = false
       })
     },
     open (qRow) {

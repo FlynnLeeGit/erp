@@ -1,7 +1,7 @@
 <template>
   <el-dialog title='添加辅材计量'
              :visible.sync='visible'>
-    <el-form ref='matForm'
+    <el-form ref='form'
              :model='row'
              label-width="80px"
              :rules='formRules'>
@@ -14,7 +14,7 @@
         <el-select v-model="row.brand"
                    @change="handleBrandChange"
                    placeholder="选择品牌">
-          <el-option v-for="(modelList,brand) in map.groupMaterials"
+          <el-option v-for="(modelList,brand) in matGroupList"
                      :key="brand"
                      :value="brand">
           </el-option>
@@ -27,7 +27,7 @@
         <el-select v-if="row.brand"
                    placeholder="选择型号"
                    v-model="row.model">
-          <el-option v-for="m in map.groupMaterials[row.brand]"
+          <el-option v-for="m in matGroupList[row.brand]"
                      :key="m.id"
                      :disabled="modelOptionsDisabled(m)"
                      @click.native="handleClickModel(m)"
@@ -36,7 +36,6 @@
         </el-select>
         <span v-else
               class="_text">请先选择品牌</span>
-  
       </el-form-item>
   
       <el-form-item label='用量'>
@@ -52,7 +51,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
-                 :loading='isSubmiting'
+                 :loading='$isAjax.CREATE_AUXMATERIAL_COUNT'
                  @click="submit(row)">
         添 加
       </el-button>
@@ -60,15 +59,9 @@
   </el-dialog>
 </template>
 <script>
-import { addMat } from './api'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  props: {
-    map: {
-      type: Object,
-      default: {}
-    }
-  },
   data () {
     return {
       visible: false,
@@ -81,7 +74,6 @@ export default {
         model: '',
         quotaAuxiliaryMaterial: {}
       },
-      isSubmiting: false,
       qRow: {},
       formRules: {
         brand: [
@@ -93,7 +85,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('purchase/material', {
+      matGroupList: 'groupList'
+    }),
+    ...mapGetters('quota/quota', ['$isAjax'])
+  },
   methods: {
+    ...mapActions('quota/quota', ['create_auxmaterial_count']),
     // 还原row为初始空内容状态
     restoreRow () {
       this.row = this.$utils.deepCopy(this.initialRow)
@@ -103,15 +102,14 @@ export default {
       return m.disabled
     },
     submit (data) {
-      this.$refs.matForm.validate(valid => {
+      this.$refs.form.validate(valid => {
         if (valid) {
-          this.isSubmiting = true
-          addMat(this.qRow.id, data).then(({ data }) => {
+          this.create_auxmaterial_count({
+            qid: this.qRow.id,
+            data
+          }).then(() => {
             this.$message.success(`添加辅材计量至 ${this.qRow.name} 成功`)
             this.close()
-            this.$root.$emit('quota.quota.update', this.qRow, data)
-          }).finally(() => {
-            this.isSubmiting = false
           })
         }
       })

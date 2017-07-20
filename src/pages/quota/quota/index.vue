@@ -8,7 +8,7 @@
         添加定额
       </el-button>
       <el-button @click='release'
-                 :loading='isReleasing'
+                 :loading='$isAjax.RELEASE_QUOTA'
                  type='success'>
         发布定额版本
       </el-button>
@@ -16,10 +16,10 @@
       <search class="_fr"
               v-model='searchField'
               :fields='searchFields'
-              :table-data='tableData'
+              :table-data='list'
               :filter-table-data.sync='filterTableData'>
       </search>
-      <el-table v-loading='isFetching'
+      <el-table v-loading='$isAjax.INIT'
                 :data="sliceTableData"
                 class="_mt2"
                 border
@@ -42,8 +42,9 @@
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          type='text'
-                         prop='name'
-                         :fn='edit'>
+                         :fn='update'
+                         :direct-modify='false'
+                         prop='name'>
             </inline-edit>
           </template>
         </el-table-column>
@@ -53,7 +54,8 @@
                          width='100'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
-                         :fn='edit'
+                         :fn='update'
+                         :direct-modify='false'
                          type='select'
                          prop='type'
                          @before-update='beforeUpdateType'>
@@ -70,7 +72,8 @@
                          width='100'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
-                         :fn='edit'
+                         :fn='update'
+                         :direct-modify='false'
                          type='select'
                          prop='secType'>
               <template slot='options'>
@@ -86,7 +89,8 @@
                          width='50'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
-                         :fn='edit'
+                         :fn='update'
+                         :direct-modify='false'
                          type='select'
                          prop='unit'>
               <template slot='options'>
@@ -102,7 +106,8 @@
                          width='50'>
           <template scope='scope'>
             <inline-edit :data='scope.row'
-                         :fn='edit'
+                         :fn='update'
+                         :direct-modify='false'
                          type='select'
                          prop='position'>
               <template slot='options'>
@@ -118,7 +123,8 @@
                          width="60">
           <template scope='scope'>
             <inline-edit :data='scope.row'
-                         :fn='edit'
+                         :fn='update'
+                         :direct-modify='false'
                          type='select'
                          prop='stage'>
               <template slot='options'>
@@ -135,7 +141,8 @@
           <template scope='scope'>
             <inline-edit :data='scope.row'
                          prop='wastage'
-                         :fn='edit'>
+                         :fn='update'
+                         :direct-modify='false'>
             </inline-edit>
           </template>
   
@@ -162,22 +169,22 @@
         </el-table-column>
   
         <el-table-column label="操作"
-                         width="220">
+                         width="240">
           <template scope="scope">
             <el-button size="mini"
                        type='success'
-                       @click="addArtficial(scope.$index, scope.row)">
+                       @click="addArtficial(scope.row)">
               <i class="el-icon-plus"></i>人工计量
             </el-button>
             <el-button size="mini"
                        type="success"
-                       @click="addMaterial(scope.$index, scope.row)">
+                       @click="addAuxmaterial(scope.row)">
               <i class="el-icon-plus"></i>辅材计量
             </el-button>
             <el-button size='mini'
                        type='danger'
-                       :loading='isDeleting && scope.row.id === delId'
-                       @click='handleDelete(scope.$index,scope.row)'>
+                       :loading='$isAjax.DELETE && scope.row.id === currentDelId'
+                       @click='handleDelete(scope.row)'>
               删除
             </el-button>
           </template>
@@ -194,16 +201,12 @@
                      @size-change='handleSizeChange'>
       </el-pagination>
   
-      <dialog-quota ref='dialogQuota'
-                    :map='map'
-                    @added='quotaAdded'>
+      <dialog-quota ref="dialogQuota"
+                    @created='handleQuotaCreated'>
       </dialog-quota>
-      <dialog-art ref='dialogArt'
-                  :map='artMap'>
-      </dialog-art>
-      <dialog-mat ref='dialogMat'
-                  :map='matMap'>
-      </dialog-mat>
+  
+      <dialog-art ref='dialogArt'></dialog-art>
+       <dialog-aux ref='dialogAux'></dialog-aux> 
     </el-col>
     <el-col :span='12'
             class="quota-content__col">
@@ -216,27 +219,22 @@
 import expand from './_expand.vue'
 import dialogQuota from './_dialog-quota.vue'
 import dialogArt from './_dialog-art.vue'
-import dialogMat from './_dialog-mat.vue'
+import dialogAux from './_dialog-aux.vue'
 
-import { get, getArtList, getMatList, getMap, edit, del, release, getMaterials } from './api'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
     expand,
     dialogQuota,
     dialogArt,
-    dialogMat
+    dialogAux
   },
   data () {
     return {
       // table
-      tableData: [],
-      map: {},
       filterTableData: [],
       // table loading status
-      isFetching: false,
-      isDeleting: false,
-      delId: 0,
 
       // pagination
       currentPage: 1,
@@ -246,48 +244,21 @@ export default {
       searchField: '',
       searchFields: ['id', 'name', 'type', 'stage', 'secType', 'unit', 'workType', 'wastage', 'position', 'content', 'description'],
       // artTable
-      artMap: {
-        artList: []
-      },
-      // matTable
-      matMap: {
-        matList: []
-      },
-
-      // release status
-      isReleasing: false,
     }
   },
   created () {
-    this.initData()
-    this.$root.$on('quota.quota.update', this.$utils.replaceObjectFields)
+    this.init()
+    // this.$root.$on('quota.quota.update', this.$utils.replaceObjectFields)
   },
   computed: {
+    ...mapGetters('quota/quota', ['$isAjax', 'list', 'currentDelId']),
+    ...mapGetters('quota', ['map']),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
     }
   },
   methods: {
-    edit,
-    // api methods
-    initData () {
-      this.isFetching = true
-      Promise.all([get(), getMap(), getArtList(), getMatList(), getMaterials()])
-        .then(([one, two, three, four, five]) => {
-          // table
-          this.tableData = one.data
-          // map
-          this.map = two.data.quota_template
-          // art && mat
-          this.artMap.artList = three.data
-          this.matMap.matList = four.data
-          this.matMap.matGroupList = this.$utils.groupByField(four.data, 'type')
-          this.matMap.groupMaterials = this.$utils.groupByField(five.data, 'brand')
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('quota/quota', ['init', 'update', 'delete', 'release_quota']),
     beforeUpdateType (editRow) {
       editRow.secType = ''
     },
@@ -296,33 +267,23 @@ export default {
     handleAdd () {
       this.$refs.dialogQuota.open()
     },
-    quotaAdded (newQuota) {
-      this.tableData.push(newQuota)
+    handleQuotaCreated () {
       this.$nextTick(() => {
         this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
       })
     },
-    handleDelete (index, row) {
-      this.$confirm(`确认删除定额项  ${row.name}？`)
-        .then(() => {
-          this.delId = row.id
-          this.isDeleting = true
-          return del(row.id)
-        })
-        .then(() => {
-          const delIndex = this.tableData.indexOf(row)
-          this.tableData.splice(delIndex, 1)
+    handleDelete (row) {
+      this.$confirm(`确认删除定额项  ${row.name}？`).then(() => {
+        this.DELETE(row.id).then(() => {
           this.$message.success('删除成功')
         })
-        .finally(() => {
-          this.isDeleting = false
-        })
+      })
     },
-    addArtficial ($index, row) {
+    addArtficial (row) {
       this.$refs.dialogArt.open(row)
     },
-    addMaterial ($index, row) {
-      this.$refs.dialogMat.open(row)
+    addAuxmaterial (row) {
+      this.$refs.dialogAux.open(row)
     },
     // pagination
     handleSizeChange (val) {

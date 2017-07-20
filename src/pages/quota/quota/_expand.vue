@@ -7,7 +7,8 @@
                     class="-block">
         <inline-edit :data='row'
                      prop='description'
-                     :fn='edit'
+                     :fn='update'
+                     :direct-modify='false'
                      type='textarea'>
           <pre>{{row.description}}</pre>
         </inline-edit>
@@ -16,26 +17,25 @@
                     class="-block">
         <inline-edit :data='row'
                      prop='content'
-                     :fn='edit'
+                     :fn='update'
+                     :direct-modify='false'
                      type='textarea'>
           <pre>{{row.content}}</pre>
         </inline-edit>
       </el-form-item>
     </el-form>
     <artficial :table-data='row.quotaArtficialCounters'
-               :qid='row.id'
-               @update='updateQuota'>
+               :qid='row.id'>
     </artficial>
     <auxmaterial :table-data='row.quotaAuxiliaryCounters'
-                 :qid='row.id'
-                 @update='updateQuota'>
+                 :qid='row.id'>
     </auxmaterial>
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
 import artficial from './_artficial.vue'
 import auxmaterial from './_auxmaterial.vue'
-import { edit } from './api'
 
 export default {
   components: {
@@ -49,10 +49,7 @@ export default {
     },
   },
   methods: {
-    edit,
-    updateQuota (newQuota) {
-      this.$root.$emit('quota.quota.update', this.row, newQuota)
-    }
+    ...mapActions('quota/quota', ['update'])
   }
 }
 </script>

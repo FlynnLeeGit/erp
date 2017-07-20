@@ -1,5 +1,5 @@
 <template>
-  <el-table v-show='hasCounters'
+  <el-table v-show='tableData.length'
             style="width=100%;"
             border
             :data='tableData'>
@@ -18,8 +18,7 @@
         <inline-edit :data='artScope.row'
                      prop='counter'
                      :fn='editFn'
-                     :direct-modify='false'
-                     @updated='update'>
+                     :direct-modify='false'>
         </inline-edit>
       </template>
     </el-table-column>
@@ -40,7 +39,8 @@
                      align='center'>
       <template scope='scope'>
         <el-button size='mini'
-                   @click='del(scope.$index,scope.row)'
+                   :loading="$isAjax.DELETE_ARTFICIAL_COUNT && qid===currentDelQid && scope.row.id === currentDelArtId"
+                   @click='handleDelete(scope.row)'
                    type='danger'>
           删除
         </el-button>
@@ -50,7 +50,7 @@
   </el-table>
 </template>
 <script>
-import { delArt, editArt } from './api'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -63,28 +63,27 @@ export default {
     }
   },
   computed: {
-    hasCounters () {
-      return this.tableData.length
-    },
+    ...mapGetters('quota/quota', ['$isAjax', 'currentDelQid', 'currentDelArtId']),
   },
   methods: {
-    editArt,
-    del ($index, row) {
+    ...mapActions('quota/quota', ['update_artficial_count', 'delete_artficial_count']),
+    handleDelete (row) {
       this.$confirm('确认删除辅材计量?')
         .then(() => {
-          return delArt(this.qid, row.id)
-        })
-        .then(({ data }) => {
-          this.$message.success('删除辅材计量成功')
-          this.update(data)
+          this.delete_artficial_count({
+            qid: this.qid,
+            artId: row.id
+          }).then(() => {
+            this.$message.success('删除辅材计量成功')
+          })
         })
     },
     // 返回promise对象,让其在inlineEdit中执行
     editFn (editRow) {
-      return editArt(this.qid, editRow)
-    },
-    update (data) {
-      this.$emit('update', data)
+      return this.update_artficial_count({
+        qid: this.qid,
+        data: editRow
+      })
     }
   }
 }
