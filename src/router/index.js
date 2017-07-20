@@ -66,7 +66,7 @@ const quotaRoutes = {
       path: 'release',
       name: 'quota.release',
       meta: {
-        title: '版本比对'
+        title: ''
       },
       component: release
     }

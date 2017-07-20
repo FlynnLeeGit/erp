@@ -1,5 +1,6 @@
 import createStore from '@/plugins/createStore'
 import list from './list/module'
+import detail from './detail/module'
 
 import { getMap } from './api'
 
@@ -30,6 +31,7 @@ export default createStore({
   actions,
   getters,
   modules: {
-    list
+    list,
+    detail
   }
 })

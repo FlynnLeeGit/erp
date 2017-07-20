@@ -188,7 +188,6 @@
                      @click='handleDelete(scope.row)'>
             删除
           </el-button>
-          {{$isAjax}} {{currentDelId}}
         </template>
       </el-table-column>
     </el-table>

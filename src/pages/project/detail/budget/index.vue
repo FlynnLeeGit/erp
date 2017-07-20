@@ -1,9 +1,8 @@
 <template>
-  <div>
-    <el-row :gutter="10"
-            v-loading='isFetching'>
+  <div v-loading='$isAjax.init'>
+    <el-row :gutter="10">
       <el-col :span='6'
-              v-for='(b,index) in tableData'
+              v-for='(b,index) in list'
               :key='b.id'>
         <card :title='b.name'
               type='default'>
@@ -18,7 +17,7 @@
           </el-button>
           <p>
             <span>定额版本库:{{b.version}}</span>
-            <span class="_ml1 _text">({{map.version[b.version]}})</span>
+            <span class="_ml1 _text">({{versionMap[b.version]}})</span>
           </p>
           <p class="_mt1">{{b.description}}</p>
           <p class='_mt1 _text'>
@@ -30,8 +29,8 @@
                          class="_p0">
                 编辑
               </el-button>
-              <el-button @click.stop='handleDelete(index,b)'
-                         :loading='isDeleting && delId === b.id'
+              <el-button @click.stop='handleDelete(b)'
+                         :loading='$isAjax.delete && currentDelId === b.id'
                          type='text'
                          class="_p0 _text-danger">
                 删除
@@ -90,16 +89,16 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
+        <el-button @click="closeDialog()">取 消</el-button>
         <el-button v-if="opt==='add'"
                    type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
         <el-button v-if="opt==='edit'"
                    type="primary"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.update'
                    @click="submitEdit(row)">
           更 新
         </el-button>
@@ -109,17 +108,11 @@
   </div>
 </template>
 <script>
-import { get, edit, add, del, getVersionList } from './api'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      tableData: [],
       selectedVersion: '',
-      versionList: [],
-
-      map: {},
-      isFetching: false,
-      isDeleting: false,
 
       row: {},
       initialRow: {
@@ -128,37 +121,28 @@ export default {
         rateOfArtificialProfit: 0.1,
         rateOfCompanyProfit: 0.3
       },
-      editRow: {},
-
-      delId: 0,
 
       opt: 'add',
       showDialog: false,
-      isSubmiting: false
     }
   },
   created () {
-    this.initData()
+    this.init(this.pid).then(() => {
+      this.selectedVersion = this.versionList[this.versionList.length - 1].version
+    })
   },
   computed: {
+    ...mapGetters('quota/release', {
+      versionList: 'list',
+      versionMap: 'map'
+    }),
+    ...mapGetters('project/detail/budget', ['$isAjax', 'list', 'currentDelId']),
     pid () {
       return +this.$route.params.pid
     }
   },
   methods: {
-    initData () {
-      this.isFetching = true
-      return Promise.all([get(this.pid), getVersionList()])
-        .then(([one, two]) => {
-          this.tableData = one.data
-          this.versionList = two.data
-          this.selectedVersion = this.versionList[this.versionList.length - 1].version
-          this.map.version = this.$utils.listToMap(this.versionList, 'description', 'version')
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('project/detail/budget', ['init', 'create', 'update', 'delete']),
     handleAdd () {
       this.opt = 'add'
       this.showDialog = true
@@ -167,49 +151,35 @@ export default {
     handleEdit (data) {
       this.opt = 'edit'
       this.showDialog = true
-      this.editRow = data
-      this.row = this.$utils.deepCopy(this.editRow)
+      this.row = this.$utils.deepCopy(data)
     },
-    handleDelete (index, row) {
-      this.delId = row.id
+    handleDelete (row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.isDeleting = true
-          return del(this.pid, row.id)
-        })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.tableData.splice(index, 1)
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.delete({
+            pid: this.pid,
+            bid: row.id
+          }).then(() => {
+            this.$message.success('删除成功')
+          })
         })
     },
-    submitAdd (row) {
-      this.isSubmiting = true
-      add(this.pid, row)
-        .then(({ data }) => {
-          this.$message.success('添加成功！')
-          this.tableData.push(data)
-          this.showDialog = false
-        })
-        .finally(() => {
-          this.isSubmiting = false
-        })
+    submitAdd (data) {
+      this.create({
+        pid: this.pid,
+        data
+      }).then(() => {
+        this.$message.success('添加成功！')
+        this.closeDialog()
+      })
     },
-    submitEdit (row) {
-      this.isSubmiting = true
-      edit(row)
-        .then(({ data }) => {
-          this.$message.success('更新成功！')
-          this.$utils.replaceObjectFields(this.editRow, data)
-          this.showDialog = false
-        })
-        .finally(() => {
-          this.isSubmiting = false
-        })
+    submitEdit (data) {
+      this.update(data).then(() => {
+        this.$message.success('更新成功！')
+        this.closeDialog()
+      })
     },
-    cancelDialog () {
+    closeDialog () {
       this.showDialog = false
     }
   }

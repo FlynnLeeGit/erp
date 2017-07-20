@@ -1,8 +1,12 @@
 <template>
   <div>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item>定额管理</el-breadcrumb-item>
+      <el-breadcrumb-item>版本比对</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-select v-model="nextVersion"
                placeholder="请选择比较版本">
-      <el-option v-for="v in OrderedVersionList"
+      <el-option v-for="v in listPlusLatest"
                  :key="v.version"
                  :value="v.version">
         <span style="float: left">{{ v.version }}</span>
@@ -12,24 +16,23 @@
     相对于
     <el-select v-model="prevVersion"
                placeholder="请选择版本">
-      <el-option v-for="v in OrderedVersionList"
+      <el-option v-for="v in listPlusLatest"
                  :key="v.version"
                  :value="v.version">
         <span style="float: left">{{ v.version }}</span>
         <span style="float: right; color: #8492a6; font-size: 13px">({{v.description}})</span>
       </el-option>
     </el-select>
-  
     <el-button type='primary'
-               @click='diffVersion'
-               :loading='isFetching'>
+               @click='diffVersion(prevVersion,nextVersion)'
+               :loading='$isAjax.diff_version'>
       比较
     </el-button>
     <el-table class="_mt2"
               border
               empty-text="没有差别记录"
               :row-class-name='rowCls'
-              v-loading='isFetching'
+              v-loading='$isAjax.diff_version || $isAjax.init'
               style="width:100%"
               :data='mergeTable'>
       <el-table-column label='diff'
@@ -177,9 +180,10 @@
   </div>
 </template>
 <script>
-import { getVersionList, getLast, getByVersion, getQuota } from './api'
 import mergeVersionTables from './mergeVersionTables'
 import diffCell from './_diffCell.vue'
+
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -187,47 +191,24 @@ export default {
   },
   data () {
     return {
-      versionList: [],
-
       prevVersion: '',
-      prevTableData: [],
       prevDesc: '',
 
       nextVersion: 'latest',
       nextDesc: '',
-      nextTableData: [],
-
-      isFetching: false
-
     }
   },
   computed: {
+    ...mapGetters('quota/release', ['$isAjax', 'listPlusLatest', 'prevTableData', 'nextTableData']),
     mergeTable () {
       return mergeVersionTables(this.prevTableData, this.nextTableData)
-    },
-    OrderedVersionList () {
-      const sorted = this.versionList.sort((a, b) => b.version - a.version)
-      sorted.unshift({
-        version: 'latest',
-        description: '正在编辑中的'
-      })
-      return sorted
     }
   },
   created () {
-    this.initData()
+    this.init()
   },
   methods: {
-    initData () {
-      this.isFetching = true
-      Promise.all([getVersionList()])
-        .then(([one]) => {
-          this.versionList = one.data
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('quota/release', ['init', 'diff_version']),
     rowCls (row) {
       if (row.diff.status === 'delete') {
         return 'danger-row'
@@ -236,23 +217,13 @@ export default {
         return 'success-row'
       }
     },
-    getQuotaData (version) {
-      return version === 'latest' ? getQuota() : getByVersion(version)
-    },
-    diffVersion () {
-      this.isFetching = true
-      Promise.all([this.getQuotaData(this.prevVersion), this.getQuotaData(this.nextVersion)])
-        .then(([one, two]) => {
-          this.prevTableData = one.data
-          this.nextTableData = two.data
-          this.$notify({
-            type: 'success',
-            message: '比较完成'
-          })
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
+    diffVersion (prevVersion, nextVersion) {
+      this.diff_version({
+        prevVersion,
+        nextVersion
+      }).then(() => {
+        this.$message.success('比对完成')
+      })
     }
   }
 }

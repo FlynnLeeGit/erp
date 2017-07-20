@@ -176,9 +176,12 @@
         </el-form-item>
   
         <el-form-item label="采购限价">
-          <el-input v-model="row.limitPrice"
-                    placeholder="请输入采购限价 防止采购人员误输入不合理的价格">
-          </el-input>
+          <el-input-number :step='1'
+                           :debounce="1000"
+                           v-model="row.limitPrice"
+                           :min="0">
+          </el-input-number>
+          <span class="_text _ml1">[步进1] 防止采购人员误输入不合理的价格</span>
         </el-form-item>
   
         <el-form-item label='计算策略'

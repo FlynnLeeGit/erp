@@ -3,7 +3,7 @@ import axios from '@/plugins/axios'
 // 获取项目列表
 export const get = () => axios.get('/_api/project/project')
 
-export const getById = pid => axios.get(`/_api/project/projects/${pid}`)
+
 // 创建项目
 export const create = data => axios.post('/_api/project/projects', data)
 

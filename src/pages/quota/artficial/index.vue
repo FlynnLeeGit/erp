@@ -109,7 +109,7 @@
            class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="success"
-                   :loading='$isAjax.creta'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
@@ -159,7 +159,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('quota/artficial', ['init', 'create', 'udpate', 'delete']),
+    ...mapActions('quota/artficial', ['init', 'create', 'update', 'delete']),
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)

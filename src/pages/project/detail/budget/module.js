@@ -21,46 +21,38 @@ const mutations = {
     state.list.splice(updateIdx, 1, res)
   },
   DELETE_START (state, { req }) {
-    state.currentDelId = req
+    state.currentDelId = req.bid
   },
   DELETE_SUCCESS (state, { req }) {
-    const delIdx = findIndex(state.list, req)
+    const delIdx = findIndex(state.list, req.bid)
     state.list.splice(delIdx, 1)
   }
 }
 
 const actions = {
-  get () {
-    return get()
+  get (store, pid) {
+    return get(pid)
   },
-  create (store, req) {
-    return create(req)
+  create (store, { pid, data }) {
+    return create({ pid, data })
   },
-  update (store, req) {
-    return update(req)
+  update (store, data) {
+    return update(data)
   },
-  delete (store, id) {
-    return del(id)
+  delete (store, { pid, bid }) {
+    return del({ pid, bid })
   },
-  init ({ dispatch }) {
+  init ({ dispatch }, pid) {
     return Promise.all([
-      dispatch('project/get_map', null, { root: true }),
-      dispatch('get')
+      dispatch('get', pid),
+      dispatch('quota/release/get', null, { root: true })
     ])
   }
 }
 
-const getArchiveList = (arr, type) => arr.filter(p => p.archiveType === type)
-
 const getters = {
   list: state => state.list,
-  currentDelId: state => state.currentDelId,
-  archiveLists: state => ({
-    1: getArchiveList(state.list, 1),
-    2: getArchiveList(state.list, 2),
-    3: getArchiveList(state.list, 3),
-    4: getArchiveList(state.list, 4)
-  })
+  currentDelId: state => state.currentDelId
 }
 
 export default createStore({

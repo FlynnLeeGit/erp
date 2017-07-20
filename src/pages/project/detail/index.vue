@@ -1,9 +1,11 @@
 <template>
-  <div v-loading='$isAjax.get_by_id'>
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{name:'project.list'}">项目列表</el-breadcrumb-item>
-      <el-breadcrumb-item>{{ currentProject.address }}-{{currentProject.houseType}}</el-breadcrumb-item>
-    </el-breadcrumb>
+  <div>
+    <section>
+      <el-breadcrumb>
+        <el-breadcrumb-item :to="{name:'project.list'}">项目列表</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ currentProject.address }}-{{currentProject.houseType}}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </section>
     <el-tabs type='card'
              class="_mt1"
              v-model="activeName"
@@ -28,7 +30,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('project/list', ['currentProject', '$isAjax']),
+    ...mapGetters('project/detail', ['currentProject']),
     pid () {
       return this.$route.params.pid
     }
@@ -37,7 +39,7 @@ export default {
     this.get_by_id(this.pid)
   },
   methods: {
-    ...mapActions('project/list', ['get_by_id']),
+    ...mapActions('project/detail', ['get_by_id']),
     handleClick (tab) {
       this.$router.push({
         name: tab.name,

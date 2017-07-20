@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-row :gutter="10"
-            v-loading='isFetching'>
+            v-loading='$isAjax.init'>
       <el-col :span='6'
-              v-for='(s,index) in tableData'
+              v-for='(s,index) in list'
               :key='s.id'>
         <card :title='s.name'
               type='default'>
@@ -15,8 +15,8 @@
                          class="_p0">
                 编辑
               </el-button>
-              <el-button @click.stop='handleDelete(index,s)'
-                         :loading='isDeleting && delId === s.id'
+              <el-button @click.stop='handleDelete(s)'
+                         :loading='$isAjax.delete && currentDelId === s.id'
                          type='text'
                          class="_p0 _text-danger">
                 删除
@@ -44,16 +44,16 @@
       </el-form>
       <div slot='footer'
            class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
+        <el-button @click="closeDialog()">取 消</el-button>
         <el-button v-if="opt==='add'"
                    type="success"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.create'
                    @click="submitAdd(row)">
           添 加
         </el-button>
         <el-button v-if="opt==='edit'"
                    type="primary"
-                   :loading='isSubmiting'
+                   :loading='$isAjax.update'
                    @click="submitEdit(row)">
           更 新
         </el-button>
@@ -63,47 +63,29 @@
   </div>
 </template>
 <script>
-import { get, edit, add, del } from './api'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      tableData: [],
-      map: {},
-      isFetching: false,
-      isDeleting: false,
-
       row: {},
       initialRow: {
         name: ''
       },
-      editRow: {},
-
-      delId: 0,
-
       opt: 'add',
-      showDialog: false,
-      isSubmiting: false
+      showDialog: false
     }
   },
   created () {
-    this.initData()
+    this.init(this.pid)
   },
   computed: {
+    ...mapGetters('project/detail/space', ['list', '$isAjax', 'currentDelId']),
     pid () {
-      return this.$route.params.pid
+      return +this.$route.params.pid
     }
   },
   methods: {
-    initData () {
-      this.isFetching = true
-      return Promise.all([get(this.pid)])
-        .then(([one]) => {
-          this.tableData = one.data
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('project/detail/space', ['init', 'create', 'update', 'delete']),
     handleAdd () {
       this.opt = 'add'
       this.showDialog = true
@@ -112,49 +94,35 @@ export default {
     handleEdit (data) {
       this.opt = 'edit'
       this.showDialog = true
-      this.editRow = data
-      this.row = this.$utils.deepCopy(this.editRow)
+      this.row = this.$utils.deepCopy(data)
     },
-    handleDelete (index, row) {
-      this.delId = row.id
+    handleDelete (row) {
       this.$confirm('确认删除？')
         .then(() => {
-          this.isDeleting = true
-          return del(this.pid, row.id)
-        })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.tableData.splice(index, 1)
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.delete({
+            pid: this.pid,
+            sid: row.id
+          }).then(() => {
+            this.$message.success('删除成功')
+          })
         })
     },
-    submitAdd (row) {
-      this.isSubmiting = true
-      add(this.pid, row)
-        .then(({ data }) => {
-          this.$message.success('添加成功！')
-          this.tableData.push(data)
-          this.showDialog = false
-        })
-        .finally(() => {
-          this.isSubmiting = false
-        })
+    submitAdd (data) {
+      this.create({
+        pid: this.pid,
+        data
+      }).then(() => {
+        this.$message.success('添加成功！')
+        this.closeDialog()
+      })
     },
-    submitEdit (row) {
-      this.isSubmiting = true
-      edit(row)
-        .then(({ data }) => {
-          this.$message.success('更新成功！')
-          this.$utils.replaceObjectFields(this.editRow, data)
-          this.showDialog = false
-        })
-        .finally(() => {
-          this.isSubmiting = false
-        })
+    submitEdit (data) {
+      this.update(data).then(() => {
+        this.$message.success('更新成功！')
+        this.closeDialog()
+      })
     },
-    cancelDialog () {
+    closeDialog () {
       this.showDialog = false
     }
   }

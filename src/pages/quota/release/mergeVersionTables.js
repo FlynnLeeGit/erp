@@ -7,7 +7,7 @@ const mergeVersionTables = (v1, v2) => {
   // just copy arr index
   const v2Slice = v2.slice()
 
-  const stringify = JSON.stringify.bind(JSON)
+  const stringify = JSON.stringify.bind(null)
   const v1Map = {}, v2Map = {}
 
   const mergeTable = []
