@@ -39,7 +39,7 @@
       <el-table-column label="辅材规格"
                        class-name='_text'>
         <template scope='scope'>
-          {{scope.row.quotaAuxiliaryMaterial.name}}
+          {{formatterSpec(scope.row.quotaAuxiliaryMaterialSpec)}}
         </template>
       </el-table-column>
   
@@ -171,7 +171,7 @@
         <hr>
         <el-form-item label='供应商'
                       class="_mt1">
-          <el-select v-model='row.purchaseSupplierId'>
+          <el-select v-model='row.purchaseSupplier.id'>
             <el-option v-for='s in suppliers'
                        :label='s.company'
                        :value='s.id'
@@ -181,21 +181,12 @@
         </el-form-item>
   
         <el-form-item label='辅材规格'>
-          <el-select v-model="auxGroup">
-            <el-option v-for="(list,auxType) in auxmaterialGroupList"
-                       :key="auxType"
-                       :value="auxType">
+          <el-cascader :options="auxmaterialOptions"
+                       v-model="auxModel"
+                       :show-all-levels="false"
+                       :props="{label:'name',value:'id'}">
   
-            </el-option>
-          </el-select>
-          <el-select v-if="auxGroup"
-                     v-model="row.quotaAuxiliaryMaterialId">
-            <el-option v-for="item in auxmaterialGroupList[auxGroup]"
-                       :key="item.id"
-                       :value="item.id"
-                       :label="item.name">
-            </el-option>
-          </el-select>
+          </el-cascader>
         </el-form-item>
   
         <el-form-item label='品牌'>
@@ -276,13 +267,25 @@ export default {
     return {
       // table
       filterTableData: [],
-      row: {},
+      row: {
+        quotaAuxiliaryMaterialSpec: {
+          id: ''
+        },
+        purchaseSupplier: {
+          id: ''
+        }
+      },
       initialRow: {
-        purchaseSupplierId: '',
+        quotaAuxiliaryMaterialSpec: {
+          id: ''
+        },
+        purchaseSupplier: {
+          id: ''
+        },
         packUnit: '',
         packPrice: 0,
 
-        quotaAuxiliaryMaterialId: '',
+
         specAmount: 10,
         specPrice: 0,
         brand: '',
@@ -290,7 +293,8 @@ export default {
 
         isEnable: true
       },
-      auxGroup: '',
+      auxModel: ['', '', ''],
+
       // edit && del
 
       // dialog
@@ -317,9 +321,8 @@ export default {
   computed: {
     ...mapGetters('purchase/material', ['$isAjax', 'list', 'currentDelId']),
     ...mapGetters('quota/auxmaterial', {
-      auxmaterials: 'list',
       auxmaterialMap: 'map',
-      auxmaterialGroupList: 'groupList'
+      auxmaterialOptions: 'options'
     }),
     ...mapGetters('purchase/supplier', {
       suppliers: 'list',
@@ -338,6 +341,9 @@ export default {
   },
   methods: {
     ...mapActions('purchase/material', ['init', 'create', 'update', 'delete']),
+    formatterSpec (spec) {
+      return spec && `${spec.name}[${spec.quotaAuxiliaryMaterial.name}]`
+    },
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
@@ -357,6 +363,7 @@ export default {
     },
     // dialog methods
     submitAdd (row) {
+      row.quotaAuxiliaryMaterialSpec.id = this.auxModel[2]
       this.create(row).then(() => {
         this.$message.success("添加成功")
         this.closeDialog()

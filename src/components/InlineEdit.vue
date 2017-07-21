@@ -81,11 +81,6 @@ export default {
       default: () => { },
       required: true
     },
-    // 是否直接更新原始data数据
-    directModify: {
-      type: Boolean,
-      default: false
-    },
     rows: {
       type: Number,
       default: 6
@@ -131,9 +126,6 @@ export default {
         this.$emit('before-update', editRow)
         this.fn(editRow)
           .then(({ data }) => {
-            if (this.directModify) {
-              this.$utils.replaceObjectFields(this.data, data)
-            }
             this.$emit('updated', data)
           })
           .finally(() => {

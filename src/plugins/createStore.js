@@ -1,30 +1,30 @@
 import Vue from 'vue'
 
 /**
- * 根据传入的actions,mutations,ajaxActions,state,getters 自动创建异步请求所需的_START _SUCCESS _FAILURE mutations
- * 并且添加了$isAjax $ajaxError两个state变量,
- * @param {* Object }
- * @param {* Object.ajaxActions } Array 标注ajax请求action
+ *
+ *
+ * @param {* Object } 根据传入的actions,mutations,ajaxActions,state,getters 自动创建异步请求所需的_START _SUCCESS _FAILURE mutations
+ *                    并且添加了$isAjax $ajaxError两个state变量,
+ * @param {* Object} transformResponse 转换Promise的响应信息函数
  * @return {* vuex store Object} 返回vuex使用的module对象
  */
-const createStore = ({
-  namespaced,
-  state,
-  mutations,
-  actions,
-  getters,
-  modules
-}) => {
+const createStore = (
+  { namespaced, state, mutations, actions, getters, modules },
+  options
+) => {
   state = state || {}
   mutations = mutations || {}
   actions = actions || {}
   getters = getters || {}
   modules = modules || {}
+  options = options || {}
+  // this is useful for axios 
+  const defaultTransfrom = res => res.data
+  const transformReponse = options.transformReponse || defaultTransfrom
 
   // 添加$isAjax $ajaxError变量
   state = Object.assign(state, {
     $isAjax: {}
-    // $ajaxError: {}
   })
 
   // clone actions 对象,注入mutaions后调用
@@ -37,12 +37,15 @@ const createStore = ({
       // 返回该Promise 异步请求
       return cloneActions
         [actionName](store, payload)
-        .then(({ data }) => {
-          store.commit(`${upperType}_SUCCESS`, { req: payload, res: data })
-          return Promise.resolve(data)
+        .then(res => {
+          store.commit(`${upperType}_SUCCESS`, {
+            req: payload,
+            res: transformReponse(res)
+          })
+          return Promise.resolve(res)
         })
         .catch(err => {
-          store.commit(`${upperType}_FAILURE`, err)
+          store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
           return Promise.reject(err)
         })
     }
@@ -52,9 +55,7 @@ const createStore = ({
   // 检测mutaion中是否有双下划线的错误写法
   Object.keys(mutations).forEach(m => {
     if (/__+/.test(m)) {
-      console.warn(
-        `${m} includes double or more underlines '_',maybe you type wrong number underlines`
-      )
+      console.warn(`${m} includes double or more underlines '_'`)
     }
   })
 
@@ -77,7 +78,6 @@ const createStore = ({
     }
     mutations[`${upperType}_FAILURE`] = (state, payload) => {
       Vue.set(state.$isAjax, type, false)
-      // Vue.set(state.$ajaxError, type, payload)
       if (cloneMutations[`${upperType}_FAILURE`]) {
         cloneMutations[`${upperType}_FAILURE`](state, payload)
       }
@@ -85,7 +85,6 @@ const createStore = ({
   })
 
   getters.$isAjax = state => state.$isAjax
-  // getters.$ajaxError = state => state.$ajaxError
 
   return {
     namespaced,

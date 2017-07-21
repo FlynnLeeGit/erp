@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-breadcrumb class="_mb2">
+      <el-breadcrumb-item>项目列表</el-breadcrumb-item>
+    </el-breadcrumb>
     <div v-loading='$isAjax.init'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'

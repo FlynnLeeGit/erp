@@ -138,7 +138,20 @@ const routes = [
     path: '/',
     name: '首页',
     component: index,
-    children: [quotaRoutes, purchaseRoutes, accountRoutes, projectRoutes]
+    children: [
+      quotaRoutes,
+      purchaseRoutes,
+      accountRoutes,
+      projectRoutes,
+      {
+        path: 'tests',
+        component: require('../pages/tests/index.vue')
+      },
+      {
+        path: 'tests/:id',
+        component: require('../pages/tests/_id/index.vue')
+      }
+    ]
   },
   {
     path: '/login',

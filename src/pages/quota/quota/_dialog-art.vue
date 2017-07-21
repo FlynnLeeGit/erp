@@ -10,9 +10,10 @@
         <el-select v-model='row.quotaArtficial.id'>
           <el-option v-for='art in artList'
                      :key='art.id'
-                     :label='art.workType'
                      :value='art.id'
                      :disabled="optionDisabled(qRow,art)">
+            <span style="float: left">{{ art.workType }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{art.price}}元</span>
           </el-option>
         </el-select>
       </el-form-item>

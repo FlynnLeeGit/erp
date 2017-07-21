@@ -29,7 +29,6 @@
                    v-model="row.model">
           <el-option v-for="m in matGroupList[row.brand]"
                      :key="m.id"
-                     :disabled="modelOptionsDisabled(m)"
                      @click.native="handleClickModel(m)"
                      :value="m.model">
           </el-option>
@@ -97,10 +96,10 @@ export default {
     restoreRow () {
       this.row = this.$utils.deepCopy(this.initialRow)
     },
-    modelOptionsDisabled (m) {
-      m.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, m.quotaAuxiliaryMaterialId, 'quotaAuxiliaryMaterial.id')
-      return m.disabled
-    },
+    // modelOptionsDisabled (m) {
+    //   m.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, m.quotaAuxiliaryMaterialId, 'quotaAuxiliaryMaterial.id')
+    //   return m.disabled
+    // },
     submit (data) {
       this.$refs.form.validate(valid => {
         if (valid) {

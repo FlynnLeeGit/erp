@@ -2,7 +2,7 @@
   <div>
     <el-breadcrumb class="_mb2">
       <el-breadcrumb-item>定额管理</el-breadcrumb-item>
-      <el-breadcrumb-item>定额辅材规格</el-breadcrumb-item>
+      <el-breadcrumb-item>定额辅材材质</el-breadcrumb-item>
     </el-breadcrumb>
     <el-button @click='handleAdd()'
                type='primary'>
@@ -26,7 +26,7 @@
                        prop='id'
                        width="80">
       </el-table-column>
-      <el-table-column label="规格"
+      <el-table-column label="名称"
                        sortable
                        prop='name'
                        :sort-method="$utils.sortByChs.bind(this,'name')"
@@ -71,32 +71,6 @@
           </inline-edit>
         </template>
       </el-table-column>
-      <el-table-column label="描述"
-                       sortable
-                       prop='specDesc'
-                       :sort-method="$utils.sortByChs.bind(this,'specDesc')"
-                       width="120">
-        <template scope='scope'>
-          <inline-edit :data='scope.row'
-                       :fn='update'
-                       type='text'
-                       prop='specDesc'>
-          </inline-edit>
-        </template>
-      </el-table-column>
-  
-      <el-table-column label="采购限价"
-                       sortable
-                       prop='limitPrice'
-                       width="120">
-        <template scope='scope'>
-          <inline-edit :data='scope.row'
-                       :fn='update'
-                       type='number'
-                       prop='limitPrice'>
-          </inline-edit>
-        </template>
-      </el-table-column>
   
       <el-table-column label="计算策略"
                        sortable
@@ -119,9 +93,29 @@
         </template>
   
       </el-table-column>
+      <el-table-column label="规格"
+                       width="200">
+        <template scope="scope">
+          <el-tag class="_ml1"
+                  closable
+                  type="primary"
+                  @close='handleDeleteSpec(scope.row.id,spec.id)'
+                  v-for="spec in scope.row.quotaAuxiliaryMaterialSpecs"
+                  :key="spec.id">
+            {{spec.name}}
+          </el-tag>
+        </template>
+  
+      </el-table-column>
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
+          <el-button @click="handleAddSpec(scope.row.id)"
+                     size="mini"
+                     type="success">
+            <i class="fa fa-plus"></i>
+            添加规格
+          </el-button>
           <el-button size="mini"
                      :loading='$isAjax.delete && scope.row.id === currentDelId'
                      type="danger"
@@ -144,18 +138,18 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='添加辅材规格'
+    <el-dialog title='添加辅材材质'
                :visible.sync='showDialog'>
       <el-form :model='row'
                :rules='formRules'
                label-width='120px'>
-        <el-form-item label='规格'
+        <el-form-item label='名称'
                       prop='name'>
-          <el-input placeholder='请输入辅材名称'
+          <el-input placeholder='请输入材质名称'
                     v-model='row.name'></el-input>
         </el-form-item>
         <el-form-item label='定额单位'>
-          <el-input placeholder='定额内使用单位(m,kg等)'
+          <el-input placeholder='材质使用单位(m,kg等)'
                     v-model='row.specUnit'></el-input>
         </el-form-item>
         <el-form-item label="类型">
@@ -169,19 +163,6 @@
             </el-option>
           </el-select>
   
-        </el-form-item>
-        <el-form-item label='描述'>
-          <el-input placeholder='描述'
-                    v-model='row.specDesc'></el-input>
-        </el-form-item>
-  
-        <el-form-item label="采购限价">
-          <el-input-number :step='1'
-                           :debounce="1000"
-                           v-model="row.limitPrice"
-                           :min="0">
-          </el-input-number>
-          <span class="_text _ml1">[步进1] 防止采购人员误输入不合理的价格</span>
         </el-form-item>
   
         <el-form-item label='计算策略'
@@ -207,13 +188,19 @@
       </div>
     </el-dialog>
   
+    <spec-dialog ref="specDialog"></spec-dialog>
+  
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import specDialog from './_spec-dialog.vue'
 
 export default {
+  components: {
+    specDialog
+  },
   data () {
     return {
       // table
@@ -225,7 +212,6 @@ export default {
         type: '',
         specDesc: '',
         calcStrategy: '1',
-        limitPrice: ''
       },
       // edit && del
 
@@ -238,7 +224,7 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'name', 'specUnit', 'specDesc'],
+      searchFields: ['id', 'name', 'specUnit', 'type'],
 
       formRules: {
         name: [
@@ -258,7 +244,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('quota/auxmaterial', ['init', 'create', 'update', 'delete']),
+    ...mapActions('quota/auxmaterial', ['init', 'create', 'update', 'delete', 'delete_spec']),
     // table methods
     calcStrategyFormatter (row) {
       return this.map.calcStrategy[row.calcStrategy]
@@ -288,6 +274,19 @@ export default {
         this.closeDialog()
         this.$nextTick(() => {
           this.currentPage = Math.ceil(this.filterTableData.length / this.pageSize)
+        })
+      })
+    },
+    handleAddSpec (auxId) {
+      this.$refs.specDialog.open(auxId)
+    },
+    handleDeleteSpec (auxId, specId) {
+      this.$confirm('是否删除此规格？').then(() => {
+        this.delete_spec({
+          auxId,
+          specId
+        }).then(() => {
+          this.$message.success("删除规格成功")
         })
       })
     }

@@ -6,7 +6,7 @@
     <el-menu-item-group title="定额管理"
                         v-if='userPass.quota'>
       <el-menu-item index="/quota/artficial">定额人工费</el-menu-item>
-      <el-menu-item index="/quota/auxmaterial">定额辅材规格</el-menu-item>
+      <el-menu-item index="/quota/auxmaterial">定额辅材材质</el-menu-item>
       <el-menu-item index="/quota/quota">定额模版</el-menu-item>
       <el-menu-item index="/quota/release">版本比对</el-menu-item>
     </el-menu-item-group>
