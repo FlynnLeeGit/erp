@@ -5,12 +5,19 @@ import budgets from './budgets/module'
 import { getById } from './api'
 
 const state = {
-  projectInfo: {}
+  projectInfo: {},
+  showPidTabs: true
 }
 
 const mutations = {
   GET_BY_ID_SUCCESS (state, { res }) {
     state.projectInfo = res
+  },
+  HIDE_PID_TABS (state) {
+    state.showPidTabs = false
+  },
+  SHOW_PID_TABS (state) {
+    state.showPidTabs = true
   }
 }
 
@@ -21,7 +28,8 @@ const actions = {
 }
 
 const getters = {
-  projectInfo: state => state.projectInfo
+  projectInfo: state => state.projectInfo,
+  showPidTabs: state => state.showPidTabs
 }
 
 export default createStore({
