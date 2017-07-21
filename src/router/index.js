@@ -27,6 +27,16 @@ import projectDetailSpace from '@/pages/project/detail/space/index.vue'
 import projectDetailBudget from '@/pages/project/detail/budget/index.vue'
 import projectDetailBudgetItems from '@/pages/project/items/index.vue'
 
+import projects from '../pages/projects/index.vue'
+import projectsPid from '../pages/projects/_pid.vue'
+import projectsPidBudgets from '../pages/projects/_pid/budgets/index.vue'
+import projectsPidSpaces from '../pages/projects/_pid/spaces/index.vue'
+import projectsPidBudgetsBid from '../pages/projects/_pid/budgets/_bid.vue'
+import projectsPidBudgetsBidItems
+  from '../pages/projects/_pid/budgets/_bid/items.vue'
+import projectsPidBudgetsBidStatistics
+  from '../pages/projects/_pid/budgets/_bid/statistics.vue'
+
 Vue.use(Router)
 
 const quotaRoutes = {
@@ -133,6 +143,41 @@ const projectRoutes = {
   ]
 }
 
+const projectsRoutes = {
+  path: 'projects/:pid?',
+  component: projectsPid,
+  name: 'projects-pid',
+  children: [
+    {
+      path: 'spaces',
+      component: projectsPidSpaces,
+      name: 'projects-pid-spaces'
+    },
+    {
+      path: 'budgets',
+      component: projectsPidBudgets,
+      name: 'projects-pid-budgets'
+    },
+    {
+      path: 'budgets/:bid?',
+      component: projectsPidBudgetsBid,
+      name: 'projects-pid-budgets-bid',
+      children: [
+        {
+          path: 'items',
+          component: projectsPidBudgetsBidItems,
+          name: 'projects-pid-budgets-bid-items'
+        },
+        {
+          path: 'statistics',
+          component: projectsPidBudgetsBidStatistics,
+          name: 'projects-pid-budgets-bid-statistics'
+        }
+      ]
+    }
+  ]
+}
+
 const routes = [
   {
     path: '/',
@@ -144,26 +189,11 @@ const routes = [
       accountRoutes,
       projectRoutes,
       {
-        path: 'tests',
-        name:'tests',
-        component: require('../pages/tests/index.vue')
+        path: 'projects',
+        component: projects,
+        name: 'projects'
       },
-      {
-        path: 'tests/:pid',
-        component: require('../pages/tests/_pid/index.vue'),
-        children: [
-          {
-            path: 'budget',
-            name:'tests-budget',
-            component: require('../pages/tests/_pid/budget.vue')
-          },
-          {
-            path: 'space',
-            name:'tests-space',
-            component: require('../pages/tests/_pid/space.vue')
-          }
-        ]
-      }
+      projectsRoutes
     ]
   },
   {

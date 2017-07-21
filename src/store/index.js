@@ -9,13 +9,15 @@ import project from '@/pages/project/module'
 import quota from '@/pages/quota/module'
 import purchase from '@/pages/purchase/module'
 
+import projects from '@/pages/projects/module'
 const store = new Vuex.Store({
   modules: {
     users,
     layout,
     project,
     quota,
-    purchase
+    purchase,
+    projects
   },
   strict: false
 })

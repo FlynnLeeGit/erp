@@ -1,5 +1,5 @@
 <template>
   <div>
-    space list
+    分析
   </div>
 </template>
