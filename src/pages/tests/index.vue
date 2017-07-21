@@ -1,16 +1,19 @@
 <template>
   <div>
+    <button @click="add">ADD</button>
     <ul>
       <li v-for="l in list"
           :key="l.id">
-        <router-link :to="link(l.id)" v-text="l.name"></router-link>
+        <router-link :to="link(l.id)"
+                     v-text="l.name"></router-link>
   
       </li>
-    </ul>
   
+    </ul>
   </div>
 </template>
 <script>
+let id = 4
 export default {
   data () {
     return {
@@ -24,7 +27,14 @@ export default {
   },
   methods: {
     link (id) {
-      return `/tests/${id}`
+      return `/tests/${id}/budget`
+    },
+    add () {
+      id++
+      this.list.push({
+        id: id,
+        name: `项目${id}`
+      })
     }
   }
 }

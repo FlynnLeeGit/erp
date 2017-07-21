@@ -145,11 +145,24 @@ const routes = [
       projectRoutes,
       {
         path: 'tests',
+        name:'tests',
         component: require('../pages/tests/index.vue')
       },
       {
-        path: 'tests/:id',
-        component: require('../pages/tests/_id/index.vue')
+        path: 'tests/:pid',
+        component: require('../pages/tests/_pid/index.vue'),
+        children: [
+          {
+            path: 'budget',
+            name:'tests-budget',
+            component: require('../pages/tests/_pid/budget.vue')
+          },
+          {
+            path: 'space',
+            name:'tests-space',
+            component: require('../pages/tests/_pid/space.vue')
+          }
+        ]
       }
     ]
   },
