@@ -30,7 +30,7 @@ const mutations = {
 }
 
 const actions = {
-  get () {
+  get ({ getters }) {
     return get()
   },
   create (store, req) {

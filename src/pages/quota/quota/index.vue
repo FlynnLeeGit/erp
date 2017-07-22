@@ -294,11 +294,12 @@ export default {
         })
         this.release_quota({
           description: value
-        }).then((res) => {
+        }).then(({ data }) => {
+          console.log(res)
           this.$notify({
             type: 'info',
             title: '发布成功！',
-            message: `版本号为${res.version}`
+            message: `版本号为${data.version}`
           })
         })
       })

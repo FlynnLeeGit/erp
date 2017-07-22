@@ -18,7 +18,7 @@ const createStore = (
   getters = getters || {}
   modules = modules || {}
   options = options || {}
-  // this is useful for axios 
+  // this is useful for axios
   const defaultTransfrom = res => res.data
   const transformReponse = options.transformReponse || defaultTransfrom
 
@@ -32,22 +32,25 @@ const createStore = (
 
   Object.keys(actions).forEach(actionName => {
     const upperType = actionName.toUpperCase()
-    actions[actionName] = (store, payload) => {
-      store.commit(`${upperType}_START`, { req: payload })
-      // 返回该Promise 异步请求
-      return cloneActions
-        [actionName](store, payload)
-        .then(res => {
-          store.commit(`${upperType}_SUCCESS`, {
-            req: payload,
-            res: transformReponse(res)
+    console.log(actions[actionName])
+    if (actions[actionName].then) {
+      actions[actionName] = (store, payload) => {
+        store.commit(`${upperType}_START`, { req: payload })
+        // 返回该Promise 异步请求
+        return cloneActions
+          [actionName](store, payload)
+          .then(res => {
+            store.commit(`${upperType}_SUCCESS`, {
+              req: payload,
+              res: transformReponse(res)
+            })
+            return Promise.resolve(res)
           })
-          return Promise.resolve(res)
-        })
-        .catch(err => {
-          store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
-          return Promise.reject(err)
-        })
+          .catch(err => {
+            store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
+            return Promise.reject(err)
+          })
+      }
     }
   })
 

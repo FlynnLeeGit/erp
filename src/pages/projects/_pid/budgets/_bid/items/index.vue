@@ -228,17 +228,17 @@ export default {
     },
     budgetDesc () {
       const b = this.budgetData
-      return `总售价：${b.totalPrice}元
-             公司总利润：${b.totalCompanyProfit}元
+      return `总售价：${b.totalPrice || 0}元
+             公司总利润：${b.totalCompanyProfit || 0}元
 
-             人工售价：${b.totalArtificialPrice}元
-             人工成本：${b.totalArtificialCost}元
-             人工劳务利润：${b.totalLabourArtificialProfit}元
-             人工公司利润：${b.totalCompanyArtificialProfit}元
+             人工售价：${b.totalArtificialPrice || 0}元
+             人工成本：${b.totalArtificialCost || 0}元
+             人工劳务利润：${b.totalLabourArtificialProfit || 0}元
+             人工公司利润：${b.totalCompanyArtificialProfit || 0}元
 
-             辅材售价：${b.totalAuxiliaryMaterialPrice}元
-             辅材成本：${b.totalAuxiliaryMaterialCost}元
-             辅材公司利润：${b.totalCompanyAuxiliaryMaterialProfit}元
+             辅材售价：${b.totalAuxiliaryMaterialPrice || 0}元
+             辅材成本：${b.totalAuxiliaryMaterialCost || 0}元
+             辅材公司利润：${b.totalCompanyAuxiliaryMaterialProfit || 0}元
             `
     }
   },

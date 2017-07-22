@@ -105,6 +105,19 @@ export const replaceObjectFields = (oldObj, newObj, fields = 'all') => {
 }
 
 /**
+ * 获取数组中值对应的第一个元素
+ * @param {* [Object]} arr 数组
+ * @param {* String } value 目标值
+ * @param {* String} field 目标字段
+ */
+export const getItemInArray = (arr, value, field = 'id') => {
+  const filterItems = arr.filter(
+    item => item[field].toString() === value.toString()
+  )
+  return filterItems.length ? filterItems[0] : {}
+}
+
+/**
  * 中文表格字段排序函数
  * @param {* 排序字段} sortKey
  * @param {* 比较前对象} a
