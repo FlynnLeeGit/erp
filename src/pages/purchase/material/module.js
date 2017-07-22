@@ -1,6 +1,6 @@
 import createStore from '@/plugins/createStore'
 
-import { find, findIndex, groupByField } from '@/plugins/utils'
+import { find, findIndex, groupByField, deepCopy } from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
 
@@ -55,7 +55,54 @@ const getters = {
   list: state => state.list,
   currentDelId: state => state.currentDelId,
   // 将材料根据品牌分组
-  groupList: state => groupByField(state.list, 'brand')
+  groupList: state => groupByField(state.list, 'brand'),
+  groupBySpec: state => {
+    const matList = deepCopy(state.list)
+    const groupByBrandList = groupByField(matList, 'brand')
+    const groupBySpecList = groupByField(
+      matList,
+      'quotaAuxiliaryMaterialSpec.id'
+    )
+    const matGroup = {}
+    Object.keys(groupBySpecList).forEach(specName => {
+      matGroup[specName] = deepCopy(groupBySpecList[specName]).map(mat => {
+        const brandObj = {
+          id: mat.id,
+          name: mat.brand,
+          children: deepCopy(groupByBrandList[mat.brand]).map(mat => ({
+            id: mat.id,
+            name: mat.model
+          }))
+        }
+        if (!brandObj.children.length) {
+          brandObj.disabled = true
+        }
+        return brandObj
+      })
+    })
+    // 得到[规格-品牌-型号] 的tree
+    return matGroup
+  },
+  options: (state, getters, rootState, rootGetters) => {
+    const matOptionsAux = deepCopy(rootGetters['quota/auxmaterial/options'])
+    const matGroupBySpec = getters['groupBySpec']
+
+    matOptionsAux.forEach(one => {
+      one.children.forEach(two => {
+        two.children = deepCopy(two.children).map(spec => {
+          spec.children = matGroupBySpec[spec.id]
+          spec.disabled = true
+          if(spec.children && spec.children.length){
+            spec.disabled = false
+          }
+          return spec
+        })
+      })
+    })
+
+    console.log(deepCopy(matOptionsAux))
+    return matOptionsAux
+  }
 }
 
 export default createStore({

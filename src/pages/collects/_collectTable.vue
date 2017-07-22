@@ -178,14 +178,12 @@
                    @click="submitAdd(row)">
           确 定
         </el-button>
-  
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
 import { get, update, del, create, getQuota, getByVersion } from './api'
-
 export default {
   props: {
     pickerMode: {
@@ -195,6 +193,10 @@ export default {
     editerMode: {
       type: Boolean,
       default: false
+    },
+    version: {
+      type: String,
+      default: ''
     },
     disabledRows: {
       type: Array,
@@ -277,7 +279,7 @@ export default {
     initPickerMode () {
       this.onlyShowCollect = this.pickerMode
       this.pageSize = 20
-      this.getQuotasFunction = () => getByVersion(this.$route.query.bversion)
+      this.getQuotasFunction = () => getByVersion(this.version)
     },
     initEditerMode () {
       this.getQuotasFunction = () => getQuota()

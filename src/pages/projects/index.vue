@@ -19,7 +19,7 @@
                   :key='project.id'>
             <card :title='project.address'
                   :type='archiveThemeMap[tKey]'>
-              <el-button @click='goDetail(project)'
+              <el-button @click='goPid(project)'
                          type='info'
                          slot='header-slot'
                          class="_fr"
@@ -207,7 +207,7 @@ export default {
     closeDialog () {
       this.showDialog = false
     },
-    goDetail (project) {
+    goPid (project) {
       this.$router.push({
         name: 'projects-pid-budgets',
         params: {

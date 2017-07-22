@@ -73,12 +73,5 @@ export default {
   }
 }
 </script>
-<style lang='scss'>
-.detail-back {
-  position: absolute;
-  margin-top: -40px;
-  margin-left: 90px;
-}
-</style>
 
 

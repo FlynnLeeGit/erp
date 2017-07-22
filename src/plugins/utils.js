@@ -59,7 +59,12 @@ export const removeItemInArray = (arr, item) => {
  * @param {* 查询字段 可支持a.b.c的语法} field
  */
 export const recursionFieldValue = (obj, fields) => {
-  return fields.split('.').reduce((prev, next) => prev[next], obj)
+  try {
+    return fields.split('.').reduce((prev, next) => prev[next], obj)
+  } catch (e) {
+    // 报错时返回null
+    return null
+  }
 }
 
 /**
@@ -158,10 +163,13 @@ export const toLocaleString = time => new Date(time * 1000).toLocaleDateString()
 export const groupByField = (arr, field) => {
   const obj = {}
   arr.forEach(item => {
-    if (!obj[item[field]]) {
-      obj[item[field]] = []
+    const targetFieldValue = recursionFieldValue(item, field)
+    if (targetFieldValue !== null && targetFieldValue !== undefined) {
+      if (!obj[targetFieldValue]) {
+        obj[targetFieldValue] = []
+      }
+      obj[targetFieldValue].push(item)
     }
-    obj[item[field]].push(item)
   })
   return obj
 }

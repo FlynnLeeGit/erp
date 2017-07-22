@@ -3,38 +3,17 @@
              :visible.sync='visible'>
     <el-form ref='form'
              :model='row'
-             label-width="80px"
-             :rules='formRules'>
+             label-width="80px">
       <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
   
-      <el-form-item label='辅材品牌'
-                    prop='brand'>
-        <el-select v-model="row.brand"
-                   @change="handleBrandChange"
-                   placeholder="选择品牌">
-          <el-option v-for="(modelList,brand) in matGroupList"
-                     :key="brand"
-                     :value="brand">
-          </el-option>
-        </el-select>
-  
-      </el-form-item>
-  
-      <el-form-item label="型号"
-                    prop="model">
-        <el-select v-if="row.brand"
-                   placeholder="选择型号"
-                   v-model="row.model">
-          <el-option v-for="m in matGroupList[row.brand]"
-                     :key="m.id"
-                     @click.native="handleClickModel(m)"
-                     :value="m.model">
-          </el-option>
-        </el-select>
-        <span v-else
-              class="_text">请先选择品牌</span>
+      <el-form-item label='辅材选择'>
+        <el-cascader :options="matOptions"
+                     placeholder="级联选择规格与型号"
+                     v-model="auxModel"
+                     :props="{label:'name',value:'id'}">
+        </el-cascader>
       </el-form-item>
   
       <el-form-item label='用量'>
@@ -65,28 +44,26 @@ export default {
     return {
       visible: false,
       row: {
-        quotaAuxiliaryMaterial: {}
+        quotaAuxiliaryMaterialSpec: {
+          id: ''
+        }
       },
       initialRow: {
         counter: 0,
         brand: '',
         model: '',
-        quotaAuxiliaryMaterial: {}
+        quotaAuxiliaryMaterialSpec: {
+          id: ''
+        }
       },
       qRow: {},
-      formRules: {
-        brand: [
-          { required: true, message: '品牌不能为空' }
-        ],
-        model: [
-          { required: true, message: '型号不能为空' }
-        ]
-      }
+      auxModel: ['', '', '', '', '']
     }
   },
   computed: {
     ...mapGetters('purchase/material', {
-      matGroupList: 'groupList'
+      matGroupList: 'groupList',
+      matOptions: 'options'
     }),
     ...mapGetters('quota/quota', ['$isAjax'])
   },
@@ -96,13 +73,12 @@ export default {
     restoreRow () {
       this.row = this.$utils.deepCopy(this.initialRow)
     },
-    // modelOptionsDisabled (m) {
-    //   m.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, m.quotaAuxiliaryMaterialId, 'quotaAuxiliaryMaterial.id')
-    //   return m.disabled
-    // },
     submit (data) {
       this.$refs.form.validate(valid => {
         if (valid) {
+          data.quotaAuxiliaryMaterialSpec.id = this.auxModel[2]
+          data.brand = this.auxModel[3]
+          data.model = this.auxModel[4]
           this.create_auxmaterial_count({
             qid: this.qRow.id,
             data
@@ -120,13 +96,6 @@ export default {
     },
     close () {
       this.visible = false
-    },
-    handleBrandChange (brand) {
-      this.row.model = ''
-      this.row.quotaAuxiliaryMaterial.id = ''
-    },
-    handleClickModel (model) {
-      this.row.quotaAuxiliaryMaterial.id = model.quotaAuxiliaryMaterialId
     }
   }
 }

@@ -2,9 +2,10 @@
   <el-dialog size="large"
              :visible.sync="visible"
              title="添加定额（多选）">
-  
-    <collect-table :disabled-rows='disabledRows'
+    <collect-table v-if="visible"
+                   :disabled-rows='disabledRows'
                    :selection.sync='selectedQuotas'
+                   :version='budgetInfo.version'
                    picker-mode>
     </collect-table>
     <div slot='footer'
@@ -17,12 +18,12 @@
       </el-button>
   
     </div>
-  
   </el-dialog>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import { add } from './api'
-import collectTable from '@/pages/project/collect/_collectTable.vue'
+import collectTable from '@/pages/collects/_collectTable.vue'
 export default {
   components: {
     collectTable
@@ -45,6 +46,9 @@ export default {
 
       selectedQuotas: []
     }
+  },
+  computed: {
+    ...mapGetters('projects/_pid/budgets/_bid', ['budgetInfo'])
   },
   methods: {
     submitAdd () {
