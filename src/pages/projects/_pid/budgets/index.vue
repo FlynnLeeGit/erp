@@ -8,10 +8,12 @@
               type='default'>
           <el-button type='info'
                      slot='header-slot'
-                     class="_fr"
+                     class="_fr -has-link"
                      @click="goItems(pid,b.id)"
                      size='small'>
-            进入{{b.name}}
+            <router-link :to="{name:'projects-pid-budgets-bid-items',params:{pid,bid:b.id}}">
+              进入{{b.name}}
+            </router-link>
           </el-button>
           <p>
             <span>定额版本库:{{b.version}}</span>
@@ -178,15 +180,6 @@ export default {
     },
     closeDialog () {
       this.showDialog = false
-    },
-    goItems (pid, bid) {
-      this.$router.push({
-        name: 'projects-pid-budgets-bid-items',
-        params: {
-          pid,
-          bid
-        }
-      })
     }
   }
 }

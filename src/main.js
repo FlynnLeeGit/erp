@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
+import Meta from 'vue-meta'
+
 import router from './router'
 import store from './store'
 import './plugins/directives'
@@ -12,8 +14,11 @@ import Card from '@/components/Card.vue'
 import CardPlus from '@/components/CardPlus.vue'
 
 Vue.use(ElementUI)
+Vue.use(Meta)
+
 Vue.prototype.$utils = utils
 Vue.prototype.$log = console.log
+
 Vue.component(InlineEdit.name, InlineEdit)
 Vue.component(Search.name, Search)
 Vue.component(Card.name, Card)

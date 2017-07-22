@@ -58,6 +58,11 @@ export default {
       return this.$route.params.pid
     },
   },
+  metaInfo () {
+    return {
+      title: `${this.projectInfo.address}-${this.tabsMap[this.activeName]}`
+    }
+  },
   created () {
     this.get_by_id(this.pid)
   },

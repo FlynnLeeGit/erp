@@ -3,7 +3,7 @@
     <el-breadcrumb class="_mb2">
       <el-breadcrumb-item>项目列表</el-breadcrumb-item>
     </el-breadcrumb>
-
+  
     <div v-loading='$isAjax.init'>
       <div class="_mt3"
            v-for='(t,tKey) in map.archiveType'
@@ -19,12 +19,13 @@
                   :key='project.id'>
             <card :title='project.address'
                   :type='archiveThemeMap[tKey]'>
-              <el-button @click='goPid(project)'
-                         type='info'
+              <el-button type='info'
                          slot='header-slot'
-                         class="_fr"
+                         class="_fr -has-link"
                          size='small'>
-                进入项目
+                <router-link :to="{name:'projects-pid-budgets',params:{pid:project.id}}">
+                  进入项目
+                </router-link>
               </el-button>
   
               <span>{{project.username}} {{map.gender[project.gender]}}</span>
@@ -170,6 +171,9 @@ export default {
   computed: {
     ...mapGetters('projects', ['$isAjax', 'archiveLists', 'currentDelId', 'map']),
   },
+  metaInfo: {
+    title: '项目列表'
+  },
   created () {
     this.init()
   },
@@ -206,14 +210,6 @@ export default {
     },
     closeDialog () {
       this.showDialog = false
-    },
-    goPid (project) {
-      this.$router.push({
-        name: 'projects-pid-budgets',
-        params: {
-          pid: project.id
-        }
-      })
     }
   }
 }

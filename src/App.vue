@@ -41,6 +41,10 @@ export default {
   methods: {
     ...mapActions(['logout']),
     ...mapMutations(['TOGGLE_SIDE_HIDE']),
+  },
+  metaInfo:{
+    title:'欢迎您',
+    titleTemplate:'中孚空间ERP | %s'
   }
 }
 </script>

@@ -54,6 +54,11 @@ export default {
       activeName: ''
     }
   },
+  metaInfo () {
+    return {
+      title: this.budgetInfo.name + ' ' + this.tabsMap[this.activeName]
+    }
+  },
   created () {
     this.HIDE_PID_TABS()
     this.init({
