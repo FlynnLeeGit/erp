@@ -4,7 +4,7 @@ import { find, findIndex } from '@/plugins/utils'
 
 import { get, create, update, del, getMap } from './api'
 
-import _pid from './_pid/module'
+import _pid from './_pid/_pid-module'
 
 const state = {
   map: {},

@@ -184,7 +184,7 @@
   </div>
 </template>
 <script>
-import { get, edit, del, add, getQuota, getByVersion } from './api'
+import { get, update, del, create, getQuota, getByVersion } from './api'
 
 export default {
   props: {
@@ -324,7 +324,7 @@ export default {
       this.$refs.dialogForm.validate(valid => {
         if (valid) {
           this.isSubmiting = true
-          add(row).then(({ data }) => {
+          create(row).then(({ data }) => {
             this.$message.success('添加常用定额标注成功！')
             this.showDialog = false
             this.quotaCollects.push(data)

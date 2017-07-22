@@ -3,6 +3,7 @@ import createStore from '@/plugins/createStore'
 import { find, findIndex } from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
+import _bid from './_bid/_bid-module'
 
 const state = {
   list: [],
@@ -60,5 +61,8 @@ export default createStore({
   state,
   mutations,
   actions,
-  getters
+  getters,
+  modules: {
+    _bid
+  }
 })

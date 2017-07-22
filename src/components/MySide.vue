@@ -17,8 +17,8 @@
     </el-menu-item-group>
     <el-menu-item-group title="项目管理"
                         v-if='userPass.project'>
-      <el-menu-item index="/project/list">项目列表</el-menu-item>
-      <el-menu-item index="/project/collect">常用定额</el-menu-item>
+      <el-menu-item index="/projects">项目列表</el-menu-item>
+      <el-menu-item index="/collects">常用定额</el-menu-item>
     </el-menu-item-group>
     <el-menu-item-group title="账号管理"
                         v-if='userPass.account'>

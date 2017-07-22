@@ -8,34 +8,28 @@
         {{projectInfo.address}} 预算管理
       </el-breadcrumb-item>
       <el-breadcrumb-item>
-        预算明细
+        {{budgetInfo.name}} {{tabsMap[activeName]}}
       </el-breadcrumb-item>
     </el-breadcrumb>
     <el-tabs v-model="activeName"
              type="card"
              @tab-click='tabClick'>
-      <el-tab-pane label="预算明细"
-                   name="projects-pid-budgets-bid-items">
-  
-      </el-tab-pane>
-      <el-tab-pane label="预算统计"
-                   name="projects-pid-budgets-bid-statistics">
-  
+      <el-tab-pane v-for="tab in tabs"
+                   :key="tab.name"
+                   :label="budgetInfo.name + ' ' + tab.label"
+                   :name="tab.name">
       </el-tab-pane>
     </el-tabs>
-  
     <router-view>
-  
     </router-view>
-  
   </div>
 </template>
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 
 const tabs = [
-  { label: '预算明细', name: 'projects-pid-budgets-bid-items', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/budgets(?:\/((?:[^\/]+?)))?\/items(?:\/(?=$))?$/i },
-  { label: '预算统计', name: 'projects-pid-budgets-bid-statistics', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/budgets(?:\/((?:[^\/]+?)))?\/statistics(?:\/(?=$))?$/i },
+  { label: '明细', name: 'projects-pid-budgets-bid-items', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/budgets(?:\/((?:[^\/]+?)))?\/items(?:\/(?=$))?$/i },
+  { label: '统计', name: 'projects-pid-budgets-bid-statistics', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/budgets(?:\/((?:[^\/]+?)))?\/statistics(?:\/(?=$))?$/i },
 ]
 
 export default {
@@ -56,14 +50,23 @@ export default {
   },
   data () {
     return {
+      tabs,
       activeName: ''
     }
   },
   created () {
     this.HIDE_PID_TABS()
+    this.init({
+      pid: this.pid,
+      bid: this.bid
+    })
   },
   computed: {
     ...mapGetters('projects/_pid', ['projectInfo']),
+    ...mapGetters('projects/_pid/budgets/_bid', ['budgetInfo']),
+    tabsMap () {
+      return this.$utils.listToMap(tabs, 'label', 'name')
+    },
     pid () {
       return +this.$route.params.pid
     },
@@ -72,6 +75,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('projects/_pid/budgets/_bid', ['init']),
     ...mapMutations('projects/_pid', ['HIDE_PID_TABS', 'SHOW_PID_TABS']),
     tabClick (tab) {
       this.$router.replace({

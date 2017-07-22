@@ -27,15 +27,18 @@ import projectDetailSpace from '@/pages/project/detail/space/index.vue'
 import projectDetailBudget from '@/pages/project/detail/budget/index.vue'
 import projectDetailBudgetItems from '@/pages/project/items/index.vue'
 
+import collects from '../pages/collects/index.vue'
+
 import projects from '../pages/projects/index.vue'
-import projectsPid from '../pages/projects/_pid.vue'
+import projectsPid from '../pages/projects/_pid/index.vue'
 import projectsPidBudgets from '../pages/projects/_pid/budgets/index.vue'
 import projectsPidSpaces from '../pages/projects/_pid/spaces/index.vue'
-import projectsPidBudgetsBid from '../pages/projects/_pid/budgets/_bid.vue'
+import projectsPidBudgetsBid
+  from '../pages/projects/_pid/budgets/_bid/index.vue'
 import projectsPidBudgetsBidItems
-  from '../pages/projects/_pid/budgets/_bid/items.vue'
+  from '../pages/projects/_pid/budgets/_bid/items/index.vue'
 import projectsPidBudgetsBidStatistics
-  from '../pages/projects/_pid/budgets/_bid/statistics.vue'
+  from '../pages/projects/_pid/budgets/_bid/statistics/index.vue'
 
 Vue.use(Router)
 
@@ -103,46 +106,6 @@ const accountRoutes = {
   ]
 }
 
-const projectRoutes = {
-  path: 'project',
-  name: '项目管理',
-  component: project,
-  children: [
-    {
-      path: 'list',
-      name: '项目列表',
-      component: projectList
-    },
-    {
-      path: 'collect',
-      name: '常用定额',
-      component: projectCollect
-    },
-    {
-      path: ':pid/budget/:bid/items',
-      name: '预算详情',
-      component: projectDetailBudgetItems
-    },
-    {
-      path: ':pid',
-      name: '项目详情',
-      component: projectDetail,
-      children: [
-        {
-          path: 'space',
-          name: '空间管理',
-          component: projectDetailSpace
-        },
-        {
-          path: 'budget',
-          name: '预算管理',
-          component: projectDetailBudget
-        }
-      ]
-    }
-  ]
-}
-
 const projectsRoutes = {
   path: 'projects/:pid?',
   component: projectsPid,
@@ -187,7 +150,11 @@ const routes = [
       quotaRoutes,
       purchaseRoutes,
       accountRoutes,
-      projectRoutes,
+      {
+        path: 'collects',
+        component: collects,
+        name: 'collects'
+      },
       {
         path: 'projects',
         component: projects,

@@ -1,6 +1,6 @@
 import createStore from '@/plugins/createStore'
-import spaces from './spaces/module'
-import budgets from './budgets/module'
+import spaces from './spaces/spaces-module'
+import budgets from './budgets/budgets-module'
 
 import { getById } from './api'
 
