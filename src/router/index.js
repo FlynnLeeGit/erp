@@ -2,43 +2,37 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
 
-import index from '@/pages/index.vue'
-import login from '@/pages/login.vue'
+const index = r => require(['@/pages/index.vue'], r)
+const login = r => require(['@/pages/login.vue'], r)
 
-import quota from '@/pages/quota/index.vue'
-import artficial from '@/pages/quota/artficial/index.vue'
-import auxmaterial from '@/pages/quota/auxmaterial/index.vue'
-import quotaTpl from '@/pages/quota/quota/index.vue'
-import release from '@/pages/quota/release/index.vue'
+const quota = r => require(['@/pages/quota/index.vue'], r)
+const artficial = r => require(['@/pages/quota/artficial/index.vue'], r)
+const auxmaterial = r => require(['@/pages/quota/auxmaterial/index.vue'], r)
+const quotaTpl = r => require(['@/pages/quota/quota/index.vue'], r)
+const release = r => require(['@/pages/quota/release/index.vue'], r)
 
-import purchase from '@/pages/purchase/index.vue'
-import supplier from '@/pages/purchase/supplier/index.vue'
-import material from '@/pages/purchase/material/index.vue'
+const purchase = r => require(['@/pages/purchase/index.vue'], r)
+const supplier = r => require(['@/pages/purchase/supplier/index.vue'], r)
+const material = r => require(['@/pages/purchase/material/index.vue'], r)
 
-import account from '@/pages/account/index.vue'
-import accoutUsers from '@/pages/account/users.vue'
-import accountPassword from '@/pages/account/password.vue'
+const account = r => require(['@/pages/account/index.vue'], r)
+const accoutUsers = r => require(['@/pages/account/users.vue'], r)
+const accountPassword = r => require(['@/pages/account/password.vue'], r)
 
-import project from '@/pages/project/index.vue'
-import projectCollect from '@/pages/project/collect/index.vue'
-import projectList from '@/pages/project/list/index.vue'
-import projectDetail from '@/pages/project/detail/index.vue'
-import projectDetailSpace from '@/pages/project/detail/space/index.vue'
-import projectDetailBudget from '@/pages/project/detail/budget/index.vue'
-import projectDetailBudgetItems from '@/pages/project/items/index.vue'
+const collects = r => require(['../pages/collects/index.vue'], r)
 
-import collects from '../pages/collects/index.vue'
-
-import projects from '../pages/projects/index.vue'
-import projectsPid from '../pages/projects/_pid/index.vue'
-import projectsPidBudgets from '../pages/projects/_pid/budgets/index.vue'
-import projectsPidSpaces from '../pages/projects/_pid/spaces/index.vue'
-import projectsPidBudgetsBid
-  from '../pages/projects/_pid/budgets/_bid/index.vue'
-import projectsPidBudgetsBidItems
-  from '../pages/projects/_pid/budgets/_bid/items/index.vue'
-import projectsPidBudgetsBidStatistics
-  from '../pages/projects/_pid/budgets/_bid/statistics/index.vue'
+const projects = r => require(['../pages/projects/index.vue'], r)
+const projectsPid = r => require(['../pages/projects/_pid/index.vue'], r)
+const projectsPidBudgets = r =>
+  require(['../pages/projects/_pid/budgets/index.vue'], r)
+const projectsPidSpaces = r =>
+  require(['../pages/projects/_pid/spaces/index.vue'], r)
+const projectsPidBudgetsBid = r =>
+  require(['../pages/projects/_pid/budgets/_bid/index.vue'], r)
+const projectsPidBudgetsBidItems = r =>
+  require(['../pages/projects/_pid/budgets/_bid/items/index.vue'], r)
+const projectsPidBudgetsBidStatistics = r =>
+  require(['../pages/projects/_pid/budgets/_bid/statistics/index.vue'], r)
 
 Vue.use(Router)
 

@@ -100,7 +100,6 @@ const getters = {
       })
     })
 
-    console.log(deepCopy(matOptionsAux))
     return matOptionsAux
   }
 }

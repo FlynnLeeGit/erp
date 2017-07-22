@@ -45,15 +45,6 @@ export const findIndex = (arr, value, field = 'id') => {
 }
 
 /**
- * 从数组中移除制定元素
- * @param {* Array} arr
- * @param {* Object} item
- */
-export const removeItemInArray = (arr, item) => {
-  arr.splice(arr.indexOf(item), 1)
-}
-
-/**
  * 支持.语法递归寻找对象中的键值 如 obj = { a: {b:1} } recursionFieldValue（obj,'a.b')可得到1
  * @param {* 查询对象} obj
  * @param {* 查询字段 可支持a.b.c的语法} field
@@ -114,30 +105,6 @@ export const replaceObjectFields = (oldObj, newObj, fields = 'all') => {
 }
 
 /**
- * 获取数组中值对应的第一个元素
- * @param {* [Object]} arr 数组
- * @param {* String } value 目标值
- * @param {* String} field 目标字段
- */
-export const getItemInArray = (arr, value, field = 'id') => {
-  const filterItems = arr.filter(
-    item => item[field].toString() === value.toString()
-  )
-  return filterItems.length ? filterItems[0] : {}
-}
-
-/**
- * 判断值是否存在于指定的数组中的对象字段中
- * @param {* 数组对象} arr
- * @param {* 值} value
- * @param {* 寻找的字段} field
- */
-export const valueInArray = (arr, value, field = 'id') => {
-  return arr.some(
-    item => recursionFieldValue(item, field).toString() === value.toString()
-  )
-}
-/**
  * 中文表格字段排序函数
  * @param {* 排序字段} sortKey
  * @param {* 比较前对象} a
@@ -157,7 +124,7 @@ export const toLocaleString = time => new Date(time * 1000).toLocaleDateString()
 /**
  * 根据给出字段将数据分组
  * @param {* 数组} arr
- * @param {* 分组用字段} field
+ * @param {* 分组用字段} field 支持递归
  * @return [ object ]
  */
 export const groupByField = (arr, field) => {

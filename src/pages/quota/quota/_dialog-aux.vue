@@ -18,7 +18,7 @@
   
       <el-form-item label='用量'>
         <el-input-number v-model='row.counter'
-                         :debounce='800'
+                         :debounce='1000'
                          :min='0'
                          :step='0.1'>
         </el-input-number>
@@ -62,7 +62,6 @@ export default {
   },
   computed: {
     ...mapGetters('purchase/material', {
-      matGroupList: 'groupList',
       matOptions: 'options'
     }),
     ...mapGetters('quota/quota', ['$isAjax'])
