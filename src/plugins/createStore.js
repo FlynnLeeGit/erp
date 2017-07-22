@@ -32,25 +32,22 @@ const createStore = (
 
   Object.keys(actions).forEach(actionName => {
     const upperType = actionName.toUpperCase()
-    console.log(actions[actionName])
-    if (actions[actionName].then) {
-      actions[actionName] = (store, payload) => {
-        store.commit(`${upperType}_START`, { req: payload })
-        // 返回该Promise 异步请求
-        return cloneActions
-          [actionName](store, payload)
-          .then(res => {
-            store.commit(`${upperType}_SUCCESS`, {
-              req: payload,
-              res: transformReponse(res)
-            })
-            return Promise.resolve(res)
+    actions[actionName] = (store, payload) => {
+      store.commit(`${upperType}_START`, { req: payload })
+      // 返回该Promise 异步请求
+      return cloneActions
+        [actionName](store, payload)
+        .then(res => {
+          store.commit(`${upperType}_SUCCESS`, {
+            req: payload,
+            res: transformReponse(res)
           })
-          .catch(err => {
-            store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
-            return Promise.reject(err)
-          })
-      }
+          return Promise.resolve(res)
+        })
+        .catch(err => {
+          store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
+          return Promise.reject(err)
+        })
     }
   })
 
