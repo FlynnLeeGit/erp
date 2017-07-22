@@ -36,4 +36,4 @@ export const getBySpace = (bid, sid) =>
     transfromOpt
   )
 
-export { get as getSpaces } from '@/pages/project/detail/space/api'
+export { get as getSpaces } from '@/pages/projects/_pid/spaces/api'
