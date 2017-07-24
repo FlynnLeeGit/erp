@@ -12,7 +12,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="success"
-                 :loading='isSubmiting'
+                 :loading='$isAjax.create'
                  @click="submitAdd()">
         确认 添加
       </el-button>
@@ -21,8 +21,7 @@
   </el-dialog>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import { add } from './api'
+import { mapActions, mapGetters } from 'vuex'
 import collectTable from '@/pages/collects/_collectTable.vue'
 export default {
   components: {
@@ -42,31 +41,27 @@ export default {
       // 已经添加过的禁用
       disabledRows: [],
 
-      isSubmiting: false,
-
       selectedQuotas: []
     }
   },
   computed: {
+    ...mapGetters('projects/_pid/budgets/_bid/items', ['$isAjax']),
     ...mapGetters('projects/_pid/budgets/_bid', ['budgetInfo'])
   },
   methods: {
+    ...mapActions('projects/_pid/budgets/_bid/items', ['create']),
     submitAdd () {
-      this.isSubmiting = true
       const sendData = {
         [this.sid]: this.selectedQuotas
       }
-      add(this.bid, sendData)
+      this.create({
+        bid: this.bid,
+        data: sendData
+      })
         .then(({ data }) => {
-          this.$emit('updated', data)
           this.$message.success('添加定额成功')
-
           this.close()
         })
-        .finally(() => {
-          this.isSubmiting = false
-        })
-
     },
     open (sid, bid, quotasOnSpace) {
       this.sid = sid

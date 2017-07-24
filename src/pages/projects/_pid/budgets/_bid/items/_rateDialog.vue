@@ -24,7 +24,7 @@
          class="dialog-footer">
       <el-button @click="close()">取 消</el-button>
       <el-button type="info"
-                 :loading='isSubmiting'
+                 :loading='$isAjax.update_rate'
                  @click="submitAdd()">
         确认 更新
       </el-button>
@@ -32,12 +32,12 @@
   </el-dialog>
 </template>
 <script>
-import { updateRate } from './api'
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
       visible: false,
-      isSubmiting: false,
       // 预算id
       bid: 0,
       rate: {
@@ -46,23 +46,22 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapGetters('projects/_pid/budgets/_bid/items', ['$isAjax']),
+  },
   methods: {
+    ...mapActions('projects/_pid/budgets/_bid/items', ['update_rate']),
     submitAdd () {
       this.$confirm('【注意】此项设置将修改所有定额项目的人工利润率及公司利润率，您确定要这么做么')
         .then(() => {
-          this.isSubmiting = true
-          updateRate(this.bid, this.rate)
-            .then(({ data }) => {
+          this.update_rate({
+            bid: this.bid,
+            data: this.rate
+          })
+            .then(() => {
               this.$message.success("批量修改利润率成功！")
               this.close()
-              this.$emit('updated', data)
             })
-            .finally(() => {
-              this.isSubmiting = false
-            })
-        })
-        .catch(() => {
-          console.log('cancel')
         })
     },
     open (bid) {

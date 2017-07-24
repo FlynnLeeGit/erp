@@ -28,6 +28,8 @@ export const get = bid =>
 // 向预算中添加定额
 export const add = (bid, data) =>
   axios.post(`/_api/project/budgets/${bid}`, data, transformOpt)
+export const create = ({ bid, data }) =>
+  axios.post(`/_api/project/budgets/${bid}`, data, transformOpt)
 
 // 更新一项定额数据
 export const edit = (bid, sid, iid, data) =>
@@ -36,20 +38,26 @@ export const edit = (bid, sid, iid, data) =>
     data,
     transformOpt
   )
+export const update = ({ bid, sid, iid, data }) =>
+  axios.put(
+    `/_api/project/budgets/${bid}/spaces/${sid}/items/${iid}`,
+    data,
+    transformOpt
+  )
 
 // 删除指定的定额
-export const del = (bid, sid, iid) =>
+export const del = ({ bid, sid, iid }) =>
   axios.delete(
     `/_api/project/budgets/${bid}/spaces/${sid}/items/${iid}`,
     transformOpt
   )
 
 // 修改项目定额下面的利润率
-export const updateRate = (bid, data) =>
+export const updateRate = ({ bid, data }) =>
   axios.put(`/_api/project/budgets/${bid}/profit`, data, transformOpt)
 
 //  预览预算的pdf版本
-export const createPdf = (bid, data) =>
+export const createPdf = ({ bid, data }) =>
   axios.post(`/_api/project/budgets/${bid}/pdfs`, data, {
     responseType: 'blob'
   })

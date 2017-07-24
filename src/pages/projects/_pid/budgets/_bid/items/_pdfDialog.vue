@@ -155,12 +155,12 @@
   
       <el-button @click="close()">取 消</el-button>
       <el-button type="primary"
-                 :loading="isCreating"
+                 :loading="$isAjax.create_pdf"
                  @click="submitCreate()">
-        <span v-if="isCreating">生成中...</span>
+        <span v-if="$isAjax.create_pdf">生成中...</span>
         <span v-else>生成</span>
       </el-button>
-      <el-button v-show='pdfUrl && !isCreating'
+      <el-button v-show='pdfUrl && !$isAjax.create_pdf'
                  type="text">
         <a :href="pdfUrl"
            style="color:inherit;"
@@ -170,14 +170,12 @@
   </el-dialog>
 </template>
 <script>
-import { createPdf } from './api'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
       visible: false,
-      isCreating: false,
       // 预算id
-      bid: 0,
       form: {
         partyAName: '',
         partyAMobile: '',
@@ -200,6 +198,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('projects/_pid', ['projectInfo']),
+    ...mapGetters('projects/_pid/budgets/_bid/items', ['$isAjax']),
+    bid () {
+      return +this.$route.params.bid
+    },
     totalConst () {
       return (this.matAndArtTotalPrice + this.form.aToBMaterial + this.form.facilitiesManagementPrice + this.form.tax).toFixed(2)
     },
@@ -217,27 +220,26 @@ export default {
     },
   },
   methods: {
+    ...mapActions('projects/_pid/budgets/_bid/items', ['create_pdf']),
     initForm (projectInfo) {
-      this.form.area = projectInfo.area
-      this.form.address = projectInfo.address
-      this.form.houseType = projectInfo.houseType
-      this.form.partyAName = projectInfo.username
-      this.form.partyAMobile = projectInfo.mobile
-      this.form.partyAEmail = projectInfo.email
-      this.form.designer = projectInfo.user.name
-      this.form.designerMobile = projectInfo.user.mobile
+      this.form.area = this.projectInfo.area
+      this.form.address = this.projectInfo.address
+      this.form.houseType = this.projectInfo.houseType
+      this.form.partyAName = this.projectInfo.username
+      this.form.partyAMobile = this.projectInfo.mobile
+      this.form.partyAEmail = this.projectInfo.email
+      this.form.designer = this.projectInfo.user.name
+      this.form.designerMobile = this.projectInfo.user.mobile
     },
-    open (bid, matAndArtTotalPrice, projectInfo) {
-      this.bid = bid
+    open (matAndArtTotalPrice) {
       this.matAndArtTotalPrice = matAndArtTotalPrice
-      this.initForm(projectInfo)
+      this.initForm()
       this.visible = true
     },
     close () {
       this.visible = false
     },
     submitCreate () {
-      this.isCreating = true
       const sendData = Object.assign(this.form, {
         totalConst: this.totalConst,
         firstPayment: this.firstPayment,
@@ -245,14 +247,13 @@ export default {
         thirdPayment: this.thirdPayment,
         lastPayment: this.lastPayment
       })
-      createPdf(this.bid, sendData)
+      this.create_pdf({
+        bid: this.bid,
+        data: sendData
+      })
         .then(({ data }) => {
           this.pdfUrl = window.URL.createObjectURL(data)
           this.createTime = new Date().toLocaleTimeString()
-          this.isCreating = false
-        })
-        .catch(() => {
-          this.isCreating = false
         })
     }
   }

@@ -1,5 +1,6 @@
 import createStore from '@/plugins/createStore'
 import { find } from '@/plugins/utils'
+import items from './items/items-module'
 
 const state = {
   budgetInfo: {}
@@ -33,5 +34,8 @@ export default createStore({
   state,
   mutations,
   actions,
-  getters
+  getters,
+  modules: {
+    items
+  }
 })

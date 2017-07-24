@@ -12,13 +12,13 @@
                  @click='handleOpenRateDialog(bid)'>
         <i class="fa fa-line-chart"></i> 利润率修改
       </el-button>
-      <el-button @click='openPdfDialog(bid,budgetData.totalPrice,projectInfo)'
+      <el-button @click='openPdfDialog(budgetData.totalPrice)'
                  type="primary">
         <i class="fa fa-file-pdf-o"></i> 生成PDF
       </el-button>
     </section>
   
-    <section v-loading='isFetching'>
+    <section v-loading='$isAjax.init'>
       <div class="_mt1"
            v-for='space in spaceList'
            :key='space.id'>
@@ -33,13 +33,22 @@
         <el-table class="_mt1"
                   :data='quotaTable(space.id)'
                   empty-text="暂无此空间模版数据"
-                  border>
+                  border
+                  default-expand-all>
+  
+          <el-table-column type="expand">
+            <template scope="scope">
+              <h4>材料计量</h4>
+              <items-expand :table-data='scope.row.quotaTemplate.quotaAuxiliaryCounters'>
+              </items-expand>
+            </template>
+          </el-table-column>
           <el-table-column label="操作"
                            width="80"
                            align="center">
             <template scope="scope">
               <el-button size="mini"
-                         :loading='isDeleting && delId===scope.row.id && delSid === space.id'
+                         :loading='$isAjax.delete && currentIid===scope.row.id && currentSid === space.id'
                          @click='handleDelete(space.id,scope.row)'
                          type="danger">
                 删除
@@ -78,9 +87,7 @@
               <inline-edit type='number'
                            :data='scope.row'
                            prop='amount'
-                           :fn='editFn.bind(this,space.id,scope.row.id)'
-                           :direct-update='false'
-                           @updated='handleUpdateBudget'>
+                           :fn='editFn.bind(this,space.id,scope.row.id)'>
               </inline-edit>
             </template>
           </el-table-column>
@@ -90,9 +97,7 @@
               <inline-edit type='number'
                            :data='scope.row'
                            prop='rateOfArtificialProfit'
-                           :fn='editFn.bind(this,space.id,scope.row.id)'
-                           :direct-update='false'
-                           @updated='handleUpdateBudget'>
+                           :fn='editFn.bind(this,space.id,scope.row.id)'>
               </inline-edit>
             </template>
           </el-table-column>
@@ -102,9 +107,7 @@
               <inline-edit type='number'
                            :data='scope.row'
                            prop='rateOfCompanyProfit'
-                           :fn='editFn.bind(this,space.id,scope.row.id)'
-                           :direct-update='false'
-                           @updated='handleUpdateBudget'>
+                           :fn='editFn.bind(this,space.id,scope.row.id)'>
               </inline-edit>
             </template>
           </el-table-column>
@@ -181,45 +184,37 @@
     </section>
   
     <!-- quota dialog -->
-    <items-dialog ref='dialog'
-                  @updated='handleUpdateBudget'>
-  
-    </items-dialog>
-    <rate-dialog ref="rateDialog"
-                 @updated='handleUpdateBudget'>
-  
-    </rate-dialog>
+    <items-dialog ref='dialog'></items-dialog>
+    <rate-dialog ref="rateDialog"></rate-dialog>
     <pdf-dialog ref='pdfDialog'></pdf-dialog>
   
   </div>
 </template>
 <script>
-import { get, edit, add, del, getSpaces, getProjects } from './api'
+import { mapActions, mapGetters } from 'vuex'
+// import { get, edit, add, del, getSpaces, getProjects } from './api'
 import itemsDialog from './_itemsDialog.vue'
 import rateDialog from './_rateDialog.vue'
 import pdfDialog from './_pdfDialog.vue'
+import itemsExpand from './_items-expand.vue'
 
 export default {
   components: {
     itemsDialog,
     rateDialog,
-    pdfDialog
+    pdfDialog,
+    itemsExpand
   },
   data () {
     return {
-      budgetData: {
-        items: {}
-      },
-      spaceList: [],
-      projectInfo: {},
-
-      isFetching: false,
-      isDeleting: false,
-      delSid: 0,
-      delId: 0,
     }
   },
   computed: {
+    ...mapGetters('projects/_pid/budgets/_bid/items', ['$isAjax', 'budgetData', 'currentSid', 'currentIid']),
+   
+    ...mapGetters('projects/_pid/spaces', {
+      spaceList: 'list'
+    }),
     pid () {
       return +this.$route.params.pid
     },
@@ -243,47 +238,35 @@ export default {
     }
   },
   created () {
-    this.initData()
+    this.init({
+      pid: this.pid,
+      bid: this.bid
+    })
   },
 
   methods: {
-    initData () {
-      this.isFetching = true
-      Promise.all([get(this.bid), getSpaces(this.pid), getProjects()])
-        .then(([one, two, three]) => {
-          if (one.data) {
-            this.budgetData = one.data
-          }
-          this.spaceList = two.data
-          this.projectInfo = this.$utils.getItemInArray(three.data, this.pid)
-        })
-        .finally(() => {
-          this.isFetching = false
-        })
-    },
+    ...mapActions('projects/_pid/budgets/_bid/items', ['init', 'delete', 'update']),
     quotaTable (sid) {
       return this.budgetData.items[sid] ? this.budgetData.items[sid].quotas : []
     },
     editFn (sid, iid, editRow) {
-      return edit(this.bid, sid, iid, editRow)
-    },
-    handleUpdateBudget (newBudget) {
-      this.budgetData = newBudget
+      return this.update({
+        bid: this.bid,
+        sid,
+        iid,
+        data: editRow
+      })
     },
     handleDelete (sid, row) {
       this.$confirm('确认取消？')
         .then(() => {
-          this.isDeleting = true
-          this.delSid = sid
-          this.delId = row.id
-          return del(this.bid, sid, row.id)
-        })
-        .then(({ data }) => {
-          this.handleUpdateBudget(data)
-          this.$message.success('删除定额成功！')
-        })
-        .finally(() => {
-          this.isDeleting = false
+          this.delete({
+            bid: this.bid,
+            sid,
+            iid: row.id
+          }).then(() => {
+            this.$message.success('删除定额成功！')
+          })
         })
     },
     openDialog (sid) {
@@ -292,10 +275,9 @@ export default {
     handleOpenRateDialog (bid) {
       this.$refs.rateDialog.open(bid)
     },
-    openPdfDialog (bid, matAndArtTotalPrice, projectInfo) {
-      this.$refs.pdfDialog.open(bid, matAndArtTotalPrice, projectInfo)
+    openPdfDialog (matAndArtTotalPrice) {
+      this.$refs.pdfDialog.open(matAndArtTotalPrice)
     }
-
   }
 }
 </script>

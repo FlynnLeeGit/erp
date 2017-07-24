@@ -2,15 +2,15 @@ import Vue from 'vue'
 /**
  * 通过数据源全表查询匹配记录
  * @param {*数组数据源} dataSource
- * @param {*查询关键字} searchField
+ * @param {*查询关键字} searchValue
  * @param {*需查询字段} searchFields
  * @param {*查询字段映射map表} searchMap
  */
-export const search = (dataSource, searchField, searchFields, searchMap) => {
+export const search = (dataSource, searchValue, searchFields, searchMap) => {
   return dataSource.filter(row => {
     // 第一个字段匹配了就返回
     return searchFields.some(field => {
-      if (searchField === '') {
+      if (searchValue === '') {
         return true
       }
       if (row[field] !== undefined && row[field] !== null) {
@@ -19,7 +19,7 @@ export const search = (dataSource, searchField, searchFields, searchMap) => {
         if (field in searchMap) {
           result = searchMap[field][result]
         }
-        return result.toString().indexOf(searchField) > -1
+        return result.toString().indexOf(searchValue) > -1
       }
     })
   })

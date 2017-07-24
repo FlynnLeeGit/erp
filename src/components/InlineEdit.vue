@@ -43,13 +43,14 @@
               class="InlineEdit__input"
               @keyup.enter='submit(editRow)'
               @blur='submit(editRow)'
-              v-model='editRow[prop]'>
+              :value='$utils.recursionFieldValue(editRow,prop)'
+              @input='updateEditRowPropVal'>
         <slot name='options'></slot>
       </select>
     </template>
     <div v-else
          class="_pointer">
-      <slot>{{data[prop]}}</slot>
+      <slot>{{$utils.recursionFieldValue(data,prop)}}</slot>
     </div>
   </div>
 </template>
@@ -105,14 +106,28 @@ export default {
     },
     isTextarea () {
       return this.type === 'textarea'
-    }
+    },
+    propType () {
+      return typeof this.$utils.recursionFieldValue(this.data, this.prop)
+    },
   },
   methods: {
     noOp () {
 
     },
+    updateEditRowPropVal ($event) {
+      let newVal = $event.target.value
+      if (this.propType === 'number') {
+        newVal = +newVal
+        eval('this.editRow.' + this.prop + '=' + newVal)
+      }
+      if (this.propType === 'string') {
+        eval('this.editRow.' + this.prop + '=\'' + newVal + '\'')
+      }
+
+    },
+
     edit (data) {
-      console.log('edit')
       this.editMode = true
       this.editRow = this.$utils.deepCopy(this.data)
       if (this.isTextarea) {

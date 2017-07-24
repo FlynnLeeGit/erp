@@ -29,10 +29,21 @@
       </el-table-column>
   
       <el-table-column label="供应商"
-                       sortable
-                       class-name='_text'>
+                       sortable>
         <template scope='scope'>
-          {{scope.row.purchaseSupplier.company}}
+          <inline-edit :data='scope.row'
+                       type='select'
+                       prop='purchaseSupplier.id'
+                       :fn='update'>
+            {{scope.row.purchaseSupplier.company}}
+            <template slot='options'>
+              <option v-for='s in suppliers'
+                      :label='s.company'
+                      :value='s.id'
+                      :key='s.id'>
+              </option>
+            </template>
+          </inline-edit>
         </template>
       </el-table-column>
   
