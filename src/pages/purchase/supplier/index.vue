@@ -77,7 +77,7 @@
           </inline-edit>
         </template>
       </el-table-column>
-      <el-table-column label='使用此供应商材料'>
+      <!-- <el-table-column label='使用此供应商材料'>
         <template scope='scope'>
           <div v-if='scope.row.purchaseMaterials.length'>
             <el-tag type='primary'
@@ -91,7 +91,7 @@
             无
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">

@@ -9,7 +9,7 @@
       </el-form-item>
   
       <el-form-item label='辅材选择'>
-        <el-cascader :options="matOptions"
+        <el-cascader :options="matOptionsByDisabledQuotaAux"
                      placeholder="级联选择规格与型号"
                      v-model="auxModel"
                      :props="{label:'name',value:'id'}">
@@ -56,7 +56,9 @@ export default {
           id: ''
         }
       },
-      qRow: {},
+      qRow: {
+        quotaAuxiliaryCounters: []
+      },
       auxModel: ['', '', '', '', '']
     }
   },
@@ -64,13 +66,27 @@ export default {
     ...mapGetters('purchase/material', {
       matOptions: 'options'
     }),
-    ...mapGetters('quota/quota', ['$isAjax'])
+    ...mapGetters('quota/quota', ['$isAjax']),
+    matOptionsByDisabledQuotaAux () {
+      const cloneMatOptions = this.$utils.deepCopy(this.matOptions)
+      const auxAlreadyHas = this.qRow.quotaAuxiliaryCounters
+
+      return cloneMatOptions.map(mat => {
+        mat.children.forEach(aux => {
+          if (!aux.disabled) {
+            aux.disabled = this.$utils.valueInArray(auxAlreadyHas, aux.id, 'quotaAuxiliaryMaterial.id')
+          }
+        })
+        return mat
+      })
+    }
   },
   methods: {
     ...mapActions('quota/quota', ['create_auxmaterial_count']),
     // 还原row为初始空内容状态
-    restoreRow () {
+    reset () {
       this.row = this.$utils.deepCopy(this.initialRow)
+      this.auxModel = ['', '', '', '', '']
     },
     submit (data) {
       this.$refs.form.validate(valid => {
@@ -90,7 +106,7 @@ export default {
     },
     open (qRow) {
       this.qRow = qRow
-      this.restoreRow()
+      this.reset()
       this.visible = true
     },
     close () {

@@ -118,6 +118,18 @@ export const getItemInArray = (arr, value, field = 'id') => {
 }
 
 /**
+ * 判断值是否存在于指定的数组中的对象字段中
+ * @param {* 数组对象} arr
+ * @param {* 值} value
+ * @param {* 寻找的字段} field
+ */
+export const valueInArray = (arr, value, field = 'id') => {
+  return arr.some(
+    item => recursionFieldValue(item, field).toString() === value.toString()
+  )
+}
+
+/**
  * 中文表格字段排序函数
  * @param {* 排序字段} sortKey
  * @param {* 比较前对象} a

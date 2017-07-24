@@ -5,7 +5,7 @@
              label-width='120px'>
       <el-form-item label='名称'
                     prop='name'>
-        <el-input placeholder='请输入材质名称'
+        <el-input placeholder='请输入规格名称'
                   v-model='row.name'>
         </el-input>
       </el-form-item>
