@@ -44,7 +44,6 @@
           <inline-edit :data='scope.row'
                        type='text'
                        :fn='update'
-                       :direct-modify='false'
                        prop='name'>
           </inline-edit>
         </template>
@@ -56,7 +55,6 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='update'
-                       :direct-modify='false'
                        type='select'
                        prop='type'
                        @before-update='beforeUpdateType'>
@@ -74,7 +72,6 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='update'
-                       :direct-modify='false'
                        type='select'
                        prop='secType'>
             <template slot='options'>
@@ -91,7 +88,6 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='update'
-                       :direct-modify='false'
                        type='select'
                        prop='unit'>
             <template slot='options'>
@@ -108,7 +104,6 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='update'
-                       :direct-modify='false'
                        type='select'
                        prop='position'>
             <template slot='options'>
@@ -125,7 +120,6 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        :fn='update'
-                       :direct-modify='false'
                        type='select'
                        prop='stage'>
             <template slot='options'>
@@ -142,8 +136,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='wastage'
+                       type='number'
                        :fn='update'>
-            {{scope.row.wastage}}%
           </inline-edit>
         </template>
   

@@ -107,7 +107,7 @@
       <el-table-column label="损耗率"
                        width="80">
         <template scope="scope">
-          {{scope.row.wastage}}%
+          {{scope.row.wastage}}
         </template>
   
       </el-table-column>

@@ -15,19 +15,13 @@
       <template scope='scope'>
         <inline-edit :data='scope.row'
                      prop='counter'
-                     :fn='editFn'
-                     :direct-modify='false'>
+                     :fn='editFn'>
         </inline-edit>
       </template>
     </el-table-column>
     <el-table-column label='材质 名称'>
       <template scope='scope'>
         <span class="_text">{{scope.row.quotaAuxiliaryMaterial.name}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label='材质 单位'>
-      <template scope='scope'>
-        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.specUnit}}</span>
       </template>
     </el-table-column>
     <el-table-column label='品牌'>
@@ -40,7 +34,18 @@
         <span class="_text">{{scope.row.model}}</span>
       </template>
     </el-table-column>
-  
+    <el-table-column label='材质 单位'
+                     class-name="_text">
+      <template scope='scope'>
+        {{scope.row.quotaAuxiliaryMaterial.specUnit}}
+      </template>
+    </el-table-column>
+    <el-table-column label="参考价"
+                     class-name="_text">
+      <template scope="scope">
+        {{scope.row.referencePrice}} 元 [价格策略:{{map.calcStrategy[scope.row.quotaAuxiliaryMaterial.calcStrategy]}}]
+      </template>
+    </el-table-column>
     <el-table-column label='操作'
                      width='100'
                      align='center'>
@@ -68,7 +73,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('quota/quota', ['$isAjax', 'currentDelQid', 'currentDelAuxId'])
+    ...mapGetters('quota/quota', ['$isAjax', 'currentDelQid', 'currentDelAuxId']),
+    ...mapGetters('quota', ['map'])
   },
   methods: {
     ...mapActions('quota/quota', ['update_auxmaterial_count', 'delete_auxmaterial_count']),

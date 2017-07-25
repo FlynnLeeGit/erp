@@ -124,7 +124,7 @@
           </diff-cell>
         </template>
       </el-table-column>
-      <el-table-column label="损耗率(%)"
+      <el-table-column label="损耗率"
                        width="100">
         <template scope='scope'>
           <diff-cell :data='scope.row'

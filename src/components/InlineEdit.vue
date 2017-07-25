@@ -12,7 +12,8 @@
              @blur='submit(editRow)'
              @keyup.enter='submit(editRow)'
              type='number'
-             v-model.number='editRow[prop]'>
+             :value='computedValue'
+             @input='updateEditRowPropVal'>
       </input>
   
       <!--文本类型绑定-->
@@ -23,7 +24,8 @@
              @blur='submit(editRow)'
              @keyup.enter='submit(editRow)'
              type='text'
-             v-model='editRow[prop]'>
+             :value='computedValue'
+             @input='updateEditRowPropVal'>
       </input>
   
       <textarea class="InlineEdit__input"
@@ -33,7 +35,8 @@
                 v-focus
                 :rows='rows'
                 @blur='submit(editRow)'
-                v-model='editRow[prop]'>
+                :value='computedValue'
+                @input='updateEditRowPropVal'>
       </textarea>
   
       <!--select类型绑定 加上@click.stop 防止时间冒泡-->
@@ -43,14 +46,14 @@
               class="InlineEdit__input"
               @keyup.enter='submit(editRow)'
               @blur='submit(editRow)'
-              :value='$utils.recursionFieldValue(editRow,prop)'
+              :value='computedValue'
               @input='updateEditRowPropVal'>
         <slot name='options'></slot>
       </select>
     </template>
     <div v-else
          class="_pointer">
-      <slot>{{$utils.recursionFieldValue(data,prop)}}</slot>
+      <slot>{{computedValue}}</slot>
     </div>
   </div>
 </template>
@@ -76,7 +79,11 @@ export default {
       type: String,
       default: 'number'
     },
-    // promise 函数 制定更新的promise函数
+    transformFn: {
+      type: Function,
+      default: val => val
+    },
+    // promise 函数 指定更新的promise函数
     fn: {
       type: Function,
       default: () => { },
@@ -110,6 +117,9 @@ export default {
     propType () {
       return typeof this.$utils.recursionFieldValue(this.data, this.prop)
     },
+    computedValue () {
+      return this.transformFn(this.$utils.recursionFieldValue(this.data, this.prop))
+    }
   },
   methods: {
     noOp () {
@@ -137,6 +147,7 @@ export default {
     submit (editRow) {
       this.editMode = false
       if (JSON.stringify(editRow) !== JSON.stringify(this.data)) {
+        console.log('update...')
         this.isSubmiting = true
         this.$emit('before-update', editRow)
         this.fn(editRow)
