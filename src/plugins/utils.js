@@ -187,7 +187,6 @@ export const toCascader = (...optsArrCollect) => {
         })
       }
     })
-    console.log(cloneOptsArrCollect[0])
     return cloneOptsArrCollect[0]
   } catch (e) {
     return []

@@ -47,9 +47,12 @@
         </template>
       </el-table-column>
   
-      <el-table-column label="辅材规格"
-                       class-name='_text'>
+      <el-table-column label="辅材材质与规格">
         <template scope='scope'>
+          <el-button type="default"
+                     class="_fr"
+                     size="mini"
+                     @click="handleOpenAuxDialog(scope.row)">更换</el-button>
           {{formatterSpec(scope.row.quotaAuxiliaryMaterialSpec)}}
         </template>
       </el-table-column>
@@ -67,7 +70,7 @@
         </template>
       </el-table-column>
   
-      <el-table-column label="辅材型号"
+      <el-table-column label="型号"
                        prop='model'
                        width="100">
         <template scope='scope'>
@@ -194,7 +197,6 @@
         <el-form-item label='辅材规格'>
           <el-cascader :options="cascaderOpts"
                        v-model="auxModel">
-  
           </el-cascader>
         </el-form-item>
   
@@ -266,6 +268,23 @@
       </div>
     </el-dialog>
   
+    <el-dialog :visible.sync="showAuxDialog"
+               title="更换规格">
+      <el-form label-width="80px">
+        <el-form-item label="更换规格">
+          <el-cascader :options="cascaderOpts"
+                       v-model="auxModel">
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="closeAuxDialog()">取 消</el-button>
+        <el-button @click="submitUpdate(row)"
+                   :loading="$isAjax.update">更 换</el-button>
+      </div>
+    </el-dialog>
+  
   </div>
 </template>
 
@@ -308,6 +327,7 @@ export default {
 
       // dialog
       showDialog: false,
+      showAuxDialog: false,
 
       // pagination
       currentPage: 1,
@@ -388,8 +408,23 @@ export default {
         })
       })
     },
+    handleOpenAuxDialog (row) {
+      this.row = this.$utils.deepCopy(row)
+      this.auxModel = ['', '', '']
+      this.showAuxDialog = true
+    },
+    submitUpdate (row) {
+      row.quotaAuxiliaryMaterialSpec.id = this.auxModel[2]
+      this.update(row).then(() => {
+        this.$message.success('更换成功')
+        this.closeAuxDialog()
+      })
+    },
     closeDialog () {
       this.showDialog = false
+    },
+    closeAuxDialog () {
+      this.showAuxDialog = false
     }
   }
 }

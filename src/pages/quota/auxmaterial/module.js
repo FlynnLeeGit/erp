@@ -113,23 +113,6 @@ const getters = {
   },
 
   groupList: state => groupByField(state.list, 'type'),
-  // 返回element 级联选择器的options 结构 [{id:1,name:'I',children:[{id:11:name:'II',children:[...]}]}]
-  options: state => {
-    const options = []
-    state.list.forEach(item => {
-      item.children = item.quotaAuxiliaryMaterialSpecs
-      if (!item.children.length) {
-        // 没有可选的规格时直接禁用
-        item.disabled = true
-      }
-    })
-    const groupList = groupByField(state.list, 'type')
-    Object.keys(groupList).forEach(type => {
-      options.push({ name: type, id: type, children: groupList[type] })
-    })
-    return options
-  },
-
   map: state => listToMap(state.list),
   currentDelId: state => state.currentDelId
 }
