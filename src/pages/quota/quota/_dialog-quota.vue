@@ -70,12 +70,12 @@
       </el-form-item>
   
       <el-form-item label='损耗率'>
-        <el-input-number v-model='row.wastage'
+        <el-input-number v-model='row._wastage'
                          :min='0'
                          :debounce="1000"
                          :step='1'>
         </el-input-number>
-        <span class="_ml1">[1]</span>
+        <span class="_ml1">[步进1]</span>
       </el-form-item>
   
       <el-form-item label='说明'>
@@ -120,6 +120,7 @@ export default {
         unit: '',
         workType: '',
         wastage: 0,
+        _wastage: 0,
         position: '',
         quotaArtficialCounters: [],
         quotaAuxiliaryCounters: []
@@ -169,6 +170,7 @@ export default {
     },
     submitAdd (data) {
       this.formValidate().then(() => {
+        data.wastage = data._wastage / 100
         this.create(data)
           .then(() => {
             this.$message.success("添加成功")

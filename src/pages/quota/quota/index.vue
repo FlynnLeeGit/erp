@@ -130,13 +130,15 @@
           </inline-edit>
         </template>
       </el-table-column>
-      <el-table-column label="损耗率"
+      <el-table-column label="损耗率(%)"
                        prop='wastage'
                        sortable>
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='wastage'
                        type='number'
+                       :transform-fn='val => val*100'
+                       @before-update='editRow => editRow.wastage /= 100'
                        :fn='update'>
           </inline-edit>
         </template>

@@ -79,10 +79,17 @@ export default {
       type: String,
       default: 'number'
     },
+    // 显示值的转换函数
     transformFn: {
       type: Function,
       default: val => val
     },
+    // 反向设置prop时的函数
+    reverseFn:{
+      type:Function,
+      default:val=>val
+    },
+    
     // promise 函数 指定更新的promise函数
     fn: {
       type: Function,
@@ -129,12 +136,11 @@ export default {
       let newVal = $event.target.value
       if (this.propType === 'number') {
         newVal = +newVal
-        eval('this.editRow.' + this.prop + '=' + newVal)
+        eval('this.editRow.' + this.prop + '=' +newVal)
       }
       if (this.propType === 'string') {
         eval('this.editRow.' + this.prop + '=\'' + newVal + '\'')
       }
-
     },
 
     edit (data) {
@@ -145,18 +151,21 @@ export default {
       }
     },
     submit (editRow) {
-      this.editMode = false
-      if (JSON.stringify(editRow) !== JSON.stringify(this.data)) {
-        console.log('update...')
-        this.isSubmiting = true
-        this.$emit('before-update', editRow)
-        this.fn(editRow)
-          .then(({ data }) => {
-            this.$emit('updated', data)
-          })
-          .finally(() => {
-            this.isSubmiting = false
-          })
+      // 为了防止 @keyup.enter 与 @blur触发两次submit
+      if (this.editMode) {
+        this.editMode = false
+        
+        if (JSON.stringify(editRow) !== JSON.stringify(this.data)) {
+          this.isSubmiting = true
+          this.$emit('before-update', editRow)
+          this.fn(editRow)
+            .then(({ data }) => {
+              this.$emit('updated', data)
+            })
+            .finally(() => {
+              this.isSubmiting = false
+            })
+        }
       }
     }
   }

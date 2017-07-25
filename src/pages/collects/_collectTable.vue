@@ -78,7 +78,6 @@
                        show-overflow-tooltip
                        prop='brand'
                        width='50'>
-  
       </el-table-column>
   
       <el-table-column label="大类"
@@ -104,12 +103,11 @@
                        show-overflow-tooltip
                        width="60">
       </el-table-column>
-      <el-table-column label="损耗率"
+      <el-table-column label="损耗率(%)"
                        width="80">
         <template scope="scope">
-          {{scope.row.wastage}}
+          {{scope.row.wastage * 100}}
         </template>
-  
       </el-table-column>
       <el-table-column label='人工价'
                        width='80'
