@@ -13,7 +13,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/',
-    filename: 'build.js?[hash:5]'
+    filename: 'build.[hash:5].js'
   },
   module: {
     rules: [
