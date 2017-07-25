@@ -13,7 +13,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/',
-    filename: 'build.js'
+    filename: 'build.js?[hash:5]'
   },
   module: {
     rules: [
@@ -70,9 +70,8 @@ const config = {
   plugins: [
     new HtmlWeppackPlugin({
       inject: true,
-      template: 'template/index.html',
-      hash: true
-    }),
+      template: 'template/index.html'
+    })
     // new AutoWebpackPlugin({
     //   debug: true,
     //   inject: true,
