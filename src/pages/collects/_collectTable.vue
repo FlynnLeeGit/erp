@@ -105,8 +105,10 @@
                        width="60">
       </el-table-column>
       <el-table-column label="损耗率"
-                       prop='wastage'
                        width="80">
+        <template scope="scope">
+          {{scope.row.wastage}}%
+        </template>
   
       </el-table-column>
       <el-table-column label='人工价'

@@ -27,6 +27,8 @@ const projectsPidBudgets = r =>
   require(['../pages/projects/_pid/budgets/index.vue'], r)
 const projectsPidSpaces = r =>
   require(['../pages/projects/_pid/spaces/index.vue'], r)
+const projectsPidBudgets_diff = r =>
+  require(['../pages/projects/_pid/budgets_diff/index.vue'], r)
 const projectsPidBudgetsBid = r =>
   require(['../pages/projects/_pid/budgets/_bid/index.vue'], r)
 const projectsPidBudgetsBidItems = r =>
@@ -114,6 +116,11 @@ const projectsRoutes = {
       path: 'budgets',
       component: projectsPidBudgets,
       name: 'projects-pid-budgets'
+    },
+    {
+      path: 'budgets_diff',
+      component: projectsPidBudgets_diff,
+      name: 'projects-pid-budgets_diff'
     },
     {
       path: 'budgets/:bid?',

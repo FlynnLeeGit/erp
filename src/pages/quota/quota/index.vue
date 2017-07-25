@@ -142,8 +142,8 @@
         <template scope='scope'>
           <inline-edit :data='scope.row'
                        prop='wastage'
-                       :fn='update'
-                       :direct-modify='false'>
+                       :fn='update'>
+            {{scope.row.wastage}}%
           </inline-edit>
         </template>
   

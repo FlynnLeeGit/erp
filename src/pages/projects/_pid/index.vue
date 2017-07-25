@@ -28,7 +28,7 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 const tabs = [
   { label: '预算管理', name: 'projects-pid-budgets', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/budgets(?:\/(?=$))?$/i },
-  { label: '预算比对', name: 'projects-pid-budgets', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/diff(?:\/(?=$))?$/i },
+  { label: '预算比对', name: 'projects-pid-budgets_diff', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/budgets_diff(?:\/(?=$))?$/i },
   { label: '空间管理', name: 'projects-pid-spaces', regex: /^\/projects(?:\/((?:[^\/]+?)))?\/spaces(?:\/(?=$))?$/i }
 ]
 

@@ -1,6 +1,7 @@
 import createStore from '@/plugins/createStore'
 import spaces from './spaces/spaces-module'
 import budgets from './budgets/budgets-module'
+import budgets_diff from './budgets_diff/budget_diff-module'
 
 import { getById } from './api'
 
@@ -40,6 +41,7 @@ export default createStore({
   getters,
   modules: {
     spaces,
-    budgets
+    budgets,
+    budgets_diff
   }
 })

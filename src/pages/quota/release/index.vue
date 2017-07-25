@@ -34,7 +34,7 @@
               :row-class-name='rowCls'
               v-loading='$isAjax.diff_version || $isAjax.init'
               style="width:100%"
-              :data='mergeTable'>
+              :data='diffTable'>
       <el-table-column label='diff'
                        align='center'
                        width='60'>
@@ -124,7 +124,7 @@
           </diff-cell>
         </template>
       </el-table-column>
-      <el-table-column label="损耗率"
+      <el-table-column label="损耗率(%)"
                        width="100">
         <template scope='scope'>
           <diff-cell :data='scope.row'
@@ -180,15 +180,11 @@
   </div>
 </template>
 <script>
-import mergeVersionTables from './mergeVersionTables'
-import diffCell from './_diffCell.vue'
+import diffTable from '@/plugins/diffTable'
 
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: {
-    diffCell
-  },
   data () {
     return {
       prevVersion: '',
@@ -200,8 +196,8 @@ export default {
   },
   computed: {
     ...mapGetters('quota/release', ['$isAjax', 'listPlusLatest', 'prevTableData', 'nextTableData']),
-    mergeTable () {
-      return mergeVersionTables(this.prevTableData, this.nextTableData)
+    diffTable () {
+      return diffTable(this.prevTableData, this.nextTableData)
     }
   },
   created () {

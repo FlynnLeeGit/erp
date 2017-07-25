@@ -44,15 +44,13 @@ export default {
     return {
       visible: false,
       row: {
-        quotaAuxiliaryMaterialSpec: {
+        purchaseMaterial: {
           id: ''
         }
       },
       initialRow: {
         counter: 0,
-        brand: '',
-        model: '',
-        quotaAuxiliaryMaterialSpec: {
+        purchaseMaterial: {
           id: ''
         }
       },
@@ -85,9 +83,7 @@ export default {
     submit (data) {
       this.$refs.form.validate(valid => {
         if (valid) {
-          data.quotaAuxiliaryMaterialSpec.id = this.auxModel[2]
-          data.brand = this.auxModel[3]
-          data.model = this.auxModel[4]
+          data.purchaseMaterial.id = this.auxModel[4]
           this.create_auxmaterial_count({
             qid: this.qRow.id,
             data

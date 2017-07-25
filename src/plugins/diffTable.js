@@ -3,7 +3,7 @@
  * @param {Object[]} 新版本表
  * @return {Object[]} diff后的表格
 */
-const mergeVersionTables = (v1, v2) => {
+const diffTable = (v1, v2) => {
   // just copy arr index
   const v2Slice = v2.slice()
 
@@ -62,4 +62,4 @@ const mergeVersionTables = (v1, v2) => {
   return mergeTable.sort((a, b) => a.id - b.id)
 }
 
-export default mergeVersionTables
+export default diffTable

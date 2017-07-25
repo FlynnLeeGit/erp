@@ -72,10 +72,10 @@
       <el-form-item label='损耗率'>
         <el-input-number v-model='row.wastage'
                          :min='0'
-                         :debounce="800"
-                         :step='0.01'>
+                         :debounce="1000"
+                         :step='1'>
         </el-input-number>
-        <span class="_ml1">[步进0.01]</span>
+        <span class="_ml1">[1]</span>
       </el-form-item>
   
       <el-form-item label='说明'>

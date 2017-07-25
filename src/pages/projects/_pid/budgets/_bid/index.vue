@@ -61,7 +61,7 @@ export default {
   },
   created () {
     this.HIDE_PID_TABS()
-    this.init({
+    this.get_by_bid({
       pid: this.pid,
       bid: this.bid
     })
@@ -80,7 +80,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('projects/_pid/budgets/_bid', ['init']),
+    ...mapActions('projects/_pid/budgets/_bid', ['get_by_bid']),
     ...mapMutations('projects/_pid', ['HIDE_PID_TABS', 'SHOW_PID_TABS']),
     tabClick (tab) {
       this.$router.replace({
