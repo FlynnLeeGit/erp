@@ -414,6 +414,9 @@ export default {
       this.showAuxDialog = true
     },
     submitUpdate (row) {
+      if (!row.quotaAuxiliaryMaterialSpec) {
+        row.quotaAuxiliaryMaterialSpec = {}
+      }
       row.quotaAuxiliaryMaterialSpec.id = this.auxModel[2]
       this.update(row).then(() => {
         this.$message.success('更换成功')
