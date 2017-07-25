@@ -39,7 +39,9 @@
           <el-table-column type="expand">
             <template scope="scope">
               <h4>材料计量</h4>
-              <items-expand :table-data='scope.row.quotaTemplate.quotaAuxiliaryCounters'>
+              <items-expand :table-data='scope.row.quotaTemplate.quotaAuxiliaryCounters'
+                            :sid='space.id'
+                            :iid='scope.row.id'>
               </items-expand>
             </template>
           </el-table-column>
@@ -211,7 +213,6 @@ export default {
   },
   computed: {
     ...mapGetters('projects/_pid/budgets/_bid/items', ['$isAjax', 'budgetData', 'currentSid', 'currentIid']),
-   
     ...mapGetters('projects/_pid/spaces', {
       spaceList: 'list'
     }),
@@ -243,7 +244,6 @@ export default {
       bid: this.bid
     })
   },
-
   methods: {
     ...mapActions('projects/_pid/budgets/_bid/items', ['init', 'delete', 'update']),
     quotaTable (sid) {

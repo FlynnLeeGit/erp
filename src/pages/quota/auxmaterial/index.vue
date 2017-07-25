@@ -189,7 +189,6 @@
     </el-dialog>
   
     <spec-dialog ref="specDialog"></spec-dialog>
-  
   </div>
 </template>
 
@@ -203,6 +202,7 @@ export default {
   },
   data () {
     return {
+      test: ['', '', ''],
       // table
       filterTableData: [],
       row: {},
@@ -241,7 +241,7 @@ export default {
     ...mapGetters('quota', ['map']),
     sliceTableData () {
       return this.$utils.getPage(this.filterTableData, this.pageSize, this.currentPage)
-    },
+    }
   },
   methods: {
     ...mapActions('quota/auxmaterial', ['init', 'create', 'update', 'delete', 'delete_spec']),

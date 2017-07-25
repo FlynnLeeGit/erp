@@ -295,7 +295,6 @@ export default {
         this.release_quota({
           description: value
         }).then(({ data }) => {
-          console.log(res)
           this.$notify({
             type: 'info',
             title: '发布成功！',

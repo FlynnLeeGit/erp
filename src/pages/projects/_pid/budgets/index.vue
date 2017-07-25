@@ -9,7 +9,6 @@
           <el-button type='info'
                      slot='header-slot'
                      class="_fr -has-link"
-                     @click="goItems(pid,b.id)"
                      size='small'>
             <router-link :to="{name:'projects-pid-budgets-bid-items',params:{pid,bid:b.id}}">
               进入{{b.name}}

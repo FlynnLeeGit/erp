@@ -165,3 +165,31 @@ export const groupByField = (arr, field) => {
   })
   return obj
 }
+
+/**
+ *
+ * @param {* [opts]} optsArrCollect 多个 opts选项组 每个opts里带有 id,parentId字段以便组成树关系
+ * @return array element-ui Cascader选项结构
+ */
+export const toCascader = (...optsArrCollect) => {
+  try {
+    // 需要深拷贝 防止里面对象引用关系互相影响
+    const cloneOptsArrCollect = deepCopy(optsArrCollect)
+    cloneOptsArrCollect.forEach((opts, idx) => {
+      if (idx < cloneOptsArrCollect.length - 1) {
+        opts.forEach(opt => {
+          opt.children = cloneOptsArrCollect[idx + 1].filter(
+            item => item.parentId === opt.id
+          )
+          if (!opt.children.length) {
+            opt.disabled = true
+          }
+        })
+      }
+    })
+    console.log(cloneOptsArrCollect[0])
+    return cloneOptsArrCollect[0]
+  } catch (e) {
+    return []
+  }
+}

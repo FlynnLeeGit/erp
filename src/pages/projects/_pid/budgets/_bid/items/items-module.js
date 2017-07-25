@@ -1,5 +1,13 @@
 import createStore from '@/plugins/createStore'
-import { get, create, update, del, updateRate, createPdf } from './api'
+import {
+  get,
+  create,
+  update,
+  del,
+  updateRate,
+  createPdf,
+  replaceAux
+} from './api'
 import { find, findIndex } from '@/plugins/utils'
 
 const state = {
@@ -16,7 +24,9 @@ const updateBudgetItems = (state, { req, res }) => {
 
 const mutations = {
   GET_SUCCESS (state, { req, res }) {
-    state.budgetData = res
+    if (res) {
+      state.budgetData = res
+    }
   },
   CREATE_SUCCESS: updateBudgetItems,
   UPDATE_SUCCESS: updateBudgetItems,
@@ -26,9 +36,7 @@ const mutations = {
   },
   DELETE_SUCCESS: updateBudgetItems,
   UPDATE_RATE_SUCCESS: updateBudgetItems,
-  CREATE_PDF_SUCCESS (state, { req, res }) {
-    console.log('pdf success')
-  }
+  REPLACE_AUX_SUCCESS: updateBudgetItems
 }
 const actions = {
   get (store, bid) {
@@ -49,10 +57,15 @@ const actions = {
   create_pdf (store, { bid, data }) {
     return createPdf({ bid, data })
   },
+  replace_aux (store, { bid, sid, iid, data }) {
+    return replaceAux({ bid, sid, iid, data })
+  },
   init ({ dispatch }, { pid, bid }) {
     return Promise.all([
       dispatch('get', bid),
-      dispatch('projects/_pid/spaces/get', pid, { root: true })
+      dispatch('projects/_pid/spaces/get', pid, { root: true }),
+      dispatch('quota/auxmaterial/get', null, { root: true }),
+      dispatch('purchase/material/get', null, { root: true })
     ])
   }
 }

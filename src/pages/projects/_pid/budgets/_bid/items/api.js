@@ -26,18 +26,10 @@ export const get = bid =>
   axios.get(`/_api/project/budgets/${bid}`, transformOpt)
 
 // 向预算中添加定额
-export const add = (bid, data) =>
-  axios.post(`/_api/project/budgets/${bid}`, data, transformOpt)
 export const create = ({ bid, data }) =>
   axios.post(`/_api/project/budgets/${bid}`, data, transformOpt)
 
 // 更新一项定额数据
-export const edit = (bid, sid, iid, data) =>
-  axios.put(
-    `/_api/project/budgets/${bid}/spaces/${sid}/items/${iid}`,
-    data,
-    transformOpt
-  )
 export const update = ({ bid, sid, iid, data }) =>
   axios.put(
     `/_api/project/budgets/${bid}/spaces/${sid}/items/${iid}`,
@@ -62,5 +54,10 @@ export const createPdf = ({ bid, data }) =>
     responseType: 'blob'
   })
 
-export { get as getSpaces } from '@/pages/projects/_pid/spaces/api'
-export { get as getProjects } from '@/pages/projects/api'
+// 替换辅材计量
+export const replaceAux = ({ bid, sid, iid, data }) =>
+  axios.put(
+    `/_api/project/budgets/${bid}/spaces/${sid}/items/${iid}/auxiliary`,
+    data,
+    transformOpt
+  )

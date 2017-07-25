@@ -192,10 +192,8 @@
         </el-form-item>
   
         <el-form-item label='辅材规格'>
-          <el-cascader :options="auxmaterialOptions"
-                       v-model="auxModel"
-                       :show-all-levels="false"
-                       :props="{label:'name',value:'id'}">
+          <el-cascader :options="cascaderOpts"
+                       v-model="auxModel">
   
           </el-cascader>
         </el-form-item>
@@ -333,7 +331,10 @@ export default {
     ...mapGetters('purchase/material', ['$isAjax', 'list', 'currentDelId']),
     ...mapGetters('quota/auxmaterial', {
       auxmaterialMap: 'map',
-      auxmaterialOptions: 'options'
+      // auxmaterialOptions: 'options',
+      auxmaterialSpecOpts: 'specOpts',
+      auxmaterialAuxOpts: 'auxOpts',
+      auxmaterialTypeOpts: 'typeOpts',
     }),
     ...mapGetters('purchase/supplier', {
       suppliers: 'list',
@@ -348,6 +349,9 @@ export default {
         purchaseSupplierId: this.supplierMap,
         quotaAuxiliaryMaterialId: this.auxmaterialMap
       }
+    },
+    cascaderOpts () {
+      return this.$utils.toCascader(this.auxmaterialTypeOpts, this.auxmaterialAuxOpts, this.auxmaterialSpecOpts)
     }
   },
   methods: {
@@ -358,6 +362,7 @@ export default {
     // table methods
     handleAdd () {
       this.row = this.$utils.deepCopy(this.initialRow)
+      this.auxModel = ['', '', '']
       this.showDialog = true
     },
     handleDelete (row) {

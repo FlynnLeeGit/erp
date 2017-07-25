@@ -54,54 +54,33 @@ const actions = {
 const getters = {
   list: state => state.list,
   currentDelId: state => state.currentDelId,
+  brandOpts: state => {
+    const opts = []
+    state.list.forEach(mat => {
+      opts.push({
+        label: mat.brand,
+        value: mat.id,
+        id: `brand:${mat.brand}`,
+        parentId: `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}`
+      })
+    })
+    return opts
+  },
+  modelOpts: state => {
+    const opts = []
+    state.list.forEach(mat => {
+      opts.push({
+        label: mat.model,
+        value: mat.id,
+        id: `model:${mat.model}`,
+        parentId: `brand:${mat.brand}`
+      })
+    })
+    return opts
+  },
+
   // 将材料根据品牌分组
   groupList: state => groupByField(state.list, 'brand'),
-  groupBySpec: state => {
-    const matList = deepCopy(state.list)
-    const groupByBrandList = groupByField(matList, 'brand')
-    const groupBySpecList = groupByField(
-      matList,
-      'quotaAuxiliaryMaterialSpec.id'
-    )
-    const matGroup = {}
-    Object.keys(groupBySpecList).forEach(specName => {
-      matGroup[specName] = deepCopy(groupBySpecList[specName]).map(mat => {
-        const brandObj = {
-          id: mat.id,
-          name: mat.brand,
-          children: deepCopy(groupByBrandList[mat.brand]).map(mat => ({
-            id: mat.id,
-            name: mat.model
-          }))
-        }
-        if (!brandObj.children.length) {
-          brandObj.disabled = true
-        }
-        return brandObj
-      })
-    })
-    // 得到[规格-品牌-型号] 的tree
-    return matGroup
-  },
-  options: (state, getters, rootState, rootGetters) => {
-    const matOptionsAux = deepCopy(rootGetters['quota/auxmaterial/options'])
-    const matGroupBySpec = getters['groupBySpec']
-
-    matOptionsAux.forEach(one => {
-      one.children.forEach(two => {
-        two.children = deepCopy(two.children).map(spec => {
-          spec.children = matGroupBySpec[spec.id]
-          spec.disabled = true
-          if(spec.children && spec.children.length){
-            spec.disabled = false
-          }
-          return spec
-        })
-      })
-    })
-
-    return matOptionsAux
-  }
 }
 
 export default createStore({

@@ -77,6 +77,41 @@ const actions = {
 
 const getters = {
   list: state => state.list,
+  typeOpts: (state, getters) => {
+    const typeMap = listToMap(state.list, 'id', 'type')
+    return Object.keys(typeMap).map(type => ({
+      label: type,
+      value: typeMap[type],
+      id: `type:${type}`,
+      parentId: 0
+    }))
+  },
+  auxOpts: state => {
+    return state.list.map(aux => ({
+      label: aux.name,
+      value: aux.id,
+      id: `aux:${aux.id}`,
+      parentId: `type:${aux.type}`
+    }))
+  },
+
+  specOpts: (state, getters) => {
+    const opts = []
+    state.list.forEach(aux => {
+      if (aux.quotaAuxiliaryMaterialSpecs) {
+        aux.quotaAuxiliaryMaterialSpecs.forEach(spec => {
+          opts.push({
+            label: spec.name,
+            value: spec.id,
+            id: `spec:${spec.id}`,
+            parentId: `aux:${aux.id}`
+          })
+        })
+      }
+    })
+    return opts
+  },
+
   groupList: state => groupByField(state.list, 'type'),
   // 返回element 级联选择器的options 结构 [{id:1,name:'I',children:[{id:11:name:'II',children:[...]}]}]
   options: state => {

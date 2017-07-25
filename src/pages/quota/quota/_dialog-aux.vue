@@ -8,11 +8,11 @@
         <span>{{qRow.id}}</span>
       </el-form-item>
   
-      <el-form-item label='辅材选择'>
-        <el-cascader :options="matOptionsByDisabledQuotaAux"
+      <el-form-item v-if="visible"
+                    label='辅材选择'>
+        <el-cascader :options="cascaderOpts"
                      placeholder="级联选择规格与型号"
-                     v-model="auxModel"
-                     :props="{label:'name',value:'id'}">
+                     v-model="auxModel">
         </el-cascader>
       </el-form-item>
   
@@ -63,22 +63,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('purchase/material', {
-      matOptions: 'options'
-    }),
+    ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
+    ...mapGetters('quota/auxmaterial', ['typeOpts', 'auxOpts', 'specOpts']),
     ...mapGetters('quota/quota', ['$isAjax']),
-    matOptionsByDisabledQuotaAux () {
-      const cloneMatOptions = this.$utils.deepCopy(this.matOptions)
-      const auxAlreadyHas = this.qRow.quotaAuxiliaryCounters
-
-      return cloneMatOptions.map(mat => {
-        mat.children.forEach(aux => {
-          if (!aux.disabled) {
-            aux.disabled = this.$utils.valueInArray(auxAlreadyHas, aux.id, 'quotaAuxiliaryMaterial.id')
-          }
-        })
-        return mat
+    cascaderOpts () {
+      const cloneAuxOpts = this.$utils.deepCopy(this.auxOpts)
+      // 将已经存在的材料计量禁用
+      cloneAuxOpts.forEach(aux => {
+        aux.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, aux.value, 'quotaAuxiliaryMaterial.id')
       })
+      return this.$utils.toCascader(this.typeOpts, cloneAuxOpts, this.specOpts, this.brandOpts, this.modelOpts)
     }
   },
   methods: {

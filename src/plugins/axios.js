@@ -22,7 +22,15 @@ axios.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case 400:
-          Message.error(response.data.message)
+          const errMsg = response.data.message
+          if (typeof errMsg === 'string') {
+            Message.error(errMsg)
+          }
+          if (typeof errMsg === 'object') {
+            Object.keys(response.data.message).forEach(msgType => {
+              Message.error(response.data.message[msgType])
+            })
+          }
           break
         case 401:
           Message.error('登陆信息已过期，请重新登录！')
