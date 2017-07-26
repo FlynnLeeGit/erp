@@ -26,20 +26,32 @@
                        width='180'>
       </el-table-column>
   
-      <el-table-column label="材质">
+      <el-table-column label="材质"
+                       class-name="_text">
         <template scope="scope">
           {{scope.row.quotaAuxiliaryMaterial.name}}
         </template>
       </el-table-column>
+      <el-table-column label="规格"
+                       class-name="_text">
+        <template scope="scope">
+          {{scope.row.materialSpec}}
+        </template>
+      </el-table-column>
       <el-table-column label="品牌"
+                       class-name="_text"
                        prop="brand">
-  
       </el-table-column>
   
       <el-table-column label="型号"
+                       class-name="_text"
                        prop="model">
-  
       </el-table-column>
+      <el-table-column label="参考价格(元)"
+                       class-name="_text"
+                       prop="referencePrice">
+      </el-table-column>
+  
     </el-table>
     <el-dialog title="更换辅材"
                :visible.sync="visible">
@@ -109,7 +121,7 @@ export default {
     handleEditCounter (counterId, auxId) {
       this.auxModel = ['', '', '', '']
       this.currentCounterId = counterId
-      
+
       this.cascaderOpts = this.$utils.toCascader(
         this.auxOpts.filter(aux => aux.value === auxId),
         this.specOpts,

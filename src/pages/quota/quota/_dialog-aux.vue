@@ -57,21 +57,14 @@ export default {
       qRow: {
         quotaAuxiliaryCounters: []
       },
-      auxModel: ['', '', '', '', '']
+      auxModel: ['', '', '', '', ''],
+      cascaderOpts: []
     }
   },
   computed: {
-    ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
-    ...mapGetters('quota/auxmaterial', ['typeOpts', 'auxOpts', 'specOpts']),
-    ...mapGetters('quota/quota', ['$isAjax']),
-    cascaderOpts () {
-      const cloneAuxOpts = this.$utils.deepCopy(this.auxOpts)
-      // 将已经存在的材料计量禁用
-      cloneAuxOpts.forEach(aux => {
-        aux.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, aux.value, 'quotaAuxiliaryMaterial.id')
-      })
-      return this.$utils.toCascader(this.typeOpts, cloneAuxOpts, this.specOpts, this.brandOpts, this.modelOpts)
-    }
+    // ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
+    // ...mapGetters('quota/auxmaterial', ['typeOpts', 'auxOpts', 'specOpts']),
+    ...mapGetters('quota/quota', ['$isAjax'])
   },
   methods: {
     ...mapActions('quota/quota', ['create_auxmaterial_count']),
@@ -94,9 +87,18 @@ export default {
         }
       })
     },
+    updateCascader () {
+      const cloneAuxOpts = this.$utils.deepCopy(this.auxOpts)
+      // 将已经存在的材料计量禁用
+      cloneAuxOpts.forEach(aux => {
+        aux.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, aux.value, 'quotaAuxiliaryMaterial.id')
+      })
+      this.cascaderOpts = this.$utils.toCascader(this.typeOpts, cloneAuxOpts, this.specOpts, this.brandOpts, this.modelOpts)
+    },
     open (qRow) {
       this.qRow = qRow
       this.reset()
+      this.updateCascader()
       this.visible = true
     },
     close () {
