@@ -93,16 +93,16 @@
         </template>
   
       </el-table-column>
-      <el-table-column label="规格"
-                       width="200">
+      <el-table-column label="规格[限制单价]">
         <template scope="scope">
-          <el-tag class="_ml1"
+          <el-tag class="_ml1 _pointer"
                   closable
                   type="primary"
-                  @close='handleDeleteSpec(scope.row.id,spec.id)'
+                  @click.native="handleUpdateSpec('edit',scope.row.id,spec)"
+                  @close.stop='handleDeleteSpec(scope.row.id,spec.id)'
                   v-for="spec in scope.row.quotaAuxiliaryMaterialSpecs"
                   :key="spec.id">
-            {{spec.name}}
+            {{spec.name}}-[{{spec.limitPrice}}元]
           </el-tag>
         </template>
   
@@ -110,7 +110,7 @@
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
-          <el-button @click="handleAddSpec(scope.row.id)"
+          <el-button @click="handleAddSpec('add',scope.row.id)"
                      size="mini"
                      type="success">
             <i class="fa fa-plus"></i>
@@ -277,8 +277,11 @@ export default {
         })
       })
     },
-    handleAddSpec (auxId) {
-      this.$refs.specDialog.open(auxId)
+    handleAddSpec (opt, auxId) {
+      this.$refs.specDialog.open(opt, auxId)
+    },
+    handleUpdateSpec (opt, auxId, data) {
+      this.$refs.specDialog.open(opt, auxId, data)
     },
     handleDeleteSpec (auxId, specId) {
       this.$confirm('是否删除此规格？').then(() => {
