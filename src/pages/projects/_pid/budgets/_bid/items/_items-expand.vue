@@ -26,6 +26,11 @@
                        width='180'>
       </el-table-column>
   
+      <el-table-column label="材质">
+        <template scope="scope">
+          {{scope.row.quotaAuxiliaryMaterial.name}}
+        </template>
+      </el-table-column>
       <el-table-column label="品牌"
                        prop="brand">
   
@@ -34,12 +39,6 @@
       <el-table-column label="型号"
                        prop="model">
   
-      </el-table-column>
-  
-      <el-table-column label="材质">
-        <template scope="scope">
-          {{scope.row.quotaAuxiliaryMaterial.name}}
-        </template>
       </el-table-column>
     </el-table>
     <el-dialog title="更换辅材"
