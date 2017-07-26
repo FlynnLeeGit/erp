@@ -137,9 +137,10 @@
           <inline-edit :data='scope.row'
                        prop='wastage'
                        type='number'
-                       :transform-fn='val => val*100'
+                       :transform-fn='val => (val*100).toFixed(2)'
                        @before-update='editRow => editRow.wastage /= 100'
                        :fn='update'>
+            {{scope.row.wastage*100}}%
           </inline-edit>
         </template>
   

@@ -8,7 +8,7 @@ if (process.__API__) {
   api = (process.__API__ = {
     cached: LRU({
       max: 1000,
-      maxAge: 1000 * 5 * 1
+      maxAge: 1000 * 60 * 0.1
     }),
     cachedItem: {}
   })

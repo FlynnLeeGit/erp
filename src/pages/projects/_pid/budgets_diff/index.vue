@@ -86,7 +86,7 @@
             <template scope='scope'>
               <diff-cell :data='scope.row'
                          prop='rateOfArtificialProfit'
-                         :transform-fn='val=>val*100'>
+                         :transform-fn='val=>`${val*100}%`'>
               </diff-cell>
             </template>
           </el-table-column>
@@ -95,7 +95,7 @@
             <template scope='scope'>
               <diff-cell :data='scope.row'
                          prop='rateOfCompanyProfit'
-                         :transform-fn='val=>val*100'>
+                         :transform-fn='val=>`${val*100}%`'>
               </diff-cell>
             </template>
           </el-table-column>

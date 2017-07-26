@@ -56,17 +56,19 @@
         <el-form-item label='劳务利润率'>
           <el-input-number placeholder='请输入劳务利润率'
                            :disabled="opt==='edit'"
-                           :step='0.1'
+                           :step='1'
                            :min='0'
-                           v-model='row.rateOfArtificialProfit'>
+                           :max="100"
+                           v-model='row._rateOfArtificialProfit'>
           </el-input-number>
         </el-form-item>
         <el-form-item label='公司利润率'>
           <el-input-number placeholder='请输入公司利润率'
                            :disabled="opt==='edit'"
                            :min='0'
-                           :step='0.1'
-                           v-model='row.rateOfCompanyProfit'>
+                           :max="100"
+                           :step='1'
+                           v-model='row._rateOfCompanyProfit'>
           </el-input-number>
         </el-form-item>
         <el-form-item label='定额版本库'>
@@ -111,9 +113,10 @@ export default {
         name: '',
         description: '',
         rateOfArtificialProfit: 0.1,
-        rateOfCompanyProfit: 0.3
+        _rateOfArtificialProfit: 10,
+        rateOfCompanyProfit: 0.3,
+        _rateOfCompanyProfit: 30
       },
-
       opt: 'add',
       showDialog: false,
     }
@@ -144,6 +147,8 @@ export default {
       this.opt = 'edit'
       this.showDialog = true
       this.row = this.$utils.deepCopy(data)
+      this.row._rateOfArtificialProfit = data.rateOfArtificialProfit * 100
+      this.row._rateOfCompanyProfit = data.rateOfCompanyProfit * 100
     },
     handleDelete (row) {
       this.$confirm('确认删除？')
@@ -157,6 +162,8 @@ export default {
         })
     },
     submitAdd (data) {
+      data.rateOfArtificialProfit = data._rateOfArtificialProfit / 100
+      data.rateOfCompanyProfit = data._rateOfCompanyProfit / 100
       this.create({
         pid: this.pid,
         data

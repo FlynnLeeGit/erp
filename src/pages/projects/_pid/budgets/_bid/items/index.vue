@@ -99,7 +99,10 @@
               <inline-edit type='number'
                            :data='scope.row'
                            prop='rateOfArtificialProfit'
+                           :transform-fn='val => (val*100).toFixed(2)'
+                           @before-update='editRow => editRow.rateOfArtificialProfit /= 100'
                            :fn='editFn.bind(this,space.id,scope.row.id)'>
+                {{(scope.row.rateOfArtificialProfit*100).toFixed(2)}}%
               </inline-edit>
             </template>
           </el-table-column>
@@ -109,7 +112,10 @@
               <inline-edit type='number'
                            :data='scope.row'
                            prop='rateOfCompanyProfit'
+                           :transform-fn='val => (val*100).toFixed(2)'
+                           @before-update='editRow => editRow.rateOfCompanyProfit /= 100'
                            :fn='editFn.bind(this,space.id,scope.row.id)'>
+                {{(scope.row.rateOfCompanyProfit*100).toFixed(2)}}%
               </inline-edit>
             </template>
           </el-table-column>
