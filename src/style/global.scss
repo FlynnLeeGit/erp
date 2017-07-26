@@ -1,4 +1,4 @@
-#app {
+#body {
   [container] {
     width: 1200px;
     margin-left: auto;
@@ -7,7 +7,6 @@
 
   .el-cascader {
     width: 350px;
-
   }
 
   .el-table {
@@ -66,6 +65,10 @@
         width: 100%;
       }
     }
+  }
+
+  .el-cascader-menu {
+    height: 450px;
   }
 
   .el-menu-item {

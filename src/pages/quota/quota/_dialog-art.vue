@@ -11,6 +11,7 @@
           <el-option v-for='art in artList'
                      :key='art.id'
                      :value='art.id'
+                     :label="art.workType"
                      :disabled="optionDisabled(qRow,art)">
             <span style="float: left">{{ art.workType }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{art.price}}元</span>

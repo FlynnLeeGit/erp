@@ -1,6 +1,12 @@
 import createStore from '@/plugins/createStore'
 
-import { find, findIndex, groupByField, deepCopy } from '@/plugins/utils'
+import {
+  find,
+  findIndex,
+  groupByField,
+  deepCopy,
+  valueInArray
+} from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
 
@@ -57,30 +63,38 @@ const getters = {
   brandOpts: state => {
     const opts = []
     state.list.forEach(mat => {
-      opts.push({
-        label: mat.brand,
-        value: mat.id,
-        id: `brand:${mat.brand}`,
-        parentId: `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}`
-      })
+      const _id = `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}>brand:${mat.brand}`
+      const _parentId = `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}`
+      // 品牌相同 规格相同的做去重
+      if (!valueInArray(opts, _id)) {
+        opts.push({
+          label: mat.brand,
+          value: mat.id,
+          id: _id,
+          parentId: _parentId
+        })
+      }
     })
+    console.log('brand', deepCopy(opts))
     return opts
   },
   modelOpts: state => {
     const opts = []
     state.list.forEach(mat => {
+      const _parentId = `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}>brand:${mat.brand}`
       opts.push({
-        label: mat.model,
+        label: `${mat.model} ${mat.packPrice}元/${mat.packUnit}`,
         value: mat.id,
         id: `model:${mat.model}`,
-        parentId: `brand:${mat.brand}`
+        parentId: _parentId
       })
     })
+    console.log('model', deepCopy(opts))
     return opts
   },
 
   // 将材料根据品牌分组
-  groupList: state => groupByField(state.list, 'brand'),
+  groupList: state => groupByField(state.list, 'brand')
 }
 
 export default createStore({
