@@ -34,7 +34,8 @@
                   :data='quotaTable(space.id)'
                   empty-text="暂无此空间模版数据"
                   border
-                  default-expand-all>
+                  :row-key="row=>`space:${space.id}>${row.id}`"
+                  >
   
           <el-table-column type="expand">
             <template scope="scope">
@@ -45,18 +46,7 @@
               </items-expand>
             </template>
           </el-table-column>
-          <el-table-column label="操作"
-                           width="80"
-                           align="center">
-            <template scope="scope">
-              <el-button size="mini"
-                         :loading='$isAjax.delete && currentIid===scope.row.id && currentSid === space.id'
-                         @click='handleDelete(space.id,scope.row)'
-                         type="danger">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
+  
           <el-table-column label='#'
                            width="50"
                            prop='id'>
@@ -187,6 +177,18 @@
               </template>
             </el-table-column>
           </el-table-column>
+          <el-table-column label="操作"
+                           width="80"
+                           align="center">
+            <template scope="scope">
+              <el-button size="mini"
+                         :loading='$isAjax.delete && currentIid===scope.row.id && currentSid === space.id'
+                         @click='handleDelete(space.id,scope.row)'
+                         type="danger">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </section>
@@ -215,6 +217,7 @@ export default {
   },
   data () {
     return {
+      
     }
   },
   computed: {
