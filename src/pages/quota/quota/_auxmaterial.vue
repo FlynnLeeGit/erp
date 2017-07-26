@@ -19,9 +19,14 @@
         </inline-edit>
       </template>
     </el-table-column>
-    <el-table-column label='材质 名称'>
+    <el-table-column label='材质' class-name="_text">
       <template scope='scope'>
-        <span class="_text">{{scope.row.quotaAuxiliaryMaterial.name}}</span>
+       {{scope.row.quotaAuxiliaryMaterial.name}}
+      </template>
+    </el-table-column>
+    <el-table-column label='规格' class-name="_text">
+      <template scope='scope'>
+        {{scope.row.materialSpec}}
       </template>
     </el-table-column>
     <el-table-column label='品牌'>
@@ -32,12 +37,6 @@
     <el-table-column label='型号'>
       <template scope='scope'>
         <span class="_text">{{scope.row.model}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label='材质 单位'
-                     class-name="_text">
-      <template scope='scope'>
-        {{scope.row.quotaAuxiliaryMaterial.specUnit}}
       </template>
     </el-table-column>
     <el-table-column label="参考价"
