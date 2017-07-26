@@ -17,32 +17,35 @@
           <el-col :span='6'
                   v-for='project in archiveLists[tKey]'
                   :key='project.id'>
-            <card :title='project.address'
+            <card :title='`${project.address} [${project.houseType} ${project.area}㎡]`'
+                  :to="{name:'projects-pid-budgets',params:{pid:project.id}}"
+                  to-title="进入项目"
                   :type='archiveThemeMap[tKey]'>
-              <el-button type='info'
-                         slot='header-slot'
-                         class="_fr -has-link"
-                         size='small'>
-                <router-link :to="{name:'projects-pid-budgets',params:{pid:project.id}}">
-                  进入项目
-                </router-link>
-              </el-button>
-  
-              <span>{{project.username}} {{map.gender[project.gender]}}</span>
-              <p class='_mt1 _text'>
-                {{project.mobile}}
-                <span class="_fr">
-                  <el-button @click.stop='handleEdit(project)'
+              <el-row>
+                {{project.username}} {{map.gender[project.gender]}}
+              </el-row>
+              <el-row class="_mt1">
+                <el-col :span="18"
+                        class="_text">
+                  {{project.mobile}}
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click='handleEdit(project)'
                              type='text'
                              class="_p0">
                     编辑
                   </el-button>
-                  <el-button @click.stop='handleDelete(project)'
+                  <el-button @click='handleDelete(project)'
                              :loading='$isAjax.delete && currentDelId === project.id'
                              type='text'
                              class="_p0 _text-danger">
                     删除
                   </el-button>
+                </el-col>
+              </el-row>
+              <p class='_mt1 _text'>
+                <span class="_fr">
+  
                 </span>
               </p>
             </card>

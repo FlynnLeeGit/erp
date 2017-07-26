@@ -26,6 +26,10 @@ const mutations = {
   GET_SUCCESS (state, { req, res }) {
     if (res) {
       state.budgetData = res
+    } else {
+      state.budgetData = {
+        items: {}
+      }
     }
   },
   CREATE_SUCCESS: updateBudgetItems,

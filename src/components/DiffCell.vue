@@ -1,10 +1,10 @@
 <template>
   <div v-if='data.diff.fields[prop]'>
     <p class="info-cell">
-      <span class="_text">[修改后]:</span>{{transformFn(data[prop])}}
+      <span class="_text">[后]:</span>{{transformFn(data[prop])}}
     </p>
     <p>
-      <span class="_text">[修改前]:</span>{{transformFn(data.diff.prevRow[prop])}}
+      <span class="_text">[前]:</span>{{transformFn(data.diff.prevRow[prop])}}
     </p>
   </div>
   <div v-else>

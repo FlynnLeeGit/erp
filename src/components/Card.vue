@@ -1,9 +1,22 @@
 <template>
   <el-card :class="cls">
     <div slot='header'>
-      {{title}}
-      <slot name='header-slot'>
-      </slot>
+      <el-row>
+        <el-col :span="18">
+          {{title}}
+        </el-col>
+        <el-col v-if="toTitle"
+                :span="6"
+                class="_tr">
+          <el-button type='info'
+                     class="-has-link"
+                     size='small'>
+            <router-link :to="to">
+              {{toTitle}}
+            </router-link>
+          </el-button>
+        </el-col>
+      </el-row>
     </div>
     <slot></slot>
   </el-card>
@@ -19,6 +32,14 @@ export default {
     title: {
       type: String,
       default: 'Title Here'
+    },
+    to: {
+      type: null,
+      default: ''
+    },
+    toTitle: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -33,6 +54,7 @@ export default {
   margin-bottom: 6px;
   .el-card__header {
     color: #fff;
+    line-height: 1.4;
     .el-button.-has-link {
       padding: 0;
       a {

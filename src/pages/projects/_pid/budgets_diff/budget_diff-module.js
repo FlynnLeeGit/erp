@@ -8,15 +8,10 @@ const state = {
 
 const mutations = {
   GET_PREV_ITEMS_SUCCESS (state, { req, res }) {
-    if (res) {
-      // 空间为key的数据
-      state.prevTable = res.items
-    }
+    state.prevTable = res ? res.items : {}
   },
   GET_NEXT_ITEMS_SUCCESS (state, { req, res }) {
-    if (res) {
-      state.nextTable = res.items
-    }
+    state.nextTable = res ? res.items : {}
   }
 }
 
@@ -34,7 +29,6 @@ const actions = {
     ])
   },
   init ({ dispatch }, pid) {
-    console.log(pid)
     return Promise.all([
       dispatch('projects/_pid/budgets/get', pid, { root: true }),
       dispatch('projects/_pid/spaces/get', pid, { root: true })

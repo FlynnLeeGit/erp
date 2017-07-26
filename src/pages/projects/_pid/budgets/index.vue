@@ -5,15 +5,9 @@
               v-for='(b,index) in list'
               :key='b.id'>
         <card :title='b.name'
-              type='default'>
-          <el-button type='info'
-                     slot='header-slot'
-                     class="_fr -has-link"
-                     size='small'>
-            <router-link :to="{name:'projects-pid-budgets-bid-items',params:{pid,bid:b.id}}">
-              进入{{b.name}}
-            </router-link>
-          </el-button>
+              type='default'
+              :to="{name:'projects-pid-budgets-bid-items',params:{pid,bid:b.id}}"
+              :to-title="'进入'+b.name">
           <p>
             <span>定额版本库:{{b.version}}</span>
             <span class="_ml1 _text">({{versionMap[b.version]}})</span>
