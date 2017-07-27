@@ -18,10 +18,10 @@
         </el-tab-pane>
       </el-tabs>
     </section>
-    <keep-alive>
-      <router-view>
-      </router-view>
-    </keep-alive>
+  
+    <router-view>
+    </router-view>
+  
   </div>
 </template>
 <script>
