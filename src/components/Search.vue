@@ -2,6 +2,7 @@
   <el-input @input='syncValue'
             style="width:180px"
             :icon='loadingIcon'
+            :force-render='filterTable'
             placeholder='全表搜索'>
   </el-input>
 </template>
@@ -53,12 +54,9 @@ export default {
   },
   computed: {
     filterTable () {
-      return this.$utils.search(this.tableData, this.value, this.fields, this.map)
-    }
-  },
-  watch: {
-    filterTable (newVal) {
-      this.$emit('update:filterTableData', newVal)
+      const _res = this.$utils.search(this.tableData, this.value, this.fields, this.map)
+      this.$emit('update:filterTableData', _res)
+      return _res
     }
   }
 }

@@ -65,7 +65,7 @@ export default {
     if (configApi.cached && configApi.cached.has(key) && useCache) {
       console.log(`使用api缓存${key}`) // eslint-disable-line
       // 为了让vuex 认为这是新的response
-      return Promise.resolve(deepCopy(configApi.cached.get(key)))
+      return Promise.resolve(configApi.cached.get(key))
     }
     return axios.get(url, options).then(res => {
       if (configApi.cached) configApi.cached.set(key, res)

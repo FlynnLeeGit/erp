@@ -30,8 +30,10 @@ const mutations = {
 }
 
 const actions = {
-  get (store, pid) {
-    return get(pid)
+  get ({ getters }, pid) {
+    if (!getters['list'].length) {
+      return get(pid)
+    }
   },
   create (store, { pid, data }) {
     return create({ pid, data })

@@ -36,8 +36,10 @@ const mutations = {
 }
 
 const actions = {
-  get () {
-    return get()
+  get ({ getters }) {
+    if (!getters['list'].length) {
+      return get()
+    }
   },
   create (state, req) {
     return create(req)
@@ -75,7 +77,6 @@ const getters = {
         })
       }
     })
-    console.log('brand', deepCopy(opts))
     return opts
   },
   modelOpts: state => {
@@ -89,7 +90,6 @@ const getters = {
         parentId: _parentId
       })
     })
-    console.log('model', deepCopy(opts))
     return opts
   },
 

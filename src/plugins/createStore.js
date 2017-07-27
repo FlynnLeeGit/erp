@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { deepCopy } from './utils'
 
 /**
  *
@@ -35,19 +36,24 @@ const createStore = (
     actions[actionName] = (store, payload) => {
       store.commit(`${upperType}_START`, { req: payload })
       // 返回该Promise 异步请求
-      return cloneActions
-        [actionName](store, payload)
-        .then(res => {
-          store.commit(`${upperType}_SUCCESS`, {
-            req: payload,
-            res: transformReponse(res)
+      const result = cloneActions[actionName](store, payload)
+      if (result instanceof Promise) {
+        return result
+          .then(res => {
+            store.commit(`${upperType}_SUCCESS`, {
+              req: payload,
+              res: transformReponse(res)
+            })
+            return Promise.resolve(res)
           })
-          return Promise.resolve(res)
-        })
-        .catch(err => {
-          store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
-          return Promise.reject(err)
-        })
+          .catch(err => {
+            store.commit(`${upperType}_FAILURE`, { req: payload, res: err })
+            return Promise.reject(err)
+          })
+      } else {
+        console.log('使用store缓存', deepCopy(store.state), actionName)
+        store.commit(`ISAJAX_${upperType}_SUCCESS`)
+      }
     }
   })
 
@@ -69,6 +75,9 @@ const createStore = (
       if (cloneMutations[`${upperType}_START`]) {
         cloneMutations[`${upperType}_START`](state, payload)
       }
+    }
+    mutations[`ISAJAX_${upperType}_SUCCESS`] = state => {
+      Vue.set(state.$isAjax, type, false)
     }
     mutations[`${upperType}_SUCCESS`] = (state, payload) => {
       Vue.set(state.$isAjax, type, false)

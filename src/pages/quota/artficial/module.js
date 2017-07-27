@@ -1,6 +1,6 @@
 import createStore from '@/plugins/createStore'
 
-import { find, findIndex } from '@/plugins/utils'
+import { find, findIndex, deepCopy } from '@/plugins/utils'
 
 import { get, create, update, del } from './api'
 
@@ -31,7 +31,9 @@ const mutations = {
 
 const actions = {
   get ({ getters }) {
-    return get()
+    if (!getters['list'].length) {
+      return get()
+    }
   },
   create (store, req) {
     return create(req)

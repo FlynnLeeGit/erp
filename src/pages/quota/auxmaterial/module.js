@@ -46,8 +46,10 @@ const mutations = {
 }
 
 const actions = {
-  get () {
-    return get()
+  get ({ getters }) {
+    if (!getters['list'].length) {
+      return get()
+    }
   },
   create (store, req) {
     return create(req)

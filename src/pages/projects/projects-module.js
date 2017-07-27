@@ -13,6 +13,9 @@ const state = {
 }
 
 const mutations = {
+  GET_MAP_SUCCESS (state, { res }) {
+    state.map = res.project_info
+  },
   GET_SUCCESS (state, { res }) {
     state.list = res
   },
@@ -29,18 +32,19 @@ const mutations = {
   DELETE_SUCCESS (state, { req }) {
     const delIdx = findIndex(state.list, req)
     state.list.splice(delIdx, 1)
-  },
-  GET_MAP_SUCCESS (state, { res }) {
-    state.map = res.project_info
   }
 }
 
 const actions = {
-  get_map () {
-    return getMap()
+  get_map ({ getters }) {
+    if (!getters['map'].archiveType) {
+      return getMap()
+    }
   },
-  get () {
-    return get()
+  get ({ getters }) {
+    if (!getters['list'].length) {
+      return get()
+    }
   },
   create (store, req) {
     return create(req)

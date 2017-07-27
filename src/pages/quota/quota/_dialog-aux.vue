@@ -62,8 +62,8 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
-    // ...mapGetters('quota/auxmaterial', ['typeOpts', 'auxOpts', 'specOpts']),
+    ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
+    ...mapGetters('quota/auxmaterial', ['typeOpts', 'auxOpts', 'specOpts']),
     ...mapGetters('quota/quota', ['$isAjax'])
   },
   methods: {

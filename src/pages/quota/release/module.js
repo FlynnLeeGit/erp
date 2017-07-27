@@ -21,7 +21,7 @@ const mutations = {
   }
 }
 const actions = {
-  get () {
+  get ({ getters }) {
     return get()
   },
   get_prev_version (store, version) {

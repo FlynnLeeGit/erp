@@ -18,6 +18,7 @@
     <el-table v-loading='$isAjax.init'
               :data="sliceTableData"
               border
+              row-key="id"
               class="_mt2"
               :default-sort="{prop: 'id'}"
               style="width: 100%">
