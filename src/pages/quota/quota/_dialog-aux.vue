@@ -1,6 +1,9 @@
 <template>
-  <el-dialog title='添加辅材计量'
-             :visible.sync='visible'>
+  <dialog-wrapper title='辅材计量'
+                  mode='add'
+                  v-model='visible'
+                  :loading='$isAjax.create_auxmaterial_count'
+                  @submit="submit(row)">
     <el-form ref='form'
              :model='row'
              label-width="80px">
@@ -25,16 +28,7 @@
         <span class="_ml1">[步进0.1]</span>
       </el-form-item>
     </el-form>
-    <div slot='footer'
-         class="dialog-footer">
-      <el-button @click="close()">取 消</el-button>
-      <el-button type="success"
-                 :loading='$isAjax.create_auxmaterial_count'
-                 @click="submit(row)">
-        添 加
-      </el-button>
-    </div>
-  </el-dialog>
+  </dialog-wrapper>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -104,13 +98,6 @@ export default {
     close () {
       this.visible = false
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.visible && !this.$isAjax.create_auxmaterial_count) {
-        this.submit(this.row)
-      }
-    })
   }
 }
 </script>

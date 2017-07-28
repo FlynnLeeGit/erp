@@ -79,9 +79,11 @@
                    @size-change='handleSizeChange'>
     </el-pagination>
   
-    <!--dialog-->
-    <el-dialog title='添加人工'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title="人工"
+                    v-model="showDialog"
+                    mode='add'
+                    :loading='$isAjax.create'
+                    @submit="submitAdd(row)">
       <el-form :model='row'
                :rules='formRules'
                label-width='80px'>
@@ -103,18 +105,45 @@
           <span class="_ml1">[步进10]</span>
           <span class="_ml2">元</span>
         </el-form-item>
-  
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="success"
-                   :loading='$isAjax.create'
-                   @click="submitAdd(row)">
-          添 加
-        </el-button>
-      </div>
-    </el-dialog>
+  
+    </dialog-wrapper>
+    <!--dialog-->
+    <!-- <el-dialog title='添加人工'
+                 :visible.sync='showDialog'>
+        <el-form :model='row'
+                 :rules='formRules'
+                 label-width='80px'>
+          <el-form-item label='工种'
+                        prop='workType'>
+            <el-select v-model='row.workType'>
+              <el-option v-for='(w,wIdx) in map.workType'
+                         :key='wIdx'
+                         :value='w'>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label='价格'>
+            <el-input-number v-model.number='row.price'
+                             :debounce='1000'
+                             :min='0'
+                             :step='10'>
+            </el-input-number>
+            <span class="_ml1">[步进10]</span>
+            <span class="_ml2">元</span>
+          </el-form-item>
+    
+        </el-form>
+        <div slot='footer'
+             class="dialog-footer">
+          <el-button @click="closeDialog()">取 消</el-button>
+          <el-button type="success"
+                     :loading='$isAjax.create'
+                     @click="submitAdd(row)">
+            添 加
+          </el-button>
+        </div>
+      </el-dialog> -->
   </div>
 </template>
 
@@ -193,13 +222,6 @@ export default {
     closeDialog () {
       this.showDialog = false
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.showDialog && !this.$isAjax.create) {
-        this.submitAdd(this.row)
-      }
-    })
   }
 }
 </script>

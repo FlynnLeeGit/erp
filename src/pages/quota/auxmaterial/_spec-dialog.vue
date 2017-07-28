@@ -1,6 +1,9 @@
 <template>
-  <el-dialog :visible.sync="visible"
-             title="添加规格">
+  <dialog-wrapper v-model="visible"
+                  title="规格"
+                  :loading='$isAjax.create_spec'
+                  mode='add'
+                  @submit='submitAdd(row)'>
     <el-form :model='row'
              label-width='120px'>
       <el-form-item label='名称'
@@ -21,25 +24,8 @@
         </el-input-number>
         <span class="_ml1">元 [步进1]</span>
       </el-form-item>
-  
     </el-form>
-    <div slot='footer'
-         class="dialog-footer">
-      <el-button @click="close()">取 消</el-button>
-      <el-button v-if="opt==='add'"
-                 type="success"
-                 :loading='$isAjax.create_spec'
-                 @click="submitAdd(row)">
-        添 加
-      </el-button>
-      <el-button v-if="opt==='edit'"
-                 type="primary"
-                 @click="submitUpdate(row)"
-                 :loading="$isAjax.update_spec">
-        更 新
-      </el-button>
-    </div>
-  </el-dialog>
+  </dialog-wrapper>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -93,13 +79,6 @@ export default {
         this.close()
       })
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.visible && !this.$isAjax.create_spec && !this.$isAjax.update_spec) {
-        this.submitAdd(this.row)
-      }
-    })
   }
 }
 </script>

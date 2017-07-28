@@ -150,8 +150,11 @@
                    @size-change='handleSizeChange'>
     </el-pagination>
     <!--dialog-->
-    <el-dialog title='列为常用'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title='常用'
+                    v-model='showDialog'
+                    :loading='isSubmiting'
+                    mode='add'
+                    @submit="submitAdd(row)">
       <el-form :model='row'
                ref='dialogForm'
                :rules='formRules'
@@ -170,16 +173,7 @@
           <span class="_ml1">(可从之前的标签中选择或手工输入)</span>
         </el-form-item>
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="cancelDialog()">取 消</el-button>
-        <el-button type="success"
-                   :loading='isSubmiting'
-                   @click="submitAdd(row)">
-          确 定
-        </el-button>
-      </div>
-    </el-dialog>
+    </dialog-wrapper>
   </div>
 </template>
 <script>
@@ -355,15 +349,7 @@ export default {
     handleChangeTag (tag) {
       console.log(tag.name)
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.showDialog && !this.isSubmiting) {
-        this.submitAdd(this.row)
-      }
-    })
   }
-
 }
 </script>
 

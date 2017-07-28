@@ -1,5 +1,7 @@
 <template>
-  <el-dialog :visible.sync="visible">
+  <el-dialog :title="modeMap[mode].title"
+             :before-close='close'
+             :visible="visible">
     <slot>
     </slot>
     <div slot='footer'
@@ -7,7 +9,7 @@
       <el-button @click="close()">取 消</el-button>
       <el-button :type="modeMap[mode].type"
                  :loading='loading'
-                 @click="submit(row)">
+                 @click="submit()">
         {{modeMap[mode].text}}
       </el-button>
     </div>
@@ -15,40 +17,63 @@
 </template>
 <script>
 export default {
-  name: 'DialogWrap',
+  name: 'DialogWrapper',
   props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    value: {
+      type: Boolean,
+      default: false,
+    },
     mode: {
       type: String,
-      default: 'add'
+      default: ''
     },
     loading: {
       type: Boolean,
       default: false
     }
   },
+  watch: {
+    value (newVal) {
+      this.visible = newVal
+    }
+  },
   data () {
     return {
       visible: false,
-      modeMap: {
+      form: null
+    }
+  },
+  computed: {
+    modeMap () {
+      return {
+        '': {
+          type: 'info',
+          text: '确 认',
+          title: this.title
+        },
         add: {
           type: 'success',
-          text: '添 加'
+          text: '添 加',
+          title: `添加${this.title}`
         },
         edit: {
           type: 'primary',
-          text: '更 新'
+          text: '更 新',
+          title: `更新${this.title}`
         }
       }
     }
   },
   methods: {
-    open () {
-      this.visible = true
-    },
     close () {
-      this.visible = false
+      this.$emit('input', false)
     },
     submit () {
+
       this.$emit('submit')
     }
   },

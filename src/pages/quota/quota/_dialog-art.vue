@@ -1,8 +1,11 @@
 <template>
-  <el-dialog title='添加人工计量'
-             :visible.sync='visible'
+  <dialog-wrapper title='人工计量'
+                  :loading='$isAjax.create_artficial_count'
+                  v-model='visible'
+                  mode='add'
+                  @submit="submit(row)">
+    <el-form :model='row'
              label-width='80px'>
-    <el-form :model='row'>
       <el-form-item label='模版ID'>
         <span>{{qRow.id}}</span>
       </el-form-item>
@@ -27,16 +30,7 @@
         <span class="_ml1">[步进0.1]</span>
       </el-form-item>
     </el-form>
-    <div slot='footer'
-         class="dialog-footer">
-      <el-button @click="close()">取 消</el-button>
-      <el-button type="success"
-                 :loading='$isAjax.create_artficial_count'
-                 @click="submit(row)">
-        添 加
-      </el-button>
-    </div>
-  </el-dialog>
+  </dialog-wrapper>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -90,13 +84,6 @@ export default {
     close () {
       this.visible = false
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.visible && !this.$isAjax.create_artficial_count) {
-        this.submit(this.row)
-      }
-    })
   }
 }
 </script>

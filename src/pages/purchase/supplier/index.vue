@@ -78,20 +78,20 @@
         </template>
       </el-table-column>
       <!-- <el-table-column label='使用此供应商材料'>
-                  <template scope='scope'>
-                    <div v-if='scope.row.purchaseMaterials.length'>
-                      <el-tag type='primary'
-                              v-for='m in scope.row.purchaseMaterials'
-                              :key='m.id'>
-                        {{m.brand}}-[{{m.model}}]
-                      </el-tag>
-                    </div>
-                    <el-tag v-else
-                            type='gray'>
-                      无
-                    </el-tag>
-                  </template>
-                </el-table-column> -->
+                                    <template scope='scope'>
+                                      <div v-if='scope.row.purchaseMaterials.length'>
+                                        <el-tag type='primary'
+                                                v-for='m in scope.row.purchaseMaterials'
+                                                :key='m.id'>
+                                          {{m.brand}}-[{{m.model}}]
+                                        </el-tag>
+                                      </div>
+                                      <el-tag v-else
+                                              type='gray'>
+                                        无
+                                      </el-tag>
+                                    </template>
+                                  </el-table-column> -->
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
@@ -115,25 +115,33 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='供应商'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title='供应商'
+                    mode='add'
+                    v-model='showDialog'
+                    :loading='$isAjax.create'
+                    @submit='submitAdd(row)'>
       <el-form :model='row'
+               :rules='rules'
                label-width='80px'>
-        <el-form-item v-if="showDialog"
-                      label='公司'>
+        <el-form-item label='公司'
+                      prop="company">
           <el-input v-focus
+                    v-if="showDialog"
                     placeholder='请输入供应商公司名称'
                     v-model='row.company'></el-input>
         </el-form-item>
-        <el-form-item label='联系人'>
+        <el-form-item label='联系人'
+                      prop="contact">
           <el-input placeholder='请输入供应商联系人'
                     v-model='row.contact'></el-input>
         </el-form-item>
-        <el-form-item label='手机号'>
+        <el-form-item label='手机号'
+                      prop="mobile">
           <el-input placeholder='请输入供应商手机号'
                     v-model='row.mobile'></el-input>
         </el-form-item>
-        <el-form-item label='备注'>
+        <el-form-item label='备注'
+                      prop="note">
           <el-input type='textarea'
                     :rows='3'
                     placeholder='请输入备注'
@@ -142,17 +150,8 @@
         </el-form-item>
   
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="success"
-                   :loading='$isAjax.create'
-                   @click="submitAdd(row)">
-          添 加
-        </el-button>
   
-      </div>
-    </el-dialog>
+    </dialog-wrapper>
   
   </div>
 </template>
@@ -181,7 +180,18 @@ export default {
 
       // search
       searchField: '',
-      searchFields: ['id', 'company', 'contact', 'mobile', 'note']
+      searchFields: ['id', 'company', 'contact', 'mobile', 'note'],
+      rules: {
+        company: [
+          { required: true, message: '公司名称不能为空' }
+        ],
+        contact: [
+          { required: true, message: '联系人不能为空' }
+        ],
+        mobile: [
+          { required: true, message: '手机号不能为空' }
+        ]
+      }
     }
   },
   created () {
@@ -225,13 +235,6 @@ export default {
     closeDialog () {
       this.showDialog = false
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.showDialog && !this.$isAjax.create) {
-        this.submitAdd(this.row)
-      }
-    })
   }
 }
 </script>

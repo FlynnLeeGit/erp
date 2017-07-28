@@ -1,6 +1,9 @@
 <template>
-  <el-dialog title='添加定额'
-             :visible.sync='visible'>
+  <dialog-wrapper title='定额'
+                  mode='add'
+                  v-model='visible'
+                  :loading='$isAjax.create'
+                  @submit="submitAdd(row)">
     <el-form ref='form'
              :model='row'
              label-width="80px"
@@ -96,16 +99,7 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <div slot='footer'
-         class="dialog-footer">
-      <el-button @click="close()">取 消</el-button>
-      <el-button type="success"
-                 :loading='$isAjax.create'
-                 @click="submitAdd(row)">
-        添 加
-      </el-button>
-    </div>
-  </el-dialog>
+  </dialog-wrapper>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -189,13 +183,6 @@ export default {
     close () {
       this.visible = false
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.visible && !this.$isAjax.create) {
-        this.submitAdd(this.row)
-      }
-    })
   }
 
 }

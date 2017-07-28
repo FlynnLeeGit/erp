@@ -137,9 +137,11 @@
                    @size-change='handleSizeChange'>
     </el-pagination>
   
-    <!--dialog-->
-    <el-dialog title='添加辅材材质'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title='辅材材质'
+                    v-model="showDialog"
+                    mode='add'
+                    :loading='$isAjax.create'
+                    @submit="submitAdd(row)">
       <el-form ref='form'
                :model='row'
                :rules='formRules'
@@ -178,18 +180,9 @@
             </el-option>
           </el-select>
         </el-form-item>
-  
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="success"
-                   :loading='$isAjax.create'
-                   @click="submitAdd(row)">
-          添 加
-        </el-button>
-      </div>
-    </el-dialog>
+  
+    </dialog-wrapper>
   
     <spec-dialog ref="specDialog"></spec-dialog>
   </div>
@@ -296,14 +289,6 @@ export default {
         })
       })
     }
-  },
-  mounted () {
-    this.$utils.addSubmitEvent(() => {
-      if (this.showDialog && !this.$isAjax.create) {
-        this.submitAdd(this.row)
-      }
-    })
   }
-
 }
 </script>
