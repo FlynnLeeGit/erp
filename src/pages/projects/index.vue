@@ -61,8 +61,11 @@
     </div>
   
     <!--dialog-->
-    <el-dialog title='创建项目'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title='项目'
+                    v-model='showDialog'
+                    :mode='opt'
+                    @submit='submit(row)'
+                    :loading='$isAjax.create || $isAjax.update'>
       <el-form :model='row'
                label-width='80px'>
         <h4>客户信息</h4>
@@ -125,24 +128,7 @@
         </el-form-item>
   
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button v-if="opt==='add'"
-                   type="success"
-                   :loading='$isAjax.create'
-                   @click="submitAdd(row)">
-          添 加
-        </el-button>
-        <el-button v-if="opt==='edit'"
-                   type="primary"
-                   :loading='$isAjax.update'
-                   @click="submitEdit(row)">
-          更 新
-        </el-button>
-  
-      </div>
-    </el-dialog>
+    </dialog-wrapper>
   </div>
 </template>
 <script>
@@ -201,17 +187,19 @@ export default {
         })
       })
     },
-    submitAdd (row) {
-      this.create(row).then(() => {
-        this.$message.success('创建项目成功')
-        this.closeDialog()
-      })
-    },
-    submitEdit (row) {
-      this.update(row).then(() => {
-        this.$message.success('更新项目信息成功')
-        this.closeDialog()
-      })
+    submit (row) {
+      if (this.opt === 'add') {
+        this.create(row).then(() => {
+          this.$message.success('创建项目成功')
+          this.closeDialog()
+        })
+      }
+      if (this.opt === 'edit') {
+        this.update(row).then(() => {
+          this.$message.success('更新项目信息成功')
+          this.closeDialog()
+        })
+      }
     },
     closeDialog () {
       this.showDialog = false

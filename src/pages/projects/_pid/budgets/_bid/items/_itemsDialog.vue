@@ -3,7 +3,6 @@
              :visible.sync="visible"
              title="添加定额（多选）">
     <collect-table v-if="visible"
-                   :disabled-rows='disabledRows'
                    :selection.sync='selectedQuotas'
                    :version='budgetInfo.version'
                    picker-mode>
@@ -66,7 +65,7 @@ export default {
     open (sid, bid, quotasOnSpace) {
       this.sid = sid
       this.bid = bid
-      this.disabledRows = quotasOnSpace.map(q => q.id)
+      // this.disabledRows = quotasOnSpace.map(q => q.id)
       this.selectedQuotas = []
       this.visible = true
     },

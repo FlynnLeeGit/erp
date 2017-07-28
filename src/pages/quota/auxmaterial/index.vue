@@ -72,27 +72,6 @@
         </template>
       </el-table-column>
   
-      <el-table-column label="计算策略"
-                       sortable
-                       prop='calcStrategy'
-                       width="100">
-        <template scope='scope'>
-          <inline-edit :data='scope.row'
-                       :fn='update'
-                       type='select'
-                       prop='calcStrategy'>
-            {{calcStrategyFormatter(scope.row)}}
-            <template slot='options'>
-              <option v-for='(c,cKey) in map.calcStrategy'
-                      :key='cKey'
-                      :value='cKey'
-                      v-text='c'>
-              </option>
-            </template>
-          </inline-edit>
-        </template>
-  
-      </el-table-column>
       <el-table-column label="规格[限制单价]">
         <template scope="scope">
           <el-tag class="_ml1 _pointer"
@@ -170,16 +149,6 @@
   
         </el-form-item>
   
-        <el-form-item label='计算策略'
-                      prop='calcStrategy'>
-          <el-select v-model='row.calcStrategy'>
-            <el-option v-for='(c,cKey) in map.calcStrategy'
-                       :key='cKey'
-                       :label='c'
-                       :value='cKey'>
-            </el-option>
-          </el-select>
-        </el-form-item>
       </el-form>
   
     </dialog-wrapper>

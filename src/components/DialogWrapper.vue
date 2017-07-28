@@ -73,7 +73,6 @@ export default {
       this.$emit('input', false)
     },
     submit () {
-
       this.$emit('submit')
     }
   },

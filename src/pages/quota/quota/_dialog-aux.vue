@@ -56,7 +56,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
+    ...mapGetters('purchase/material', ['brandOpts', 'productOpts']),
     ...mapGetters('quota/auxmaterial', ['typeOpts', 'auxOpts', 'specOpts']),
     ...mapGetters('quota/quota', ['$isAjax'])
   },
@@ -87,7 +87,7 @@ export default {
       cloneAuxOpts.forEach(aux => {
         aux.disabled = this.$utils.valueInArray(this.qRow.quotaAuxiliaryCounters, aux.value, 'quotaAuxiliaryMaterial.id')
       })
-      this.cascaderOpts = this.$utils.toCascader(this.typeOpts, cloneAuxOpts, this.specOpts, this.brandOpts, this.modelOpts)
+      this.cascaderOpts = this.$utils.toCascader(this.typeOpts, cloneAuxOpts, this.specOpts, this.brandOpts, this.productOpts)
     },
     open (qRow) {
       this.qRow = qRow

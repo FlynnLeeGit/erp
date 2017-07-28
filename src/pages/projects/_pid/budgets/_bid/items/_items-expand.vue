@@ -109,7 +109,7 @@ export default {
   },
   computed: {
     ...mapGetters('quota/auxmaterial', ['auxOpts', 'specOpts']),
-    ...mapGetters('purchase/material', ['brandOpts', 'modelOpts']),
+    ...mapGetters('purchase/material', ['brandOpts', 'productOpts']),
     ...mapGetters('projects/_pid/budgets/_bid/items', ['$isAjax']),
     bid () {
       return +this.$route.params.bid
@@ -126,7 +126,7 @@ export default {
         this.auxOpts.filter(aux => aux.value === auxId),
         this.specOpts,
         this.brandOpts,
-        this.modelOpts
+        this.productOpts
       )
 
       this.openDialog()

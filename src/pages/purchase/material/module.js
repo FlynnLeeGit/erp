@@ -79,14 +79,14 @@ const getters = {
     })
     return opts
   },
-  modelOpts: state => {
+  productOpts: state => {
     const opts = []
     state.list.forEach(mat => {
       const _parentId = `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}>brand:${mat.brand}`
       opts.push({
-        label: `${mat.model} ${mat.packPrice}元/${mat.packUnit}`,
+        label: `${mat.purchaseSupplier.company} ${mat.model} ${mat.packPrice}元/${mat.packUnit}`,
         value: mat.id,
-        id: `model:${mat.model}`,
+        id: `product:${mat.model}`,
         parentId: _parentId
       })
     })

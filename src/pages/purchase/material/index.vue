@@ -176,8 +176,10 @@
     </el-pagination>
   
     <!--dialog-->
-    <el-dialog title='辅材'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title='辅材'
+                    :loading='$isAjax.create'
+                    @submit="submitAdd(row)"
+                    v-model='showDialog'>
       <el-form :model='row'
                :rules="rules"
                label-width="80px">
@@ -252,24 +254,15 @@
                      on-text="启用"
                      off-text="禁用">
           </el-switch>
-  
         </el-form-item>
-  
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="success"
-                   :loading='$isAjax.create'
-                   @click="submitAdd(row)">
-          添 加
-        </el-button>
+    </dialog-wrapper>
   
-      </div>
-    </el-dialog>
-  
-    <el-dialog :visible.sync="showAuxDialog"
-               title="更换规格">
+    <dialog-wrapper v-model="showAuxDialog"
+                    :loading='$isAjax.update'
+                    title="规格"
+                    mode='edit'
+                    @submit='submitUpdate(row)'>
       <el-form label-width="80px">
         <el-form-item label="更换规格">
           <el-cascader :options="cascaderOpts"
@@ -277,13 +270,7 @@
           </el-cascader>
         </el-form-item>
       </el-form>
-      <div slot="footer"
-           class="dialog-footer">
-        <el-button @click="closeAuxDialog()">取 消</el-button>
-        <el-button @click="submitUpdate(row)"
-                   :loading="$isAjax.update">更 换</el-button>
-      </div>
-    </el-dialog>
+    </dialog-wrapper>
   
   </div>
 </template>
