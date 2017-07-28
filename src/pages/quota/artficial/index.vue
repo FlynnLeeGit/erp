@@ -81,7 +81,6 @@
   
     <!--dialog-->
     <el-dialog title='添加人工'
-               @keyup.enter.native='submitAdd(row)'
                :visible.sync='showDialog'>
       <el-form :model='row'
                :rules='formRules'
@@ -160,6 +159,9 @@ export default {
     },
   },
   methods: {
+    hello () {
+      console.log('hello')
+    },
     ...mapActions('quota/artficial', ['init', 'create', 'update', 'delete']),
     // table methods
     handleAdd () {
@@ -191,6 +193,13 @@ export default {
     closeDialog () {
       this.showDialog = false
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.showDialog && !this.$isAjax.create) {
+        this.submitAdd(this.row)
+      }
+    })
   }
 }
 </script>

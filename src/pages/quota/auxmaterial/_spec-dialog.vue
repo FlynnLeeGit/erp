@@ -6,6 +6,8 @@
       <el-form-item label='名称'
                     prop='name'>
         <el-input placeholder='请输入规格名称'
+                  v-if="visible"
+                  v-focus
                   v-model='row.name'>
         </el-input>
       </el-form-item>
@@ -91,6 +93,13 @@ export default {
         this.close()
       })
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.visible && !this.$isAjax.create_spec && !this.$isAjax.update_spec) {
+        this.submitAdd(this.row)
+      }
+    })
   }
 }
 </script>

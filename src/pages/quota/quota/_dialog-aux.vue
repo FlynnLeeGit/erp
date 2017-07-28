@@ -104,6 +104,13 @@ export default {
     close () {
       this.visible = false
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.visible && !this.$isAjax.create_auxmaterial_count) {
+        this.submit(this.row)
+      }
+    })
   }
 }
 </script>

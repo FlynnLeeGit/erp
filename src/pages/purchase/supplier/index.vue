@@ -78,20 +78,20 @@
         </template>
       </el-table-column>
       <!-- <el-table-column label='使用此供应商材料'>
-        <template scope='scope'>
-          <div v-if='scope.row.purchaseMaterials.length'>
-            <el-tag type='primary'
-                    v-for='m in scope.row.purchaseMaterials'
-                    :key='m.id'>
-              {{m.brand}}-[{{m.model}}]
-            </el-tag>
-          </div>
-          <el-tag v-else
-                  type='gray'>
-            无
-          </el-tag>
-        </template>
-      </el-table-column> -->
+                  <template scope='scope'>
+                    <div v-if='scope.row.purchaseMaterials.length'>
+                      <el-tag type='primary'
+                              v-for='m in scope.row.purchaseMaterials'
+                              :key='m.id'>
+                        {{m.brand}}-[{{m.model}}]
+                      </el-tag>
+                    </div>
+                    <el-tag v-else
+                            type='gray'>
+                      无
+                    </el-tag>
+                  </template>
+                </el-table-column> -->
       <el-table-column label="操作"
                        width='160'>
         <template scope="scope">
@@ -119,8 +119,10 @@
                :visible.sync='showDialog'>
       <el-form :model='row'
                label-width='80px'>
-        <el-form-item label='公司'>
-          <el-input placeholder='请输入供应商公司名称'
+        <el-form-item v-if="showDialog"
+                      label='公司'>
+          <el-input v-focus
+                    placeholder='请输入供应商公司名称'
                     v-model='row.company'></el-input>
         </el-form-item>
         <el-form-item label='联系人'>
@@ -223,6 +225,13 @@ export default {
     closeDialog () {
       this.showDialog = false
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.showDialog && !this.$isAjax.create) {
+        this.submitAdd(this.row)
+      }
+    })
   }
 }
 </script>

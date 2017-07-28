@@ -8,7 +8,10 @@
       <el-form-item prop='name'
                     label='名称'>
         <el-input placeholder='请输入定额名称'
-                  v-model='row.name'></el-input>
+                  v-if="visible"
+                  v-focus
+                  v-model='row.name'>
+        </el-input>
       </el-form-item>
   
       <el-form-item label='分类'
@@ -186,7 +189,15 @@ export default {
     close () {
       this.visible = false
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.visible && !this.$isAjax.create) {
+        this.submitAdd(this.row)
+      }
+    })
   }
+
 }
 </script>
 

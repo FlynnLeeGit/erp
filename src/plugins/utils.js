@@ -192,3 +192,16 @@ export const toCascader = (...optsArrCollect) => {
     return []
   }
 }
+
+export const addSubmitEvent = fn => {
+  document.addEventListener(
+    'keyup',
+    e => {
+      e.stopPropagation()
+      if (e.which === 13) {
+        fn(e)
+      }
+    },
+    false
+  )
+}

@@ -355,7 +355,15 @@ export default {
     handleChangeTag (tag) {
       console.log(tag.name)
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.showDialog && !this.isSubmiting) {
+        this.submitAdd(this.row)
+      }
+    })
   }
+
 }
 </script>
 

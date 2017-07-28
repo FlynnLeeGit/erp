@@ -429,6 +429,16 @@ export default {
     closeAuxDialog () {
       this.showAuxDialog = false
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.showDialog && !this.$isAjax.create) {
+        this.submitAdd(this.row)
+      }
+      if (this.showAuxDialog && !this.$isAjax.update) {
+        this.submitUpdate(this.row)
+      }
+    })
   }
 }
 </script>

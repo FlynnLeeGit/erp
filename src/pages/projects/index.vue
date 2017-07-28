@@ -70,6 +70,8 @@
         <el-form-item label='客户名称'
                       class="_mt1">
           <el-input placeholder='请输入客户名称'
+                    v-focus
+                    v-if="showDialog"
                     v-model='row.username'></el-input>
         </el-form-item>
         <el-form-item label='联系电话'>

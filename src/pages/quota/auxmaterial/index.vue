@@ -140,12 +140,15 @@
     <!--dialog-->
     <el-dialog title='添加辅材材质'
                :visible.sync='showDialog'>
-      <el-form :model='row'
+      <el-form ref='form'
+               :model='row'
                :rules='formRules'
                label-width='120px'>
         <el-form-item label='名称'
                       prop='name'>
-          <el-input placeholder='请输入材质名称'
+          <el-input v-if="showDialog"
+                    v-focus
+                    placeholder='请输入材质名称'
                     v-model='row.name'></el-input>
         </el-form-item>
         <el-form-item label='定额单位'>
@@ -293,6 +296,14 @@ export default {
         })
       })
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.showDialog && !this.$isAjax.create) {
+        this.submitAdd(this.row)
+      }
+    })
   }
+
 }
 </script>

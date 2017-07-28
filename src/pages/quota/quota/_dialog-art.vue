@@ -90,6 +90,13 @@ export default {
     close () {
       this.visible = false
     }
+  },
+  mounted () {
+    this.$utils.addSubmitEvent(() => {
+      if (this.visible && !this.$isAjax.create_artficial_count) {
+        this.submit(this.row)
+      }
+    })
   }
 }
 </script>

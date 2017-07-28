@@ -13,6 +13,7 @@ import Search from '@/components/Search.vue'
 import Card from '@/components/Card.vue'
 import CardPlus from '@/components/CardPlus.vue'
 import DiffCell from '@/components/DiffCell.vue'
+import DialogWrap from '@/components/DialogWrap.vue'
 
 Vue.use(ElementUI)
 Vue.use(Meta)
@@ -25,6 +26,7 @@ Vue.component(Search.name, Search)
 Vue.component(Card.name, Card)
 Vue.component(CardPlus.name, CardPlus)
 Vue.component(DiffCell.name, DiffCell)
+Vue.component(DialogWrap.name, DialogWrap)
 
 Vue.config.devtools = true
 
