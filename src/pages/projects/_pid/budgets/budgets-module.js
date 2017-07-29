@@ -2,7 +2,7 @@ import createStore from '@/plugins/createStore'
 
 import { find, findIndex } from '@/plugins/utils'
 
-import { get, create, update, del } from './api'
+import { get, create, update, del, copy } from './api'
 import _bid from './_bid/_bid-module'
 
 const state = {
@@ -15,6 +15,9 @@ const mutations = {
     state.list = res
   },
   CREATE_SUCCESS (state, { req, res }) {
+    state.list.push(res)
+  },
+  COPY_SUCCESS (state, { req, res }) {
     state.list.push(res)
   },
   UPDATE_SUCCESS (state, { req, res }) {
@@ -36,6 +39,9 @@ const actions = {
   },
   create (store, { pid, data }) {
     return create({ pid, data })
+  },
+  copy (store, { pid, data }) {
+    return copy({ pid, data })
   },
   update (store, data) {
     return update(data)

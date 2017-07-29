@@ -1,5 +1,6 @@
 <template>
   <el-dialog :title="modeMap[mode].title"
+             :size='size'
              :before-close='close'
              :visible="visible">
     <slot>
@@ -23,6 +24,10 @@ export default {
       type: String,
       default: ''
     },
+    size: {
+      type: String,
+      default: 'small'
+    },
     value: {
       type: Boolean,
       default: false,
@@ -39,6 +44,11 @@ export default {
   watch: {
     value (newVal) {
       this.visible = newVal
+      if (this.visible) {
+        this.$nextTick(() => {
+          this.setFormNode()
+        })
+      }
     }
   },
   data () {
@@ -73,15 +83,42 @@ export default {
       this.$emit('input', false)
     },
     submit () {
-      this.$emit('submit')
+      if (this.form) {
+        this.form.validate(valid => {
+          if (valid) {
+            this.$emit('submit')
+          } else {
+            return false
+          }
+        })
+      }
+    },
+    setFormNode () {
+      // 寻找form节点
+      this.form = null
+      const detectForm = (vnode) => {
+        if (vnode.$el.className === 'el-form') {
+          this.form = vnode
+          return
+        }
+        if (vnode.$children) {
+          vnode.$children.forEach(detectForm)
+        }
+      }
+      detectForm(this)
     }
   },
   mounted () {
     document.addEventListener('keyup', e => {
       e.stopPropagation()
-      if (e.which === 13) {
-        if (this.visible && !this.loading) {
+      if (this.visible && !this.loading) {
+        // enter key
+        if (e.which === 13) {
           this.submit()
+        }
+        // esc key
+        if (e.which === 27) {
+          this.close()
         }
       }
     })

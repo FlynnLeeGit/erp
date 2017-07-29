@@ -67,21 +67,26 @@
                     @submit='submit(row)'
                     :loading='$isAjax.create || $isAjax.update'>
       <el-form :model='row'
+               :rules='rules'
                label-width='80px'>
         <h4>客户信息</h4>
         <hr>
         <el-form-item label='客户名称'
-                      class="_mt1">
+                      class="_mt1"
+                      prop="username">
           <el-input placeholder='请输入客户名称'
                     v-focus
                     v-if="showDialog"
-                    v-model='row.username'></el-input>
+                    v-model='row.username'>
+          </el-input>
         </el-form-item>
-        <el-form-item label='联系电话'>
+        <el-form-item label='联系电话'
+                      prop="mobile">
           <el-input placeholder='请输入联系电话'
                     v-model='row.mobile'></el-input>
         </el-form-item>
-        <el-form-item label='性别'>
+        <el-form-item label='性别'
+                      prop="gender">
           <el-select v-model='row.gender'>
             <el-option v-for='(g,gKey) in map.gender'
                        :key='gKey'
@@ -90,7 +95,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label='客户邮箱'>
+        <el-form-item label='客户邮箱'
+                      prop="email">
           <el-input placeholder='请输入客户邮箱'
                     v-model='row.email'>
           </el-input>
@@ -98,21 +104,24 @@
         <h4>项目信息</h4>
         <hr>
         <el-form-item label='项目地址'
+                      prop="address"
                       class="_mt1">
           <el-input placeholder='请输入项目地址'
                     v-model='row.address'>
           </el-input>
         </el-form-item>
-        <el-form-item label='房型'>
+        <el-form-item label='房型'
+                      prop="houseType">
           <el-input placeholder='请输入项目房型(例如：三房两厅)'
                     v-model='row.houseType'>
           </el-input>
         </el-form-item>
-        <el-form-item label='套内面积'>
-          <el-input-number :min='0'
+        <el-form-item label='套内面积'
+                      prop="area">
+          <el-input-number :min='10'
                            :step="10"
                            :debounce="800"
-                           v-model="row.area">
+                           v-model.number="row.area">
           </el-input-number>
           <span class="_ml1">平方米</span>
         </el-form-item>
@@ -144,7 +153,7 @@ export default {
         gender: '',
         address: '',
         email: '',
-        area: 0,
+        area: 10,
         houseType: '',
         archiveType: 1
       },
@@ -157,6 +166,24 @@ export default {
 
       opt: 'add',
       showDialog: false,
+
+      rules: {
+        username: [
+          { required: true, message: '客户名称不能为空' }
+        ],
+        mobile: [
+          { required: true, message: '手机号不能为空' },
+        ],
+        gender: [
+          { required: true, message: '性别不能为空' }
+        ],
+        address: [
+          { required: true, message: '地址不能为空' }
+        ],
+        houseType: [
+          { required: true, message: '房型不能为空' }
+        ]
+      }
     }
   },
   computed: {

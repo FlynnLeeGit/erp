@@ -6,6 +6,8 @@
       <h3>基本信息</h3>
       <hr>
       <el-form-item label='甲方名称'
+                    v-focus
+                    v-if="visible"
                     class="_mt1">
         <el-input v-model='form.partyAName'
                   placeholder="请输入甲方名称">

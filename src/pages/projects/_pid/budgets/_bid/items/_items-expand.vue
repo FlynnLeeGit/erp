@@ -53,29 +53,31 @@
       </el-table-column>
   
     </el-table>
-    <el-dialog title="更换辅材"
-               :visible.sync="visible">
+    <dialog-wrapper title="更换辅材"
+                    v-model="visible"
+                    :loading='$isAjax.replace_aux'
+                    @submit="submitChange()">
       <el-form label-width="80px">
   
-        <el-form-item label='选择'>
+        <el-form-item label='选择辅材'>
           <el-cascader :options="cascaderOpts"
                        placeholder="级联选择规格与型号"
                        v-model="auxModel">
           </el-cascader>
         </el-form-item>
+        <el-form-item label="替换位置">
+          <el-select v-model="row.position">
+            <el-option label="当前定额"
+                       :value="0"></el-option>
+            <el-option label="当前空间"
+                       :value="1"></el-option>
+            <el-option label="全部空间"
+                       :value="2"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
   
-      <div slot="footer"
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="info"
-                   :loading='$isAjax.replace_aux'
-                   @click="submitChange()">
-          确认 更新
-        </el-button>
-      </div>
-  
-    </el-dialog>
+    </dialog-wrapper>
   </div>
 </template>
 <script>
@@ -100,6 +102,9 @@ export default {
     return {
       visible: false,
 
+      row: {
+        position: 0
+      },
       auxModel: ['', '', '', ''],
       cascaderOpts: [],
       currentCounterId: 0,
@@ -133,6 +138,7 @@ export default {
     },
     submitChange () {
       const data = {
+        position: this.row.position,
         quotaAuxiliaryCounter: {
           id: this.currentCounterId,
         },

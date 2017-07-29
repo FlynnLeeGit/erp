@@ -1,23 +1,16 @@
 <template>
-  <el-dialog size="large"
-             :visible.sync="visible"
-             title="添加定额（多选）">
+  <dialog-wrapper size="large"
+                  v-model="visible"
+                  :loading='$isAjax.create'
+                  @submit="submitAdd()"
+                  mode='add'
+                  title="定额（多选）">
     <collect-table v-if="visible"
                    :selection.sync='selectedQuotas'
                    :version='budgetInfo.version'
                    picker-mode>
     </collect-table>
-    <div slot='footer'
-         class="dialog-footer">
-      <el-button @click="close()">取 消</el-button>
-      <el-button type="success"
-                 :loading='$isAjax.create'
-                 @click="submitAdd()">
-        确认 添加
-      </el-button>
-  
-    </div>
-  </el-dialog>
+  </dialog-wrapper>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'

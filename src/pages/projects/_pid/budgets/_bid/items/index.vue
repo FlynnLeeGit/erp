@@ -33,9 +33,9 @@
         <el-table class="_mt1"
                   :data='quotaTable(space.id)'
                   empty-text="暂无此空间模版数据"
+                  default-expand-all
                   border
-                  :row-key="row=>`space:${space.id}>${row.id}`"
-                  >
+                  :row-key="row=>`space:${space.id}>${row.id}`">
   
           <el-table-column type="expand">
             <template scope="scope">
@@ -217,7 +217,7 @@ export default {
   },
   data () {
     return {
-      
+
     }
   },
   computed: {

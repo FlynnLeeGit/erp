@@ -84,7 +84,7 @@ const getters = {
     state.list.forEach(mat => {
       const _parentId = `spec:${mat.quotaAuxiliaryMaterialSpec && mat.quotaAuxiliaryMaterialSpec.id}>brand:${mat.brand}`
       opts.push({
-        label: `${mat.purchaseSupplier.company} ${mat.model} ${mat.packPrice}元/${mat.packUnit}`,
+        label: `${mat.model} - 每${mat.packUnit}(${mat.specAmount}) - ${mat.packPrice}元`,
         value: mat.id,
         id: `product:${mat.model}`,
         parentId: _parentId

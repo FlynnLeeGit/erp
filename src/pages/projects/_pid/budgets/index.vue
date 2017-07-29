@@ -40,67 +40,90 @@
     </el-row>
   
     <!--dialog-->
-    <el-dialog title='预算'
-               :visible.sync='showDialog'>
+    <dialog-wrapper title='预算'
+                    v-model='showDialog'
+                    :mode='opt'
+                    :loading='$isAjax.create || $isAjax.update || $isAjax.copy'
+                    @submit='submit(row)'>
       <el-form :model='row'
-               label-width='100px'>
-        <el-form-item label='名称'>
+               :rules='rules'
+               label-width='90px'>
+        <el-form-item label='名称'
+                      prop="name">
           <el-input placeholder='请输入预算名称'
                     v-model='row.name'></el-input>
         </el-form-item>
-        <el-form-item label='说明'>
+        <el-form-item label='说明'
+                      prop='description'>
           <el-input placeholder='请输入该预算说明'
                     v-model='row.description'>
           </el-input>
         </el-form-item>
-        <el-form-item label='劳务利润率'>
-          <el-input-number placeholder='请输入劳务利润率'
-                           :disabled="opt==='edit'"
-                           :step='1'
-                           :min='0'
-                           :max="100"
-                           v-model='row._rateOfArtificialProfit'>
-          </el-input-number>
+  
+        <el-form-item label="从已有预算拷贝?">
+          <el-switch v-model="row.isCopy">
+          </el-switch>
         </el-form-item>
-        <el-form-item label='公司利润率'>
-          <el-input-number placeholder='请输入公司利润率'
-                           :disabled="opt==='edit'"
-                           :min='0'
-                           :max="100"
-                           :step='1'
-                           v-model='row._rateOfCompanyProfit'>
-          </el-input-number>
-        </el-form-item>
-        <el-form-item label='定额版本库'>
-          <el-select disabled
-                     v-model='selectedVersion'>
-            <el-option v-for='v in versionList'
-                       :key='v.id'
-                       :label='v.description'
-                       :value='v.version'>
-            </el-option>
-          </el-select>
-        </el-form-item>
+  
+        <section v-if="row.isCopy">
+          <el-form-item label="拷贝的预算">
+            <el-select v-model="row.projectBudgetId">
+              <el-option v-for="b in list"
+                         :key="b.id"
+                         :label="b.name"
+                         :value="b.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+  
+          <el-form-item label="使用的版本">
+            <el-select v-model="row.useNewVersion">
+              <el-option label="保留"
+                         :value="0">
+              </el-option>
+              <el-option label="最新"
+                         :value="1">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </section>
+  
+        <section v-else>
+          <el-form-item label='劳务利润率'>
+            <el-input-number placeholder='请输入劳务利润率'
+                             :disabled="opt==='edit'"
+                             :step='1'
+                             :min='0'
+                             :max="100"
+                             v-model='row._rateOfArtificialProfit'>
+            </el-input-number>
+          </el-form-item>
+          <el-form-item label='公司利润率'>
+            <el-input-number placeholder='请输入公司利润率'
+                             :disabled="opt==='edit'"
+                             :min='0'
+                             :max="100"
+                             :step='1'
+                             v-model='row._rateOfCompanyProfit'>
+            </el-input-number>
+          </el-form-item>
+          <el-form-item label='定额版本库'>
+            <el-select disabled
+                       v-model='selectedVersion'>
+              <el-option v-for='v in versionList'
+                         :key='v.id'
+                         :label='v.description'
+                         :value='v.version'>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </section>
+  
       </el-form>
-      <div slot='footer'
-           class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button v-if="opt==='add'"
-                   type="success"
-                   :loading='$isAjax.create'
-                   @click="submitAdd(row)">
-          添 加
-        </el-button>
-        <el-button v-if="opt==='edit'"
-                   type="primary"
-                   :loading='$isAjax.update'
-                   @click="submitEdit(row)">
-          更 新
-        </el-button>
-      </div>
-    </el-dialog>
+    </dialog-wrapper>
   </div>
 </template>
+
 <script>
 import { mapActions, mapGetters } from 'vuex'
 export default {
@@ -115,10 +138,22 @@ export default {
         rateOfArtificialProfit: 0.1,
         _rateOfArtificialProfit: 10,
         rateOfCompanyProfit: 0.3,
-        _rateOfCompanyProfit: 30
+        _rateOfCompanyProfit: 30,
+
+        isCopy: false,
+        projectBudgetId: '',
+        useNewVersion: 0
       },
       opt: 'add',
       showDialog: false,
+      rules: {
+        name: [
+          { required: true, message: '名称不能为空' }
+        ],
+        description: [
+          { required: true, message: '预算说明不能为空' }
+        ]
+      }
     }
   },
   created () {
@@ -137,7 +172,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('projects/_pid/budgets', ['init', 'create', 'update', 'delete']),
+    ...mapActions('projects/_pid/budgets', ['init', 'create', 'update', 'delete', 'copy']),
     handleAdd () {
       this.opt = 'add'
       this.showDialog = true
@@ -161,6 +196,18 @@ export default {
           })
         })
     },
+    submit (data) {
+      if (this.opt === 'add') {
+        if (data.isCopy) {
+          this.submitCopy(data)
+        } else {
+          this.submitAdd(data)
+        }
+      }
+      if (this.opt === 'edit') {
+        this.submitEdit(data)
+      }
+    },
     submitAdd (data) {
       data.rateOfArtificialProfit = data._rateOfArtificialProfit / 100
       data.rateOfCompanyProfit = data._rateOfCompanyProfit / 100
@@ -175,6 +222,12 @@ export default {
     submitEdit (data) {
       this.update(data).then(() => {
         this.$message.success('更新成功！')
+        this.closeDialog()
+      })
+    },
+    submitCopy (data) {
+      this.copy({ pid: this.pid, data }).then(() => {
+        this.$message.success('拷贝预算成功')
         this.closeDialog()
       })
     },
